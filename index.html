@@ -18,7 +18,10 @@
 <header>
   <div class="wrap barra">
     <a href="#inicio" class="logo" translate="no"><img src="assets/imagenes/logo@2x.png" alt="Hotel Frontera" width="223" height="129"></a>
-    <button class="menu-btn trazo" type="button" aria-expanded="false" aria-controls="nav">☰ Menú</button>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav">
+      <span class="menu-icono" aria-hidden="true"><span></span><span></span><span></span></span>
+      <span class="menu-texto oculto-visual" data-abrir="Abrir menú" data-cerrar="Cerrar menú">Abrir menú</span>
+    </button>
     <nav id="nav" aria-label="Principal">
       <ul>
         <li><a href="#inicio">Inicio</a></li>
@@ -26,16 +29,30 @@
         <li><a href="#menu-rest">Restaurante</a></li>
         <li><a href="#eventos">Eventos</a></li>
         <li><a href="#contacto">Contacto</a></li>
-        <li class="idiomas notranslate" translate="no" aria-label="Idioma">
-          <a href="?lang=es" data-idioma="es" lang="es" hreflang="es" aria-label="Español" aria-current="true">ES</a>
-          <a href="?lang=en" data-idioma="en" lang="en" hreflang="en" aria-label="English">EN</a>
-          <a href="?lang=zh" data-idioma="zh" lang="zh-Hans" hreflang="zh-Hans" aria-label="中文">中文</a>
+        <li class="nav-acciones">
+          <a href="tel:+50527322668" class="btn" data-hotel="reservar">Reservar: 2732-2668</a>
+        </li>
+        <li class="idiomas notranslate" translate="no">
+          <details class="selector-idioma">
+            <summary aria-label="Idioma: Español. Elegir otro idioma">
+              <svg class="icono-globo" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3Z"/></svg>
+              <span class="idioma-actual">Español</span>
+              <svg class="icono-flecha" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+            </summary>
+            <div class="lista-idiomas">
+              <span class="lista-titulo">Idiomas</span>
+              <a href="?lang=es" data-idioma="es" lang="es" hreflang="es" aria-label="Español" aria-current="true">Español</a>
+              <a href="?lang=en" data-idioma="en" lang="en" hreflang="en" aria-label="English">English</a>
+              <a href="?lang=zh" data-idioma="zh" lang="zh-Hans" hreflang="zh-Hans" aria-label="中文">中文 <small>(简体)</small></a>
+            </div>
+          </details>
         </li>
       </ul>
     </nav>
   </div>
   <p id="estado-idiomas" class="estado-idiomas notranslate" translate="no" role="status" hidden></p>
 </header>
+<div class="velo" hidden></div>
 
 <main id="contenido" tabindex="-1">
   <!-- 1. Portada -->
@@ -50,22 +67,24 @@
           <a href="#menu-rest" class="btn claro">Ver menú del restaurante</a>
         </div>
       </div>
-      <div class="trazo marco"><img class="foto" src="assets/imagenes/el-hotel-6.webp" alt="Vista exterior del Hotel Frontera y su piscina al atardecer" width="1142" height="580" fetchpriority="high"></div>
+      <div class="carrusel" role="region" aria-roledescription="carrusel" aria-label="Fotos del hotel">
+        <div class="diapositivas" aria-live="off">
+          <figure class="diapositiva activa"><img src="assets/imagenes/el-hotel-6.webp" alt="Piscina del Hotel Frontera al atardecer" width="1142" height="580" fetchpriority="high"></figure>
+          <figure class="diapositiva"><img data-src="assets/imagenes/galeria-2.webp" alt="Fachada del hotel" width="1142" height="580"></figure>
+          <figure class="diapositiva"><img data-src="assets/imagenes/el-hotel-1.webp" alt="Entrada y jardín del hotel" width="1142" height="580"></figure>
+          <figure class="diapositiva"><img data-src="assets/imagenes/el-hotel-2.webp" alt="Pasillo de las habitaciones" width="1142" height="580"></figure>
+          <figure class="diapositiva"><img data-src="assets/imagenes/galeria-3.webp" alt="Salón de eventos" width="1142" height="580"></figure>
+          <figure class="diapositiva"><img data-src="assets/imagenes/el-hotel-3.webp" alt="Bar del hotel" width="1142" height="580"></figure>
+        </div>
+        <div class="carrusel-controles" hidden>
+          <button class="carrusel-pausa" type="button" aria-label="Pausar las fotos"><span aria-hidden="true"></span></button>
+          <div class="carrusel-puntos" role="group" aria-label="Elegir foto"></div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- 2. Mosaico -->
-  <section style="padding-top:0" aria-label="Galería">
-    <div class="wrap mosaico">
-      <div class="trazo alto"><img class="foto" loading="lazy" src="assets/imagenes/galeria-2.webp" alt=""></div>
-      <div class="trazo"><img class="foto" loading="lazy" src="assets/imagenes/el-hotel-1.webp" alt=""></div>
-      <div class="trazo"><img class="foto" loading="lazy" src="assets/imagenes/el-hotel-2.webp" alt=""></div>
-      <div class="trazo"><img class="foto" loading="lazy" src="assets/imagenes/galeria-3.webp" alt=""></div>
-      <div class="trazo"><img class="foto" loading="lazy" src="assets/imagenes/el-hotel-3.webp" alt=""></div>
-    </div>
-  </section>
-
-  <!-- 3. El hotel -->
+  <!-- 2. El hotel -->
   <section id="hotel">
     <div class="wrap">
       <h2 class="titulo-sec">El hotel</h2>
@@ -122,7 +141,7 @@
     </div>
   </section>
 
-  <!-- 4. Menú: todo sale de los datos del menú (servidor de pedidos o copia local) -->
+  <!-- 3. Menú: todo sale de los datos del menú (servidor de pedidos o copia local) -->
   <section id="menu-rest">
     <div class="wrap">
       <h2 class="titulo-sec">Nuestro menú</h2>
@@ -137,7 +156,7 @@
     </div>
   </section>
 
-  <!-- 5. Opiniones -->
+  <!-- 4. Opiniones -->
   <section style="padding-top:0">
     <div class="wrap" style="text-align:center">
       <h2 class="titulo-sec">Lo que dicen nuestros huéspedes</h2>

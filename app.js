@@ -6,13 +6,88 @@
   const fmt = (plantilla, datos) => plantilla.replace(/\{(\w+)\}/g, (_, k) => datos[k] ?? "");
 
   /* ---------- Menú móvil de navegación ---------- */
-  const btn = $(".menu-btn"), nav = $("#nav");
-  const cerrarNav = () => { nav.classList.remove("abierto"); btn.setAttribute("aria-expanded", "false"); };
-  btn.addEventListener("click", () => btn.setAttribute("aria-expanded", String(nav.classList.toggle("abierto"))));
-  nav.addEventListener("click", e => { if (e.target.closest("a")) cerrarNav(); });
-  document.addEventListener("keydown", e => { if (e.key === "Escape" && nav.classList.contains("abierto")) { cerrarNav(); btn.focus(); } });
-  document.addEventListener("click", e => { if (!e.target.closest("header")) cerrarNav(); });
+  const btn = $(".menu-btn"), nav = $("#nav"), velo = $(".velo"), textoBtn = $(".menu-texto");
+  const abierto = () => nav.classList.contains("abierto");
+  function ponerNav(abrir) {
+    if (abrir === abierto()) return;
+    nav.classList.toggle("abierto", abrir);
+    btn.setAttribute("aria-expanded", String(abrir));
+    textoBtn.textContent = abrir ? textoBtn.dataset.cerrar : textoBtn.dataset.abrir;
+    document.documentElement.classList.toggle("nav-abierta", abrir);
+    if (abrir) { velo.hidden = false; requestAnimationFrame(() => velo.classList.add("visible")); }
+    else { velo.classList.remove("visible"); setTimeout(() => { if (!abierto()) velo.hidden = true; }, 300); }
+  }
+  const cerrarNav = () => ponerNav(false);
+  btn.addEventListener("click", () => ponerNav(!abierto()));
+  nav.addEventListener("click", e => { if (e.target.closest("a:not([data-idioma])")) cerrarNav(); });
+  velo.addEventListener("click", cerrarNav);
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && abierto()) { cerrarNav(); btn.focus(); } });
+  document.addEventListener("click", e => {
+    if (abierto() && !e.target.closest("header")) cerrarNav();
+    // El desplegable de idiomas se cierra al tocar fuera de él
+    document.querySelectorAll(".selector-idioma[open]").forEach(d => { if (!d.contains(e.target)) d.open = false; });
+  });
+  document.addEventListener("keydown", e => {
+    const d = document.querySelector(".selector-idioma[open]");
+    if (e.key === "Escape" && d) { d.open = false; d.querySelector("summary").focus(); e.stopImmediatePropagation(); }
+  }, true);
+  // Si el foco sale del menú abierto (Tab), se cierra para no dejarlo tapando la página
+  $("header").addEventListener("focusout", e => { if (abierto() && e.relatedTarget && !e.relatedTarget.closest("header")) cerrarNav(); });
   matchMedia("(min-width:941px)").addEventListener("change", cerrarNav);
+
+  /* ---------- Carrusel de la portada: fundido suave entre fotos ---------- */
+  (() => {
+    const caja = $(".carrusel");
+    if (!caja) return;
+    const diapos = [...caja.querySelectorAll(".diapositiva")];
+    if (diapos.length < 2) return;
+    const puntos = caja.querySelector(".carrusel-puntos"), pausa = caja.querySelector(".carrusel-pausa");
+    const quieto = matchMedia("(prefers-reduced-motion: reduce)");
+    const INTERVALO = 6500;
+    let actual = 0, reloj = null, pausadoPorUsuario = quieto.matches, enVista = true;
+
+    const cargar = i => {
+      const img = diapos[i].querySelector("img");
+      if (img.dataset.src) { img.src = img.dataset.src; img.removeAttribute("data-src"); }
+      return img.decode ? img.decode().catch(() => {}) : Promise.resolve();
+    };
+    puntos.innerHTML = diapos.map((d, i) => `<button type="button" aria-label="Foto ${i + 1} de ${diapos.length}: ${esc(d.querySelector("img").alt)}"${i ? "" : ' aria-current="true"'}></button>`).join("");
+    const botones = [...puntos.children];
+
+    async function ir(i) {
+      i = (i + diapos.length) % diapos.length;
+      if (i === actual) return;
+      await cargar(i);                       // no se cambia hasta que la foto está lista
+      diapos[actual].classList.remove("activa");
+      diapos[i].classList.add("activa");
+      botones[actual].removeAttribute("aria-current");
+      botones[i].setAttribute("aria-current", "true");
+      actual = i;
+      cargar((i + 1) % diapos.length);       // la siguiente se prepara con tiempo
+    }
+    const detener = () => { clearInterval(reloj); reloj = null; };
+    const arrancar = () => { detener(); if (!pausadoPorUsuario && enVista && !document.hidden) reloj = setInterval(() => ir(actual + 1), INTERVALO); };
+    const marcarPausa = () => { pausa.setAttribute("aria-pressed", String(pausadoPorUsuario)); pausa.setAttribute("aria-label", pausadoPorUsuario ? "Reanudar las fotos" : "Pausar las fotos"); };
+
+    botones.forEach((b, i) => b.addEventListener("click", () => { ir(i); arrancar(); }));
+    pausa.addEventListener("click", () => { pausadoPorUsuario = !pausadoPorUsuario; marcarPausa(); arrancar(); });
+    document.addEventListener("visibilitychange", arrancar);
+    quieto.addEventListener?.("change", e => { pausadoPorUsuario = e.matches; marcarPausa(); arrancar(); });
+    // Solo avanza mientras se ve: ahorra datos y batería
+    if ("IntersectionObserver" in window) new IntersectionObserver(([e]) => { enVista = e.isIntersecting; arrancar(); }).observe(caja);
+    // Deslizar con el dedo
+    let x0 = null;
+    caja.addEventListener("touchstart", e => { x0 = e.touches[0].clientX; }, { passive: true });
+    caja.addEventListener("touchend", e => {
+      if (x0 === null) return;
+      const dx = e.changedTouches[0].clientX - x0; x0 = null;
+      if (Math.abs(dx) > 40) { ir(actual + (dx < 0 ? 1 : -1)); arrancar(); }
+    });
+    caja.querySelector(".carrusel-controles").hidden = false;
+    marcarPausa();
+    cargar(1);
+    arrancar();
+  })();
 
   // Los anclajes respetan la altura real de ambas barras, también con zoom.
   const cabecera = $("header"), barraMenu = $(".barra-menu");
@@ -178,9 +253,6 @@
   // en cada categoría ni en cada plato.
   function categoriaHTML(cid, c, U, notaEnGrupo = false) {
     const todosFuertes = c.platos.every(p => (p.incluye ?? c.incluye) === "fuerte");
-    const precios = c.platos.filter(p => !p.agotado && !p.pres?.length && p.p != null).map(p => Number(p.p)).filter(Number.isFinite);
-    const min = Math.min(...precios), max = Math.max(...precios);
-    const rango = W.mostrarRangos && precios.length > 1 && min !== max ? fmt(W.textos.rango, { min: U.dinero(min), max: U.dinero(max) }) : "";
     const configurada = W.imagenes.categorias[cid];
     const imagen = typeof configurada === "string" ? { src: configurada } : configurada;
     const foto = configurada !== undefined ? imagen?.src : U.urlFoto(c.foto);
@@ -189,7 +261,6 @@
       ${foto ? `<figure class="cat-imagen"><img data-menu-foto src="${esc(foto)}" alt="${esc(U.tx(imagen?.alt || c.nombre))}" width="960" height="640" loading="lazy">${referencia ? `<figcaption>${esc(W.textos.fotoReferencia)}</figcaption>` : ""}</figure>` : ""}
       <div class="cat-cabecera"><div><h4>${esc(U.tx(c.nombre))}</h4>
         ${c.resumen ? `<p class="resumen-c">${esc(U.tx(c.resumen))}</p>` : ""}
-        ${rango ? `<p class="rango-precios">${esc(rango)}</p>` : ""}
       </div></div>
       ${c.nota ? `<p class="nota-c">${esc(U.tx(c.nota))}</p>` : ""}
       ${todosFuertes && !notaEnGrupo ? `<p class="nota-c">${esc(W.textos.incluyeFuerte)}</p>` : ""}

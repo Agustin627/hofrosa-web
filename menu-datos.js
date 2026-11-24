@@ -1892,14 +1892,6 @@ window.MENU_RESPALDO = {
       "whisky",
       "destilados"
      ]
-    },
-    {
-     "n": {
-      "es": "Para picar"
-     },
-     "cats": [
-      "entradas"
-     ]
     }
    ]
   }

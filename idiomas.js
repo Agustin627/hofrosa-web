@@ -23,11 +23,18 @@
   function guardar(idioma) {
     try { localStorage.setItem(clavePreferencia, idioma); } catch { /* Sin almacenamiento, el selector sigue funcionando. */ }
   }
+  const etiquetaActual = document.querySelector(".idioma-actual");
+  const resumenSelector = document.querySelector(".selector-idioma summary");
   function marcar(idioma) {
     enlaces.forEach(enlace => {
-      if (enlace.dataset.idioma === idioma) enlace.setAttribute("aria-current", "true");
-      else enlace.removeAttribute("aria-current");
+      if (enlace.dataset.idioma === idioma) {
+        enlace.setAttribute("aria-current", "true");
+        // El selector muestra arriba el idioma en uso
+        if (etiquetaActual) etiquetaActual.textContent = enlace.getAttribute("aria-label");
+        resumenSelector?.setAttribute("aria-label", `Idioma: ${enlace.getAttribute("aria-label")}. Elegir otro idioma`);
+      } else enlace.removeAttribute("aria-current");
     });
+    document.querySelectorAll(".selector-idioma[open]").forEach(d => { d.open = false; });
   }
   function actualizarEnlaces() {
     enlaces.forEach(enlace => {

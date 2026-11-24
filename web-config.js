@@ -19,7 +19,6 @@ window.WEB = {
   // Los ids también funcionan con el menú en vivo, aunque todavía no incluya la etiqueta.
   compartir: { etiquetas: ["compartir"], ids: ["papas", "tostones"], maximo: 3 },
   simboloPorPrecio: false,           // la moneda y el IVA se anuncian sobre la carta
-  mostrarRangos: true,               // referencias reales de precio dentro de cada categoría
   // Fotos reales: por id de plato/categoría, con rutas locales de esta web.
   // También se admiten p.foto y c.foto del servidor de pedidos si no hay una ruta aquí.
   imagenes: {
@@ -40,7 +39,6 @@ window.WEB = {
     cerrarSecciones: "Cerrar todas las secciones",
     unaOpcion: "{n} opción",
     numeroOpciones: "{n} opciones",
-    rango: "De {min} a {max}",
     sinPlatos: "No hay platos en esta sección.",
     agotado: "Agotado",
     incluyeDesayuno: "Incluye una bebida a elegir: {lista}.",
