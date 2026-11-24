@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Editor del menú · Hotel Frontera</title>
+<style>
+  :root{
+    --papel:#fcfaf5; --tinta:#233b32; --suave:#60675e; --linea:#d9d7cb; --acento:#7c3038;
+    --relleno:#f1eee5; --bien:#2f6b3f; --mal:#a3262f; --aviso:#8a5a00; --radio:8px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--relleno);color:var(--tinta);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+  button,input,select,textarea{font:inherit;color:inherit}
+  button{cursor:pointer}
+  input,select,textarea{width:100%;padding:7px 9px;border:1px solid var(--linea);border-radius:6px;background:#fff}
+  input:focus,select:focus,textarea:focus{outline:2px solid var(--acento);outline-offset:-1px;border-color:var(--acento)}
+  textarea{resize:vertical;min-height:58px}
+  label{display:block;font-size:13px;font-weight:600;color:var(--suave);margin-bottom:3px}
+  [hidden]{display:none!important}
+
+  header{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:10px 20px;background:var(--tinta);color:#fff}
+  header h1{font-size:18px;margin:0;font-weight:600}
+  .estado{font-size:13px;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,.14)}
+  .estado.sucio{background:#e0b354;color:#2b2100}
+  .espacio{flex:1}
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:6px;border:1px solid var(--linea);background:#fff;font-weight:600;text-decoration:none;color:var(--tinta)}
+  .btn.primario{background:var(--acento);border-color:var(--acento);color:#fff}
+  .btn.primario:disabled{opacity:.5;cursor:default}
+  .btn.peligro{color:var(--mal)}
+  .btn.peq{padding:4px 9px;font-size:13px;font-weight:500}
+  header .btn{border-color:transparent}
+
+  nav.pestanas{display:flex;gap:4px;padding:0 20px;background:var(--tinta)}
+  nav.pestanas button{padding:9px 16px;border:0;border-radius:8px 8px 0 0;background:transparent;color:#dfe5df;font-weight:600}
+  nav.pestanas button[aria-selected="true"]{background:var(--relleno);color:var(--tinta)}
+
+  .aviso-global{margin:12px 20px 0;padding:10px 14px;border-radius:var(--radio);white-space:pre-line}
+  .aviso-global.error{background:#fbe9ea;color:var(--mal);border:1px solid #efc2c5}
+  .aviso-global.ok{background:#e7f3ea;color:var(--bien);border:1px solid #bcdcc4}
+
+  .vista{padding:16px 20px 60px}
+  .dos{display:grid;grid-template-columns:260px minmax(0,1fr);gap:18px;align-items:start}
+  .lateral{position:sticky;top:110px;background:var(--papel);border:1px solid var(--linea);border-radius:var(--radio);padding:10px;max-height:calc(100vh - 130px);overflow:auto}
+  .lateral h2{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--suave);margin:10px 6px 6px}
+  .lateral button.cat{display:flex;justify-content:space-between;width:100%;text-align:left;padding:7px 9px;border:0;border-radius:6px;background:transparent}
+  .lateral button.cat:hover{background:var(--relleno)}
+  .lateral button.cat[aria-current="true"]{background:var(--tinta);color:#fff}
+  .lateral .num{font-size:12px;opacity:.7}
+  .lateral .sin-uso{font-size:11px;color:var(--aviso)}
+
+  .tarjeta{background:var(--papel);border:1px solid var(--linea);border-radius:var(--radio);padding:16px;margin-bottom:14px}
+  .tarjeta h2{margin:0 0 12px;font-size:20px}
+  .rejilla{display:grid;gap:10px 14px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+  .ancho{grid-column:1/-1}
+  .fila{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .ayuda{font-size:12px;color:var(--suave);margin-top:3px}
+
+  .plato{background:#fff;border:1px solid var(--linea);border-radius:var(--radio);margin-bottom:10px}
+  .plato.agotado{background:#f6f4ef}
+  .plato.agotado .plato-titulo{text-decoration:line-through;opacity:.7}
+  .plato-cab{display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer}
+  .plato-titulo{font-weight:600;flex:1;min-width:0}
+  .plato-precio{font-variant-numeric:tabular-nums;color:var(--acento);font-weight:600}
+  .chip{display:inline-block;font-size:11px;padding:1px 7px;border-radius:999px;background:#e9eade;color:#495936;margin-left:4px}
+  .chip.rojo{background:#f6dfe1;color:var(--mal)}
+  .plato-cuerpo{padding:4px 12px 14px;border-top:1px solid var(--linea)}
+  .acciones{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px dashed var(--linea)}
+  .casillas{display:flex;flex-wrap:wrap;gap:6px 14px}
+  .casillas label{display:flex;align-items:center;gap:6px;font-weight:500;color:var(--tinta);font-size:14px;margin:0}
+  .casillas input{width:auto}
+  .pres-fila{display:grid;grid-template-columns:minmax(0,1fr) 120px auto;gap:6px;margin-bottom:6px}
+  .lista-vacia{color:var(--suave);font-style:italic;padding:10px 0}
+
+  .grupo{border:1px solid var(--linea);border-radius:var(--radio);background:#fff;padding:12px;margin-bottom:10px}
+  .cats-grupo{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+  .cat-chip{display:inline-flex;align-items:center;gap:4px;padding:3px 4px 3px 10px;border-radius:999px;background:var(--relleno);border:1px solid var(--linea);font-size:14px}
+  .cat-chip button{border:0;background:transparent;padding:0 5px;border-radius:999px;line-height:1.4}
+  .cat-chip button:hover{background:#fff}
+  .tel-fila{display:grid;grid-template-columns:1fr 1fr auto;gap:6px;margin-bottom:6px}
+  .mini{width:48px;height:32px;object-fit:cover;border-radius:4px;background:var(--relleno);flex:0 0 48px}
+  .mini.vacia{display:grid;place-items:center;font-size:11px;color:var(--suave);border:1px dashed var(--linea)}
+  .foto-bloque{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin:10px 0 4px}
+  .foto-bloque img,.foto-bloque .sin-foto{width:210px;aspect-ratio:3/2;object-fit:cover;border-radius:6px;background:var(--relleno);border:1px solid var(--linea)}
+  .foto-bloque .sin-foto{display:grid;place-items:center;color:var(--suave);font-size:13px;text-align:center;padding:8px}
+
+  dialog{border:0;border-radius:12px;padding:20px;max-width:420px;width:calc(100% - 32px)}
+  dialog::backdrop{background:rgba(20,30,25,.45)}
+
+  @media (max-width:760px){
+    .dos{grid-template-columns:1fr}
+    .lateral{position:static;max-height:none}
+    header{padding:10px 14px}
+    .vista{padding:12px 12px 60px}
+    .pres-fila{grid-template-columns:1fr 90px auto}
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Editor del menú</h1>
+  <span class="estado" id="estado">Cargando…</span>
+  <span class="espacio"></span>
+  <a class="btn peq" href="/web/#menu-rest" target="_blank" rel="noopener">Ver la web ↗</a>
+  <button class="btn peq" id="descartar" type="button" hidden>Descartar cambios</button>
+  <button class="btn primario" id="guardar" type="button" disabled>Guardar <small>(⌘/Ctrl+S)</small></button>
+</header>
+<nav class="pestanas" role="tablist">
+  <button role="tab" data-vista="platos" aria-selected="true">Platos y categorías</button>
+  <button role="tab" data-vista="secciones" aria-selected="false">Momentos y secciones</button>
+  <button role="tab" data-vista="ajustes" aria-selected="false">Horarios y contacto</button>
+</nav>
+<div id="aviso" class="aviso-global" role="status" hidden></div>
+<main class="vista" id="vista"></main>
+
+<dialog id="dialogo">
+  <form method="dialog">
+    <p id="dialogo-texto" style="margin-top:0;white-space:pre-line"></p>
+    <div id="dialogo-campo" hidden><input id="dialogo-input" autocomplete="off"></div>
+    <div class="fila" style="justify-content:flex-end;margin-top:16px">
+      <button class="btn" value="no" type="submit">Cancelar</button>
+      <button class="btn primario" value="si" type="submit" id="dialogo-si">Aceptar</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+"use strict";
+const TOKEN = "__TOKEN__";
+const ETIQUETAS = { popular: "Recomendado", casa: "De la casa", tipico: "Típico nica", compartir: "Para compartir" };
+const PRESENTACIONES = ["botella", "media", "trago"];
+const NOMBRES_MOMENTOS = { desayuno: "Desayuno", almuerzo: "Almuerzo y cena", bar: "Bar" };
+
+let menu = null, huella = null, sucio = false;
+let vista = "platos", catSel = null, abiertos = new Set(), busqueda = "";
+
+/* ---------- utilidades ---------- */
+const $ = s => document.querySelector(s);
+function h(tag, props = {}, ...hijos) {
+  const el = document.createElement(tag);
+  for (const [k, v] of Object.entries(props || {})) {
+    if (v == null || v === false) continue;
+    if (k.startsWith("on")) el.addEventListener(k.slice(2), v);
+    else if (k === "class") el.className = v;
+    else if (k === "value") el.value = v;
+    else if (k === "checked") el.checked = v;
+    else el.setAttribute(k, v === true ? "" : v);
+  }
+  for (const c of hijos.flat()) if (c != null && c !== false) el.append(c.nodeType ? c : String(c));
+  return el;
+}
+const tx = v => v == null ? "" : typeof v === "string" ? v : (v.es ?? Object.values(v)[0] ?? "");
+// Guarda texto en español. Si cambia, se descartan traducciones viejas de ese texto.
+function setTx(obj, clave, valor, opcional = false) {
+  valor = valor.trim() ? valor : "";
+  if (opcional && !valor) { delete obj[clave]; return; }
+  const previo = obj[clave];
+  if (previo && typeof previo === "object" && previo.es === valor) return;
+  obj[clave] = { es: valor };
+}
+const slug = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40) || "plato";
+const precio = n => Number.isFinite(n) ? n.toLocaleString("es-NI", { maximumFractionDigits: 2 }) : "—";
+function todosLosIds() { return new Set(Object.values(menu.categorias).flatMap(c => c.platos.map(p => p.id))); }
+function idUnico(base, usados) { base = slug(base); let id = base, n = 2; while (usados.has(id)) id = `${base.slice(0, 36)}-${n++}`; return id; }
+function momentosDeCat(cid) { return Object.entries(menu.momentos).filter(([, m]) => m.grupos.some(g => g.cats.includes(cid))).map(([id]) => id); }
+function mover(lista, i, d) { const j = i + d; if (j < 0 || j >= lista.length) return; [lista[i], lista[j]] = [lista[j], lista[i]]; }
+
+function marcarSucio() {
+  sucio = true;
+  $("#estado").textContent = "Cambios sin guardar";
+  $("#estado").classList.add("sucio");
+  $("#guardar").disabled = false;
+  $("#descartar").hidden = false;
+}
+function marcarLimpio(texto = "Todo guardado") {
+  sucio = false;
+  $("#estado").textContent = texto;
+  $("#estado").classList.remove("sucio");
+  $("#guardar").disabled = true;
+  $("#descartar").hidden = true;
+}
+function avisar(texto, tipo = "error") {
+  const a = $("#aviso");
+  a.textContent = texto; a.className = "aviso-global " + tipo; a.hidden = !texto;
+  if (tipo === "ok") setTimeout(() => { if (a.textContent === texto) a.hidden = true; }, 3500);
+}
+function preguntar(texto, { campo = null, aceptar = "Aceptar" } = {}) {
+  const d = $("#dialogo");
+  $("#dialogo-texto").textContent = texto;
+  $("#dialogo-campo").hidden = campo === null;
+  $("#dialogo-input").value = campo ?? "";
+  $("#dialogo-si").textContent = aceptar;
+  d.showModal();
+  if (campo !== null) $("#dialogo-input").select();
+  return new Promise(ok => d.addEventListener("close", () => ok(d.returnValue === "si" ? (campo !== null ? $("#dialogo-input").value.trim() : true) : null), { once: true }));
+}
+
+/* ---------- carga y guardado ---------- */
+async function cargar() {
+  try {
+    const r = await fetch("/api/menu", { cache: "no-store" });
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error || r.statusText);
+    menu = j.menu; huella = j.huella;
+    menu.config ||= {};
+    for (const m of Object.values(menu.momentos)) for (const g of m.grupos) g.cats ||= [];
+    if (!catSel || !menu.categorias[catSel]) catSel = Object.keys(menu.categorias)[0];
+    marcarLimpio("Todo guardado");
+    pintar();
+  } catch (e) {
+    $("#estado").textContent = "Error";
+    avisar("No se pudo abrir el menú: " + e.message);
+  }
+}
+async function guardar() {
+  if (!sucio) return;
+  $("#guardar").disabled = true;
+  $("#estado").textContent = "Guardando…";
+  try {
+    const r = await fetch("/api/menu", {
+      method: "PUT", headers: { "Content-Type": "application/json", "X-Editor-Token": TOKEN },
+      body: JSON.stringify({ menu, huella }),
+    });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(j.error || `Error ${r.status}`);
+    huella = j.huella;
+    marcarLimpio("Guardado " + new Date().toLocaleTimeString("es-NI", { hour: "2-digit", minute: "2-digit" }));
+    avisar("Cambios guardados. Recargue la web para verlos.", "ok");
+  } catch (e) {
+    marcarSucio();
+    avisar("No se guardó:\n" + e.message);
+  }
+}
+
+/* ---------- vistas ---------- */
+function pintar() {
+  document.querySelectorAll("nav.pestanas button").forEach(b => b.setAttribute("aria-selected", String(b.dataset.vista === vista)));
+  const v = $("#vista");
+  const y = scrollY;
+  v.replaceChildren(vista === "platos" ? vistaPlatos() : vista === "secciones" ? vistaSecciones() : vistaAjustes());
+  scrollTo(0, y);
+}
+
+/* Platos y categorías */
+function vistaPlatos() {
+  const lateral = h("aside", { class: "lateral" },
+    h("input", { type: "search", placeholder: "Buscar plato…", value: busqueda, "aria-label": "Buscar plato",
+      oninput: e => { busqueda = e.target.value; const pos = e.target.selectionStart; pintar(); const b = $(".lateral input"); b.focus(); b.setSelectionRange(pos, pos); } }),
+  );
+  const q = busqueda.trim().toLowerCase();
+  if (q) {
+    const hallados = Object.entries(menu.categorias).flatMap(([cid, c]) => c.platos.filter(p => (tx(p.n) + " " + tx(p.d) + " " + p.id).toLowerCase().includes(q)).map(p => [cid, c, p]));
+    lateral.append(h("h2", {}, `${hallados.length} resultado(s)`));
+    hallados.forEach(([cid, c, p]) => lateral.append(h("button", { class: "cat", type: "button",
+      onclick: () => { catSel = cid; abiertos.add(p.id); busqueda = ""; pintar(); requestAnimationFrame(() => document.getElementById("plato-" + p.id)?.scrollIntoView({ block: "center" })); } },
+      h("span", {}, tx(p.n)), h("span", { class: "num" }, tx(c.nombre)))));
+  } else {
+    lateral.append(h("h2", {}, "Categorías"));
+    for (const [cid, c] of Object.entries(menu.categorias)) {
+      const usos = momentosDeCat(cid);
+      lateral.append(h("button", { class: "cat", type: "button", "aria-current": String(cid === catSel), onclick: () => { catSel = cid; pintar(); } },
+        h("span", {}, tx(c.nombre) || "(sin nombre)", usos.length ? null : h("div", { class: "sin-uso" }, "No aparece en la web")),
+        h("span", { class: "num" }, c.platos.length)));
+    }
+    lateral.append(h("div", { style: "margin-top:10px" }, h("button", { class: "btn peq", type: "button", onclick: nuevaCategoria }, "+ Nueva categoría")));
+  }
+  return h("div", { class: "dos" }, lateral, h("section", {}, catSel ? panelCategoria(catSel) : h("p", {}, "Elija una categoría.")));
+}
+
+function panelCategoria(cid) {
+  const c = menu.categorias[cid];
+  const usos = momentosDeCat(cid);
+  const cab = h("div", { class: "tarjeta" },
+    h("h2", {}, tx(c.nombre) || "Categoría"),
+    h("div", { class: "rejilla" },
+      campo("Nombre de la categoría", h("input", { value: tx(c.nombre), oninput: e => { setTx(c, "nombre", e.target.value); marcarSucio(); } })),
+      campo("Resumen (debajo del nombre)", h("input", { value: tx(c.resumen), placeholder: "Ej.: Gallo pinto, huevos y maduro", oninput: e => { setTx(c, "resumen", e.target.value, true); marcarSucio(); } })),
+      campo("Acompañamiento incluido", selectIncluye(c.incluye ?? "", v => { if (v) c.incluye = v; else delete c.incluye; marcarSucio(); }, false)),
+      h("div", { class: "ancho" }, campo("Nota de la categoría (opcional)", h("input", { value: tx(c.nota), oninput: e => { setTx(c, "nota", e.target.value, true); marcarSucio(); } }))),
+    ),
+    bloqueFoto("categorias", cid, c, tx(c.nombre), "Opcional: se muestra encima de la categoría."),
+    h("p", { class: "ayuda" }, usos.length ? "Aparece en: " + usos.map(m => NOMBRES_MOMENTOS[m] || m).join(", ") + "." : "⚠ Esta categoría no está en ninguna sección, no se ve en la web. Agréguela en «Momentos y secciones».",
+      " Identificador: ", h("code", {}, cid)),
+    h("div", { class: "acciones" },
+      h("button", { class: "btn peq", type: "button", onclick: () => nuevoPlato(cid) }, "+ Agregar plato"),
+      h("button", { class: "btn peq", type: "button", onclick: () => { const ks = Object.keys(menu.categorias); const i = ks.indexOf(cid); if (i > 0) { reordenarCategorias(i, -1); } } }, "↑ Subir en la lista"),
+      h("button", { class: "btn peq", type: "button", onclick: () => { const ks = Object.keys(menu.categorias); const i = ks.indexOf(cid); if (i < ks.length - 1) { reordenarCategorias(i, 1); } } }, "↓ Bajar"),
+      h("button", { class: "btn peq peligro", type: "button", onclick: () => borrarCategoria(cid) }, "Eliminar categoría"),
+    ),
+  );
+  const lista = h("div", {});
+  if (!c.platos.length) lista.append(h("p", { class: "lista-vacia" }, "Esta categoría no tiene platos. No se mostrará en la web hasta que tenga al menos uno."));
+  c.platos.forEach((p, i) => lista.append(tarjetaPlato(cid, c, p, i)));
+  return h("div", {}, cab, lista, c.platos.length > 3 ? h("button", { class: "btn", type: "button", onclick: () => nuevoPlato(cid) }, "+ Agregar plato") : null);
+}
+
+function reordenarCategorias(i, d) {
+  const entradas = Object.entries(menu.categorias);
+  mover(entradas, i, d);
+  menu.categorias = Object.fromEntries(entradas);
+  marcarSucio(); pintar();
+}
+
+function campo(etiqueta, control, ayuda) {
+  const id = "c" + Math.random().toString(36).slice(2, 9);
+  control.id = id;
+  return h("div", {}, h("label", { for: id }, etiqueta), control, ayuda ? h("div", { class: "ayuda" }, ayuda) : null);
+}
+function selectIncluye(valor, alCambiar, heredar = true) {
+  const opciones = heredar ? [["__", "Igual que la categoría"], ["", "Nada"]] : [["", "Nada"]];
+  opciones.push(["desayuno", "Bebida del desayuno"], ["fuerte", "Ensalada, arroz y papas"]);
+  return h("select", { onchange: e => alCambiar(e.target.value) }, opciones.map(([v, t]) => h("option", { value: v, selected: v === valor }, t)));
+}
+
+function resumenPrecio(p) {
+  if (Array.isArray(p.pres) && p.pres.length) return p.pres.map(([k, v]) => `${k} ${precio(v)}`).join(" · ");
+  return precio(p.p);
+}
+
+function tarjetaPlato(cid, c, p, i) {
+  const abierto = abiertos.has(p.id);
+  const cab = h("div", { class: "plato-cab", role: "button", tabindex: "0", "aria-expanded": String(abierto),
+    onclick: () => { abierto ? abiertos.delete(p.id) : abiertos.add(p.id); pintar(); },
+    onkeydown: e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); e.currentTarget.click(); } } },
+    h("span", {}, abierto ? "▾" : "▸"),
+    p.foto ? h("img", { class: "mini", src: urlVista(p.foto), alt: "", loading: "lazy" }) : h("span", { class: "mini vacia" }, "sin foto"),
+    h("span", { class: "plato-titulo" }, tx(p.n) || "(sin nombre)", (p.t || []).map(t => h("span", { class: "chip" }, ETIQUETAS[t] || t)), p.agotado ? h("span", { class: "chip rojo" }, "Agotado") : null),
+    h("span", { class: "plato-precio" }, resumenPrecio(p)));
+  const tarjeta = h("article", { class: "plato" + (p.agotado ? " agotado" : ""), id: "plato-" + p.id }, cab);
+  if (!abierto) return tarjeta;
+
+  const cambiar = () => marcarSucio();
+  const conPres = Array.isArray(p.pres);
+  const cuerpo = h("div", { class: "plato-cuerpo" });
+  const rejilla = h("div", { class: "rejilla" },
+    campo("Nombre", h("input", { value: tx(p.n), oninput: e => { setTx(p, "n", e.target.value); tarjeta.querySelector(".plato-titulo").firstChild.textContent = e.target.value || "(sin nombre)"; cambiar(); } })),
+    conPres ? null : campo(`Precio (${menu.config.moneda || "C$"})`, h("input", { type: "number", min: "0", step: "0.01", inputmode: "decimal", value: p.p ?? "",
+      oninput: e => { const n = parseFloat(e.target.value); if (Number.isFinite(n)) p.p = n; else delete p.p; tarjeta.querySelector(".plato-precio").textContent = resumenPrecio(p); cambiar(); } })),
+    h("div", { class: "ancho" }, campo("Descripción", h("textarea", { rows: "2", value: tx(p.d), oninput: e => { setTx(p, "d", e.target.value, true); cambiar(); } }))),
+    h("div", { class: "ancho" }, campo("Opciones para elegir (separadas por comas)", h("input", { value: (p.op || []).map(tx).join(", "), placeholder: "Ej.: A la plancha, Empanizado, Al ajillo",
+      onchange: e => { const ops = e.target.value.split(",").map(s => s.trim()).filter(Boolean); if (ops.length) p.op = ops.map(o => ({ es: o })); else delete p.op; cambiar(); } }))),
+    campo("Acompañamiento incluido", selectIncluye("incluye" in p ? p.incluye : "__", v => { if (v === "__") delete p.incluye; else p.incluye = v; cambiar(); })),
+  );
+  cuerpo.append(bloqueFoto("platos", p.id, p, tx(p.n)));
+  cuerpo.append(rejilla);
+
+  // Etiquetas y agotado
+  cuerpo.append(h("div", { style: "margin-top:12px" }, h("label", {}, "Etiquetas"),
+    h("div", { class: "casillas" },
+      Object.entries(ETIQUETAS).map(([k, t]) => h("label", {}, h("input", { type: "checkbox", checked: (p.t || []).includes(k),
+        onchange: e => { const s = new Set(p.t || []); e.target.checked ? s.add(k) : s.delete(k); if (s.size) p.t = [...s]; else delete p.t; cambiar(); pintar(); } }), t)),
+      h("label", { style: "margin-left:auto;color:var(--mal)" }, h("input", { type: "checkbox", checked: !!p.agotado,
+        onchange: e => { if (e.target.checked) p.agotado = true; else delete p.agotado; cambiar(); pintar(); } }), "Agotado hoy"))));
+
+  // Presentaciones (botella / media / trago)
+  const pres = h("div", { style: "margin-top:12px" });
+  pres.append(h("label", { class: "casillas" }, h("label", {}, h("input", { type: "checkbox", checked: conPres,
+    onchange: e => {
+      if (e.target.checked) { p.pres = [[PRESENTACIONES[0], p.p ?? 0]]; delete p.p; }
+      else { p.p = p.pres?.[0]?.[1] ?? 0; delete p.pres; }
+      cambiar(); pintar();
+    } }), "Precio por presentación (botella, media, trago…)")));
+  if (conPres) {
+    p.pres.forEach((fila, j) => pres.append(h("div", { class: "pres-fila" },
+      h("input", { value: fila[0], list: "lista-pres", "aria-label": "Presentación", oninput: e => { fila[0] = e.target.value.trim(); tarjeta.querySelector(".plato-precio").textContent = resumenPrecio(p); cambiar(); } }),
+      h("input", { type: "number", min: "0", step: "0.01", value: fila[1], "aria-label": "Precio", oninput: e => { const n = parseFloat(e.target.value); fila[1] = Number.isFinite(n) ? n : 0; tarjeta.querySelector(".plato-precio").textContent = resumenPrecio(p); cambiar(); } }),
+      h("button", { class: "btn peq peligro", type: "button", "aria-label": "Quitar presentación", disabled: p.pres.length === 1,
+        onclick: () => { p.pres.splice(j, 1); cambiar(); pintar(); } }, "✕"))));
+    pres.append(h("button", { class: "btn peq", type: "button", onclick: () => { p.pres.push([PRESENTACIONES.find(x => !p.pres.some(f => f[0] === x)) || "otra", 0]); cambiar(); pintar(); } }, "+ Presentación"),
+      h("datalist", { id: "lista-pres" }, PRESENTACIONES.map(x => h("option", { value: x }))));
+  }
+  cuerpo.append(pres);
+
+  // Acciones
+  const otrasCats = Object.entries(menu.categorias).filter(([k]) => k !== cid);
+  cuerpo.append(h("div", { class: "acciones" },
+    h("button", { class: "btn peq", type: "button", disabled: i === 0, onclick: () => { mover(c.platos, i, -1); cambiar(); pintar(); } }, "↑ Subir"),
+    h("button", { class: "btn peq", type: "button", disabled: i === c.platos.length - 1, onclick: () => { mover(c.platos, i, 1); cambiar(); pintar(); } }, "↓ Bajar"),
+    h("button", { class: "btn peq", type: "button", onclick: () => duplicarPlato(c, i) }, "Duplicar"),
+    h("select", { style: "width:auto", "aria-label": "Mover a otra categoría", onchange: e => { if (e.target.value) moverPlato(cid, i, e.target.value); } },
+      h("option", { value: "" }, "Mover a…"), otrasCats.map(([k, oc]) => h("option", { value: k }, tx(oc.nombre)))),
+    h("span", { class: "espacio", style: "flex:1" }),
+    h("span", { class: "ayuda" }, "id: ", h("code", {}, p.id)),
+    h("button", { class: "btn peq peligro", type: "button", onclick: () => borrarPlato(cid, i) }, "Eliminar"),
+  ));
+  tarjeta.append(cuerpo);
+  return tarjeta;
+}
+
+// Vista previa: las rutas de la web se sirven bajo /web/
+const urlVista = f => /^https?:/.test(f) ? f : "/web/" + f.replace(/^\/+/, "");
+
+/* Recorte centrado a 4:3 y 800×600 en el navegador; WebP si el navegador sabe
+   codificarlo, si no JPEG. Así cualquier foto nueva queda igual que las demás. */
+async function recortar(archivo, ancho = 960, alto = 640) {
+  const bmp = await createImageBitmap(archivo).catch(() => null);
+  if (!bmp) throw new Error("No se pudo leer la imagen. Use JPG, PNG o WebP.");
+  if (bmp.width < 480 || bmp.height < 320) throw new Error(`La foto es muy pequeña (${bmp.width} × ${bmp.height}). Use una de al menos 960 × 640.`);
+  const escala = Math.max(ancho / bmp.width, alto / bmp.height);
+  const sw = ancho / escala, sh = alto / escala;
+  const lienzo = document.createElement("canvas");
+  lienzo.width = ancho; lienzo.height = alto;
+  const ctx = lienzo.getContext("2d");
+  ctx.imageSmoothingQuality = "high";
+  ctx.drawImage(bmp, (bmp.width - sw) / 2, (bmp.height - sh) / 2, sw, sh, 0, 0, ancho, alto);
+  const blob = (t, q) => new Promise(ok => lienzo.toBlob(ok, t, q));
+  let b = await blob("image/webp", 0.82);
+  if (!b || b.type !== "image/webp") b = await blob("image/jpeg", 0.86);
+  return b;
+}
+/* Bloque de foto para un plato (tipo "platos") o una categoría ("categorias"). */
+function bloqueFoto(tipo, ident, obj, nombre, nota) {
+  const entrada = h("input", { type: "file", accept: "image/jpeg,image/png,image/webp", hidden: true, onchange: e => { const f = e.target.files[0]; e.target.value = ""; if (f) subirFoto(tipo, ident, obj, f); } });
+  return h("div", { class: "foto-bloque" },
+    obj.foto ? h("img", { src: urlVista(obj.foto), alt: "Foto de " + nombre }) : h("div", { class: "sin-foto" }, "Sin foto. En la web se muestra solo el texto."),
+    h("div", {},
+      h("div", { class: "fila" },
+        h("button", { class: "btn peq", type: "button", onclick: () => entrada.click() }, obj.foto ? "Cambiar foto…" : "Subir foto…"),
+        obj.foto ? h("button", { class: "btn peq peligro", type: "button", onclick: () => { delete obj.foto; delete obj.fotoReferencia; marcarSucio(); pintar(); } }, "Quitar foto") : null),
+      obj.foto ? h("div", { class: "casillas", style: "margin-top:8px" }, h("label", {}, h("input", { type: "checkbox", checked: !!obj.fotoReferencia,
+        onchange: e => { if (e.target.checked) obj.fotoReferencia = true; else delete obj.fotoReferencia; marcarSucio(); } }),
+        "Foto de referencia (no es de nuestro plato)")) : null,
+      h("div", { class: "ayuda" }, nota || "", " Se recorta sola al centro en 3:2 (960 × 640) para que todas se vean iguales."),
+      obj.foto ? h("div", { class: "ayuda" }, h("code", {}, obj.foto.split("?")[0])) : null,
+      entrada));
+}
+async function subirFoto(tipo, ident, p, archivo) {
+  try {
+    $("#estado").textContent = "Subiendo foto…";
+    const b = await recortar(archivo);
+    const r = await fetch(`/api/foto/${tipo}/${encodeURIComponent(ident)}`, { method: "PUT", headers: { "Content-Type": b.type, "X-Editor-Token": TOKEN }, body: b });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(j.error || `Error ${r.status}`);
+    p.foto = j.foto;
+    delete p.fotoReferencia;  // una foto subida aquí se asume propia
+    marcarSucio(); pintar();
+    avisar("Foto lista. Pulse «Guardar» para que la web la use.", "ok");
+  } catch (e) { avisar("No se pudo subir la foto: " + e.message); if (sucio) marcarSucio(); else marcarLimpio(); }
+}
+
+async function nuevoPlato(cid) {
+  const nombre = await preguntar("Nombre del nuevo plato:", { campo: "", aceptar: "Crear" });
+  if (!nombre) return;
+  const id = idUnico(nombre, todosLosIds());
+  menu.categorias[cid].platos.push({ id, p: 0, n: { es: nombre } });
+  abiertos.add(id); marcarSucio(); pintar();
+  requestAnimationFrame(() => { const t = document.getElementById("plato-" + id); t?.scrollIntoView({ block: "center" }); t?.querySelector("input[type=number]")?.focus(); });
+}
+function duplicarPlato(c, i) {
+  const copia = structuredClone(c.platos[i]);
+  copia.id = idUnico(copia.id + "-copia", todosLosIds());
+  setTx(copia, "n", tx(copia.n) + " (copia)");
+  c.platos.splice(i + 1, 0, copia);
+  abiertos.add(copia.id); marcarSucio(); pintar();
+}
+function moverPlato(cid, i, destino) {
+  const [p] = menu.categorias[cid].platos.splice(i, 1);
+  menu.categorias[destino].platos.push(p);
+  catSel = destino; abiertos.add(p.id); marcarSucio(); pintar();
+  avisar(`«${tx(p.n)}» se movió a ${tx(menu.categorias[destino].nombre)}.`, "ok");
+}
+// Quita referencias a platos borrados (sugerencias, bebidas del desayuno, acompañantes)
+function limpiarReferencias(ids) {
+  const fuera = v => ids.has(String(v).split("@")[0]);
+  for (const c of Object.values(menu.categorias)) {
+    if (Array.isArray(c.sug)) c.sug = c.sug.filter(x => !fuera(x));
+    for (const p of c.platos) if (Array.isArray(p.sug)) p.sug = p.sug.filter(x => !fuera(x));
+  }
+  for (const k of ["bebidasDesayuno", "acompanantes"]) if (Array.isArray(menu.config[k])) menu.config[k] = menu.config[k].filter(x => !fuera(x));
+}
+async function borrarPlato(cid, i) {
+  const p = menu.categorias[cid].platos[i];
+  if (!await preguntar(`¿Eliminar «${tx(p.n)}» de la carta?\nSi solo no hay hoy, mejor márquelo como «Agotado».`, { aceptar: "Eliminar" })) return;
+  menu.categorias[cid].platos.splice(i, 1);
+  limpiarReferencias(new Set([p.id]));
+  marcarSucio(); pintar();
+}
+async function nuevaCategoria() {
+  const nombre = await preguntar("Nombre de la nueva categoría:", { campo: "", aceptar: "Crear" });
+  if (!nombre) return;
+  const id = idUnico(nombre, new Set(Object.keys(menu.categorias)));
+  menu.categorias[id] = { nombre: { es: nombre }, platos: [] };
+  catSel = id; marcarSucio(); pintar();
+  avisar("Categoría creada. Para que se vea en la web, agréguela a una sección en «Momentos y secciones».", "ok");
+}
+async function borrarCategoria(cid) {
+  const c = menu.categorias[cid];
+  if (!await preguntar(`¿Eliminar la categoría «${tx(c.nombre)}» y sus ${c.platos.length} plato(s)?`, { aceptar: "Eliminar" })) return;
+  limpiarReferencias(new Set(c.platos.map(p => p.id)));
+  delete menu.categorias[cid];
+  for (const m of Object.values(menu.momentos)) for (const g of m.grupos) g.cats = g.cats.filter(x => x !== cid);
+  catSel = Object.keys(menu.categorias)[0] || null;
+  marcarSucio(); pintar();
+}
+
+/* Momentos y secciones */
+function vistaSecciones() {
+  const cont = h("div", {}, h("p", { class: "ayuda", style: "margin-top:0" },
+    "Cada momento (pestaña de la web) se divide en secciones. Cada sección agrupa categorías. Una categoría puede estar en varios momentos."));
+  for (const [mid, m] of Object.entries(menu.momentos)) {
+    const t = h("div", { class: "tarjeta" }, h("h2", {}, NOMBRES_MOMENTOS[mid] || mid));
+    m.grupos.forEach((g, i) => {
+      const disponibles = Object.entries(menu.categorias).filter(([k]) => !g.cats.includes(k));
+      t.append(h("div", { class: "grupo" },
+        h("div", { class: "rejilla" },
+          campo("Nombre de la sección", h("input", { value: tx(g.n), oninput: e => { setTx(g, "n", e.target.value); marcarSucio(); } })),
+          campo("Nota (opcional)", h("input", { value: tx(g.nota), placeholder: "Ej.: Con ensalada, arroz y papas.", oninput: e => { setTx(g, "nota", e.target.value, true); marcarSucio(); } }))),
+        h("div", { class: "cats-grupo" },
+          g.cats.length ? g.cats.map((cid, j) => h("span", { class: "cat-chip" }, tx(menu.categorias[cid]?.nombre) || cid,
+            h("button", { type: "button", title: "Antes", "aria-label": "Mover antes", disabled: j === 0, onclick: () => { mover(g.cats, j, -1); marcarSucio(); pintar(); } }, "‹"),
+            h("button", { type: "button", title: "Después", "aria-label": "Mover después", disabled: j === g.cats.length - 1, onclick: () => { mover(g.cats, j, 1); marcarSucio(); pintar(); } }, "›"),
+            h("button", { type: "button", title: "Quitar de la sección", "aria-label": "Quitar", onclick: () => { g.cats.splice(j, 1); marcarSucio(); pintar(); } }, "✕")))
+            : h("span", { class: "lista-vacia" }, "Sin categorías: la sección no se verá.")),
+        h("div", { class: "fila" },
+          h("select", { style: "width:auto", "aria-label": "Agregar categoría", onchange: e => { if (e.target.value) { g.cats.push(e.target.value); marcarSucio(); pintar(); } } },
+            h("option", { value: "" }, "+ Agregar categoría…"), disponibles.map(([k, c]) => h("option", { value: k }, tx(c.nombre)))),
+          h("button", { class: "btn peq", type: "button", disabled: i === 0, onclick: () => { mover(m.grupos, i, -1); marcarSucio(); pintar(); } }, "↑ Sección"),
+          h("button", { class: "btn peq", type: "button", disabled: i === m.grupos.length - 1, onclick: () => { mover(m.grupos, i, 1); marcarSucio(); pintar(); } }, "↓ Sección"),
+          h("button", { class: "btn peq peligro", type: "button", onclick: async () => { if (await preguntar(`¿Quitar la sección «${tx(g.n)}»? Las categorías y platos no se borran.`, { aceptar: "Quitar" })) { m.grupos.splice(i, 1); marcarSucio(); pintar(); } } }, "Quitar sección"))));
+    });
+    t.append(h("button", { class: "btn peq", type: "button", onclick: async () => { const n = await preguntar("Nombre de la nueva sección:", { campo: "", aceptar: "Crear" }); if (n) { m.grupos.push({ n: { es: n }, cats: [] }); marcarSucio(); pintar(); } } }, "+ Nueva sección"));
+    cont.append(t);
+  }
+  return cont;
+}
+
+/* Horarios, precios y contacto */
+function vistaAjustes() {
+  const C = menu.config;
+  C.horario ||= {};
+  const horarios = h("div", { class: "tarjeta" }, h("h2", {}, "Horarios de servicio"),
+    h("p", { class: "ayuda", style: "margin-top:0" }, "La web abre la pestaña que corresponde a la hora de Nicaragua."),
+    Object.keys(menu.momentos).map(mid => {
+      const hr = C.horario[mid];
+      return h("div", { class: "fila", style: "margin-bottom:8px" },
+        h("strong", { style: "min-width:140px" }, NOMBRES_MOMENTOS[mid] || mid),
+        h("label", { class: "casillas", style: "margin:0" }, h("label", {}, h("input", { type: "checkbox", checked: !!hr,
+          onchange: e => { if (e.target.checked) C.horario[mid] = { desde: "11:00", hasta: "21:00" }; else delete C.horario[mid]; marcarSucio(); pintar(); } }), "Con horario")),
+        hr ? [h("input", { type: "time", style: "width:auto", value: hr.desde, "aria-label": "Desde", oninput: e => { hr.desde = e.target.value; marcarSucio(); } }), "a",
+          h("input", { type: "time", style: "width:auto", value: hr.hasta, "aria-label": "Hasta", oninput: e => { hr.hasta = e.target.value; marcarSucio(); } })] : null);
+    }));
+
+  const ids = Object.values(menu.categorias).flatMap(c => c.platos.map(p => [p.id, tx(p.n)]));
+  C.bebidasDesayuno ||= [];
+  const precios = h("div", { class: "tarjeta" }, h("h2", {}, "Precios"),
+    h("div", { class: "rejilla" },
+      campo("Moneda", h("input", { value: C.moneda || "C$", oninput: e => { C.moneda = e.target.value.trim() || "C$"; marcarSucio(); } })),
+      campo("IVA (%)", h("input", { type: "number", min: "0", max: "99", step: "0.01", value: Math.round((C.iva ?? 0.15) * 10000) / 100,
+        oninput: e => { const n = parseFloat(e.target.value); if (Number.isFinite(n)) { C.iva = Math.round(n * 100) / 10000; marcarSucio(); } } })),
+      campo("Tipo de cambio (C$ por US$)", h("input", { type: "number", min: "0", step: "0.0001", value: C.tipoCambio ?? "",
+        oninput: e => { const n = parseFloat(e.target.value); if (Number.isFinite(n)) C.tipoCambio = n; else delete C.tipoCambio; marcarSucio(); } })),
+    ),
+    h("div", { style: "margin-top:12px" }, h("label", {}, "Bebidas incluidas en los desayunos"),
+      h("div", { class: "cats-grupo" }, C.bebidasDesayuno.map((id, j) => h("span", { class: "cat-chip" }, ids.find(x => x[0] === id)?.[1] || id,
+        h("button", { type: "button", "aria-label": "Quitar", onclick: () => { C.bebidasDesayuno.splice(j, 1); marcarSucio(); pintar(); } }, "✕")))),
+      h("select", { style: "width:auto", onchange: e => { if (e.target.value) { C.bebidasDesayuno.push(e.target.value); marcarSucio(); pintar(); } } },
+        h("option", { value: "" }, "+ Agregar bebida…"), ids.filter(([id]) => !C.bebidasDesayuno.includes(id)).map(([id, n]) => h("option", { value: id }, n)))));
+
+  C.hotel ||= {};
+  const H = C.hotel;
+  H.telefonos ||= [];
+  const telFila = (t, quitar) => h("div", { class: "tel-fila" },
+    h("input", { value: t.texto || "", placeholder: "Como se ve: 2732-2668", "aria-label": "Texto visible", oninput: e => { t.texto = e.target.value; marcarSucio(); } }),
+    h("input", { value: t.tel || "", placeholder: "Para marcar: +50527322668", "aria-label": "Número para marcar", oninput: e => { t.tel = e.target.value.replace(/[^\d+]/g, ""); marcarSucio(); } }),
+    h("button", { class: "btn peq peligro", type: "button", "aria-label": "Quitar", onclick: quitar }, "✕"));
+  const contacto = h("div", { class: "tarjeta" }, h("h2", {}, "Contacto"),
+    h("div", { class: "rejilla" },
+      campo("Lema", h("input", { value: tx(H.lema), oninput: e => { H.lema = e.target.value; marcarSucio(); } })),
+      campo("Correo", h("input", { type: "email", value: H.correo || "", oninput: e => { H.correo = e.target.value.trim(); marcarSucio(); } })),
+      h("div", { class: "ancho" }, campo("Dirección", h("textarea", { rows: "2", value: tx(H.direccion), oninput: e => { H.direccion = e.target.value; marcarSucio(); } })))),
+    h("div", { style: "margin-top:12px" }, h("label", {}, "Teléfonos (el primero es el de reservas)"),
+      H.telefonos.map((t, j) => telFila(t, () => { H.telefonos.splice(j, 1); marcarSucio(); pintar(); })),
+      h("button", { class: "btn peq", type: "button", onclick: () => { H.telefonos.push({ texto: "", tel: "" }); marcarSucio(); pintar(); } }, "+ Teléfono")),
+    h("div", { style: "margin-top:12px" }, h("label", {}, "Celular"),
+      H.celular ? telFila(H.celular, () => { delete H.celular; marcarSucio(); pintar(); })
+        : h("button", { class: "btn peq", type: "button", onclick: () => { H.celular = { texto: "", tel: "" }; marcarSucio(); pintar(); } }, "+ Celular")));
+  return h("div", {}, horarios, precios, contacto);
+}
+
+/* ---------- eventos globales ---------- */
+document.querySelectorAll("nav.pestanas button").forEach(b => b.addEventListener("click", () => { vista = b.dataset.vista; pintar(); }));
+$("#guardar").addEventListener("click", guardar);
+$("#descartar").addEventListener("click", async () => { if (await preguntar("¿Descartar todos los cambios sin guardar?", { aceptar: "Descartar" })) cargar(); });
+document.addEventListener("keydown", e => { if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "s") { e.preventDefault(); document.activeElement?.blur?.(); guardar(); } });
+// Los campos con «onchange» (opciones, foto) se confirman al salir; el blur del atajo los aplica.
+window.addEventListener("beforeunload", e => { if (sucio) { e.preventDefault(); e.returnValue = ""; } });
+cargar();
+</script>
+</body>
+</html>

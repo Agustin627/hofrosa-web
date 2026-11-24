@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#233b32">
+<meta name="description" content="Hotel Frontera en Ocotal, Nicaragua. Explore nuestra carta de desayunos, almuerzo, cena y bar, conozca el hotel y consulte por su reserva.">
+<title>Hotel Frontera Ocotal</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="saltar-contenido" href="#contenido">Saltar al contenido</a>
+
+<header>
+  <div class="wrap barra">
+    <a href="#inicio" class="logo" translate="no"><img src="assets/imagenes/logo@2x.png" alt="Hotel Frontera" width="223" height="129"></a>
+    <button class="menu-btn trazo" type="button" aria-expanded="false" aria-controls="nav">☰ Menú</button>
+    <nav id="nav" aria-label="Principal">
+      <ul>
+        <li><a href="#inicio">Inicio</a></li>
+        <li><a href="#hotel">El hotel</a></li>
+        <li><a href="#menu-rest">Restaurante</a></li>
+        <li><a href="#eventos">Eventos</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+        <li class="idiomas notranslate" translate="no" aria-label="Idioma">
+          <a href="?lang=es" data-idioma="es" lang="es" hreflang="es" aria-label="Español" aria-current="true">ES</a>
+          <a href="?lang=en" data-idioma="en" lang="en" hreflang="en" aria-label="English">EN</a>
+          <a href="?lang=zh" data-idioma="zh" lang="zh-Hans" hreflang="zh-Hans" aria-label="中文">中文</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+  <p id="estado-idiomas" class="estado-idiomas notranslate" translate="no" role="status" hidden></p>
+</header>
+
+<main id="contenido" tabindex="-1">
+  <!-- 1. Portada -->
+  <section id="inicio">
+    <div class="wrap portada">
+      <div>
+        <span class="lema" data-hotel="lema">¡Su límite para descansar!</span>
+        <h1><span class="notranslate" translate="no">Hotel Frontera</span><br>en Ocotal</h1>
+        <p>En el km 226.5 de la Panamericana Norte, a pocos kilómetros de Honduras. Habitaciones cómodas, seguridad las 24 horas, restaurante, bar y piscina.</p>
+        <div class="botones">
+          <a href="tel:+50527322668" class="btn" data-hotel="reservar">Reservar: 2732-2668</a>
+          <a href="#menu-rest" class="btn claro">Ver menú del restaurante</a>
+        </div>
+      </div>
+      <div class="trazo marco"><img class="foto" src="assets/imagenes/el-hotel-6.webp" alt="Vista exterior del Hotel Frontera y su piscina al atardecer" width="1142" height="580" fetchpriority="high"></div>
+    </div>
+  </section>
+
+  <!-- 2. Mosaico -->
+  <section style="padding-top:0" aria-label="Galería">
+    <div class="wrap mosaico">
+      <div class="trazo alto"><img class="foto" loading="lazy" src="assets/imagenes/galeria-2.webp" alt=""></div>
+      <div class="trazo"><img class="foto" loading="lazy" src="assets/imagenes/el-hotel-1.webp" alt=""></div>
+      <div class="trazo"><img class="foto" loading="lazy" src="assets/imagenes/el-hotel-2.webp" alt=""></div>
+      <div class="trazo"><img class="foto" loading="lazy" src="assets/imagenes/galeria-3.webp" alt=""></div>
+      <div class="trazo"><img class="foto" loading="lazy" src="assets/imagenes/el-hotel-3.webp" alt=""></div>
+    </div>
+  </section>
+
+  <!-- 3. El hotel -->
+  <section id="hotel">
+    <div class="wrap">
+      <h2 class="titulo-sec">El hotel</h2>
+      <p class="sub-sec">Para viajes de familia o de trabajo</p>
+
+      <div class="bloque">
+        <div class="texto">
+          <h3>Habitaciones</h3>
+          <p>Habitaciones sencillas, dobles y triples en dos plantas, con aire acondicionado o abanico. Hay dos adaptadas para personas con movilidad reducida y una suite de dos ambientes con puerta comunicada.</p>
+          <p>Todas tienen WiFi, agua caliente y TV por cable. Algunas tienen balcón, vista panorámica o vista al jardín interior.</p>
+          <p style="margin-top:14px"><b>Entrada</b> 2:00 p.m. · <b>Salida</b> 12:00 m.d.</p>
+        </div>
+        <div class="par tres">
+          <figure><div class="trazo marco"><img class="foto" loading="lazy" src="assets/imagenes/habitacion-sencilla.webp" alt="Habitación sencilla"></div><figcaption>Sencilla</figcaption></figure>
+          <figure><div class="trazo marco"><img class="foto" loading="lazy" src="assets/imagenes/habitacion-doble.webp" alt="Habitación doble"></div><figcaption>Doble</figcaption></figure>
+          <figure><div class="trazo marco"><img class="foto" loading="lazy" src="assets/imagenes/habitacion-triple.webp" alt="Habitación triple"></div><figcaption>Triple</figcaption></figure>
+        </div>
+      </div>
+
+      <div class="bloque">
+        <div class="texto">
+          <h3>Restaurante y bar</h3>
+          <p>Abierto a huéspedes y a visitantes. Desayunos típicos nicas desde temprano, platos fuertes de res, cerdo, pollo y mariscos, y un bar con cócteles, cerveza bien helada y ron Flor de Caña.</p>
+          <p><a href="#menu-rest">Ver el menú completo</a></p>
+        </div>
+        <div class="par">
+          <div class="trazo"><img class="foto" loading="lazy" src="assets/imagenes/slide-comedor.webp" alt="Comedor del restaurante"></div>
+          <div class="trazo"><img class="foto" loading="lazy" src="assets/imagenes/el-hotel-4.webp" alt=""></div>
+        </div>
+      </div>
+
+      <div class="bloque" id="eventos">
+        <div class="texto">
+          <h3>Eventos y reuniones</h3>
+          <p>Auditorios y sala de reuniones con equipo moderno para eventos sociales, reuniones de empresa y capacitaciones.</p>
+          <p>Con el servicio del restaurante en el mismo hotel.</p>
+        </div>
+        <div class="par">
+          <div class="trazo"><img class="foto" loading="lazy" src="assets/imagenes/el-hotel-5.webp" alt=""></div>
+          <div class="trazo"><img class="foto" loading="lazy" src="assets/imagenes/el-hotel-6.webp" alt=""></div>
+        </div>
+      </div>
+
+      <ul class="servicios">
+        <li class="trazo"><b>24 h</b>Seguridad</li>
+        <li class="trazo"><b>WiFi</b>Gratis</li>
+        <li class="trazo"><b>Piscina</b>Para huéspedes</li>
+        <li class="trazo"><b>Parqueo</b>Dentro del hotel</li>
+        <li class="trazo"><b>Lavandería</b>Servicio diario</li>
+        <li class="trazo"><b>Habitación</b>Servicio al cuarto</li>
+        <li class="trazo"><b>Bar</b>Cócteles y licores</li>
+        <li class="trazo"><b>Auditorios</b>Eventos y reuniones</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 4. Menú: todo sale de los datos del menú (servidor de pedidos o copia local) -->
+  <section id="menu-rest">
+    <div class="wrap">
+      <h2 class="titulo-sec">Nuestro menú</h2>
+      <p class="sub-sec" id="menu-sub">Abra una sección para ver sus platos y precios.</p>
+      <div class="barra-menu">
+        <div class="pestanas" role="tablist" aria-label="Momentos del día" id="pestanas"></div>
+      </div>
+      <p class="horario" id="horario" aria-live="polite"></p>
+      <p class="nota-precios" id="nota-precios"></p>
+      <div id="carta" role="tabpanel" tabindex="0" aria-label="Carta del restaurante"><p class="aviso">Cargando el menú…</p></div>
+      <noscript><p class="aviso">Active JavaScript para consultar la carta o llámenos al <a href="tel:+50527322668">2732-2668</a>.</p></noscript>
+    </div>
+  </section>
+
+  <!-- 5. Opiniones -->
+  <section style="padding-top:0">
+    <div class="wrap" style="text-align:center">
+      <h2 class="titulo-sec">Lo que dicen nuestros huéspedes</h2>
+      <p class="sub-sec">Lea las opiniones reales en Tripadvisor.</p>
+      <a class="btn claro" target="_blank" rel="noopener" href="https://www.tripadvisor.com.mx/Hotel_Review-g1720870-d1718890-Reviews-Hotel_Frontera-Ocotal_Nueva_Segovia_Department.html">Ver opiniones</a>
+    </div>
+  </section>
+</main>
+
+<footer id="contacto">
+  <div class="wrap">
+    <div class="pie">
+      <div>
+        <h4>Dónde estamos</h4>
+        <p data-hotel="direccion">Km 226.5 carretera Panamericana Norte, contiguo a gasolinera Uno Ramos. Ocotal, Nueva Segovia, Nicaragua.</p>
+      </div>
+      <div>
+        <h4>Contacto</h4>
+        <ul data-hotel="contacto">
+          <li>Tel. <a href="tel:+50527322668">2732-2668</a> · <a href="tel:+50527322669">2732-2669</a></li>
+          <li>Cel. <a href="tel:+50586427663">8642-7663</a></li>
+          <li><a href="mailto:hotelfronterasa@yahoo.com">hotelfronterasa@yahoo.com</a></li>
+        </ul>
+        <ul><li><a href="https://www.facebook.com/HOFROSA" target="_blank" rel="noopener">Facebook</a></li></ul>
+      </div>
+      <div>
+        <h4>Horarios</h4>
+        <ul data-hotel="horarios">
+          <li>Desayuno: 6:30 a 10:30 a.m.</li>
+          <li>Almuerzo y cena: 10:30 a.m. a 9:00 p.m.</li>
+        </ul>
+        <p>Entrada 2:00 p.m. · Salida 12:00 m.d.</p>
+      </div>
+    </div>
+    <p class="legal">© Hotel Frontera, Ocotal · <span data-hotel="lema">¡Su límite para descansar!</span></p>
+    <div class="traductor notranslate" translate="no">
+      <a href="https://translate.google.com/" target="_blank" rel="noopener">Google Translate</a>
+      <div id="google_translate_element"></div>
+    </div>
+  </div>
+</footer>
+
+<script src="web-config.js"></script>
+<script src="menu-datos.js"></script>
+<script src="idiomas.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
