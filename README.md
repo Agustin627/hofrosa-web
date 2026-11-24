@@ -23,6 +23,12 @@ Abra `http://127.0.0.1:8080`. Use la vista por HTTP para comprobar también Goog
 - `assets/imagenes/`: fotografías y logo locales (`platos/` y `categorias/` para la carta).
 - `editor/`: aplicación en Python para modificar el menú.
 
+## Publicación
+
+La web está publicada gratis en GitHub Pages: https://agustin627.github.io/hofrosa-web/
+
+Después de cambiar el menú con el editor, haga doble clic en `publicar.command` (o ejecute `./publicar.command`) para subir los cambios; se ven en 1 o 2 minutos.
+
 ## Editar el menú
 
 ```sh
