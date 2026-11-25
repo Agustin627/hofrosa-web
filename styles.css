@@ -18,6 +18,9 @@ html { scroll-behavior: smooth; scroll-padding-top: calc(var(--alto-cabecera) + 
 body { background: var(--papel); color: var(--tinta); font: 18px/1.65 "Source Sans 3", Arial, sans-serif; overflow-wrap: break-word; top: 0 !important; }
 /* Se oculta solo la barra superior; el selector y la atribución siguen en el pie. */
 iframe.VIpgJd-ZVi9od-ORHb-OEVmcd, iframe.goog-te-banner-frame { display: none !important; }
+/* Google Translate: sin la ventanita «Texto original / Valorar traducción» ni el resaltado al tocar */
+#goog-gt-tt, .goog-tooltip, .goog-tooltip:hover, .goog-te-balloon-frame, .VIpgJd-yAWNEb-L7lbkb, .VIpgJd-yAWNEb-hvhgNd { display: none !important; visibility: hidden !important; }
+.goog-text-highlight, .VIpgJd-yAWNEb-VIpgJd-fmcmS-sn54Q { background: none !important; box-shadow: none !important; border: 0 !important; }
 h1, h2, h3, h4 { font-family: "Cormorant Garamond", Georgia, serif; font-weight: 600; line-height: 1.12; }
 a { color: inherit; text-underline-offset: 4px; }
 img { max-width: 100%; }
@@ -239,7 +242,7 @@ footer a:hover { text-decoration: underline; }
   .portada, .bloque, .pie, .cats { grid-template-columns: minmax(0, 1fr); }
   .portada { gap: 30px; }
   .portada h1 { font-size: clamp(44px, 10vw, 64px); margin: 14px 0 20px; }
-  .carrusel { height: 300px; order: -1; }
+  .carrusel { height: 300px; }
   .bloque { gap: 26px; margin-bottom: 44px; }
   .bloque:nth-child(even) .texto { order: 0; }
   .botones .btn { flex: 1 1 auto; }

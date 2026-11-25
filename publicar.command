@@ -8,6 +8,9 @@ cd "$(dirname "$0")"
 if [ -z "$(git status --porcelain)" ]; then
   echo "No hay cambios nuevos que publicar."
 else
+  # Nueva marca de versión en CSS/JS: el navegador nunca mezcla archivos viejos y nuevos
+  version="$(date '+%Y%m%d-%H%M%S')"
+  sed -i.bak -E "s/\.(css|js)\?v=[0-9-]+\"/.\1?v=${version}\"/g" index.html && rm -f index.html.bak
   git add -A
   git commit -q -m "Actualización del menú y la web ($(date '+%Y-%m-%d %H:%M'))"
   git push -q
