@@ -25,9 +25,11 @@ Abra `http://127.0.0.1:8080`. Use la vista por HTTP para comprobar también Goog
 
 ## Publicación
 
-La web está publicada gratis en GitHub Pages: https://agustin627.github.io/hofrosa-web/
+La dirección principal de la web es https://hotelfrontera.gracefulperiwinkle9.chatgpt.site/ y se publica con Sites. La configuración del sitio se guarda en `.openai/hosting.json`.
 
-Después de cambiar el menú con el editor, haga doble clic en `publicar.command` (o ejecute `./publicar.command`) para subir los cambios; se ven en 1 o 2 minutos.
+Después de cambiar el menú con el editor, puede usar `publicar.command` para sincronizar la copia pública y guardar los cambios en GitHub. Para actualizar la dirección principal, pida a Codex que publique el sitio con Sites; subir un commit a GitHub por sí solo no actualiza esa dirección.
+
+`python3 editor/preparar_sitio.py` prepara `dist/` con los archivos públicos. La publicación no incluye el editor, sus ajustes ni los respaldos. El contenido sigue siendo editable desde la aplicación de Python.
 
 ## Un solo menú para la web y el menú QR
 
@@ -68,3 +70,7 @@ Cada momento presenta recomendaciones breves visibles sin desplegarlas y seccion
 Los precios se presentan como `150` o `190`, sin símbolo monetario ni centavos en cada plato; una leyenda general informa la moneda y conserva el aviso «No incluyen IVA ni propina». Los importes enteros siguen siendo editables desde Python. Platos, precios, categorías, momentos, etiquetas, disponibilidad, opciones y fotos proceden del menú de la API o de `menu-datos.js` como respaldo.
 
 Las decisiones combinan evidencia sobre presentación de precios y dificultad de elección con criterios de interacción. Los estudios no prueban que esta interfaz concreta aumente las ventas ni establecen un límite universal de platos. La [investigación y sus límites](docs/investigacion-menu.md) distinguen los hallazgos científicos de las decisiones de diseño.
+
+## Encuéntranos
+
+La sección incluye un mapa de Google Maps y enlaces para abrir la ubicación o iniciar una ruta. La ubicación se cambia en «Identidad y contacto» del editor de Python (`config.hotel.ubicacion`); el mapa y sus enlaces se generan con ese valor y el nombre del hotel.

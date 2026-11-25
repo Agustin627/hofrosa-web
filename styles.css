@@ -240,6 +240,19 @@ section { padding: 80px 0; }
 .etiqueta { display: inline-block; font-size: 14px; padding: 1px 8px; background: #e9eade; color: #495936; border-radius: 2px; }
 .etiqueta.agotado { background: var(--relleno); color: var(--suave); }
 .aviso { text-align: center; padding: 28px; color: var(--suave); }
+/* Ubicación y acceso al hotel */
+.ubicacion-grid { display: grid; grid-template-columns: minmax(260px, .76fr) minmax(0, 1.24fr); gap: 48px; align-items: center; }
+.ubicacion-texto { min-width: 0; padding: 20px 0; }
+.ubicacion-texto h3 { font-size: clamp(32px, 3.5vw, 42px); margin-top: 12px; }
+.ubicacion-direccion { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--linea); font-style: normal; font-size: 22px; line-height: 1.45; }
+.ubicacion-referencia { margin-top: 14px; color: var(--suave); font-size: 16px; line-height: 1.6; max-width: 38ch; }
+.ubicacion-texto .botones { margin-top: 28px; }
+.ubicacion-texto .btn { max-width: 100%; }
+.mapa-hotel { min-width: 0; overflow: hidden; border: 1px solid var(--linea); border-radius: 3px; background: var(--relleno); }
+.mapa-hotel iframe { display: block; width: 100%; max-width: 100%; height: 460px; border: 0; }
+.mapa-pie { padding: 14px 18px; border-top: 1px solid var(--linea); }
+.mapa-pie p { color: var(--suave); font-size: 14px; line-height: 1.5; }
+
 footer { background: var(--tinta); color: #f4f1e7; padding: 56px 0 calc(28px + env(safe-area-inset-bottom)); }
 .pie { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 48px; }
 footer h4 { font-size: 28px; margin-bottom: 16px; color: #dfc595; }
@@ -254,6 +267,8 @@ footer a:hover { text-decoration: underline; }
 .traductor .goog-te-combo { min-height: 36px; max-width: 100%; font-size: 14px; }
 
 @media (max-width: 940px) {
+  .ubicacion-grid { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .ubicacion-texto { max-width: 38rem; padding: 0; }
   .momentos-carta { display: block; }
   .pestanas { justify-content: center; }
   .horario-contexto { max-width: 100%; margin: 6px 0 0; }
@@ -281,6 +296,11 @@ footer a:hover { text-decoration: underline; }
   .carrusel { height: 440px; }
 }
 @media (max-width: 760px) {
+  .ubicacion-grid { gap: 24px; }
+  .ubicacion-direccion { margin-top: 20px; font-size: 20px; }
+  .ubicacion-texto .botones { margin-top: 24px; }
+  .mapa-hotel iframe { height: 350px; }
+  .mapa-pie { padding: 12px 16px; }
   :root { --alto-cabecera: 58px; }
   .barra { min-height: 58px; gap: 12px; }
   .logo { padding: 3px 0; }

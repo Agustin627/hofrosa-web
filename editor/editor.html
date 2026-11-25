@@ -235,7 +235,7 @@ async function guardar() {
     if (!r.ok) throw new Error(j.error || `Error ${r.status}`);
     huella = j.huella;
     marcarLimpio("Guardado " + new Date().toLocaleTimeString("es-NI", { hour: "2-digit", minute: "2-digit" }));
-    avisar("Guardado en el menú único (QR y web). Para verlo en la web publicada, use publicar.command.", "ok");
+    avisar("Guardado en el menú único (QR y web). Para actualizar la página publicada, pida a Codex que publique el sitio.", "ok");
   } catch (e) {
     marcarSucio();
     avisar("No se guardó:\n" + e.message);
@@ -578,6 +578,7 @@ function vistaAjustes() {
     h("div", { class: "rejilla" },
       campo("Nombre del hotel", h("input", { value: H.nombre ?? "Hotel Frontera", required: true, oninput: e => { H.nombre = e.target.value; marcarSucio(); } })),
       campo("Nombre del restaurante", h("input", { value: H.restaurante ?? "Las Margaritas", required: true, oninput: e => { H.restaurante = e.target.value; marcarSucio(); } })),
+      h("div", { class: "ancho" }, campo("Ubicación en Google Maps", h("input", { name: "ubicacion", value: H.ubicacion ?? "JGPC+297, NIC-15, Ocotal, Nicaragua", required: true, maxlength: "300", oninput: e => { H.ubicacion = e.target.value; marcarSucio(); } }), "Dirección o código del lugar que se mostrará en el mapa.")),
       campo("Lema", h("input", { value: tx(H.lema), oninput: e => { H.lema = e.target.value; marcarSucio(); } })),
       campo("Correo", h("input", { type: "email", value: H.correo || "", oninput: e => { H.correo = e.target.value.trim(); marcarSucio(); } })),
       h("div", { class: "ancho" }, campo("Dirección", h("textarea", { rows: "2", value: tx(H.direccion), oninput: e => { H.direccion = e.target.value; marcarSucio(); } })))),

@@ -2,7 +2,7 @@
    La web la usa si no puede leer el menú en vivo del servidor.
    Se puede editar con: python3 editor/editor_menu.py */
 window.MENU_RESPALDO = {
- "version": 10,
+ "version": 11,
  "config": {
   "zonaHoraria": "America/Managua",
   "horario": {
@@ -44,7 +44,8 @@ window.MENU_RESPALDO = {
    "correo": "hotelfronterasa@yahoo.com",
    "lema": "¡Su límite para descansar!",
    "nombre": "Hotel Frontera",
-   "restaurante": "Las Margaritas"
+   "restaurante": "Las Margaritas",
+   "ubicacion": "JGPC+297, NIC-15, Ocotal, Nicaragua"
   },
   "bebidasDesayuno": [
    "jugo-naranja",

@@ -479,6 +479,9 @@ def validar(d):
                 for campo in ("nombre", "restaurante"):
                     if campo in hotel and not (isinstance(hotel[campo], str) and hotel[campo].strip()):
                         errores.append(f"«{campo}» debe ser un texto con nombre en los datos del hotel.")
+                if "ubicacion" in hotel and not (isinstance(hotel["ubicacion"], str)
+                        and hotel["ubicacion"].strip() and len(hotel["ubicacion"]) <= 300):
+                    errores.append("La ubicación en Google Maps debe ser un texto no vacío de hasta 300 caracteres.")
                 telefonos = hotel.get("telefonos", [])
                 if not isinstance(telefonos, list):
                     errores.append("Los teléfonos deben ser una lista.")

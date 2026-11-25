@@ -132,6 +132,7 @@
       if (!opcional(C.hotel, h => objeto(h) && opcional(h.lema, texto) && opcional(h.direccion, texto)
         && opcional(h.nombre, v => typeof v === "string" && Boolean(v.trim()))
         && opcional(h.restaurante, v => typeof v === "string" && Boolean(v.trim()))
+        && opcional(h.ubicacion, v => typeof v === "string" && Boolean(v.trim()) && v.length <= 300)
         && opcional(h.correo, v => typeof v === "string")
         && opcional(h.telefonos, v => lista(v, t => objeto(t) && typeof t.tel === "string" && typeof t.texto === "string"))
         && opcional(h.celular, t => objeto(t) && typeof t.tel === "string" && typeof t.texto === "string"))) return false;
@@ -346,6 +347,17 @@
     const hotel = h.nombre || "Hotel Frontera", restaurante = h.restaurante || "Las Margaritas";
     document.querySelectorAll('[data-hotel="nombre"]').forEach(el => el.textContent = hotel);
     document.querySelectorAll('[data-hotel="restaurante"]').forEach(el => el.textContent = restaurante);
+    const ubicacion = h.ubicacion || "JGPC+297, NIC-15, Ocotal, Nicaragua";
+    document.querySelectorAll('[data-hotel="ubicacion"]').forEach(el => el.textContent = ubicacion);
+    const consultaMapa = encodeURIComponent(`${hotel}, ${ubicacion}`);
+    document.querySelectorAll('[data-mapa="abrir"]').forEach(a => { a.href = `https://www.google.com/maps/search/?api=1&query=${consultaMapa}`; });
+    document.querySelectorAll('[data-mapa="ruta"]').forEach(a => { a.href = `https://www.google.com/maps/dir/?api=1&destination=${consultaMapa}`; });
+    const mapa = $("#mapa-hotel");
+    if (mapa) {
+      const src = `https://www.google.com/maps?q=${consultaMapa}&z=16&hl=es&output=embed`;
+      if (mapa.getAttribute("src") !== src) mapa.src = src;
+      mapa.title = `Ubicación de ${hotel} en Google Maps`;
+    }
     document.title = `${hotel} · Restaurante ${restaurante}`;
     $(".logo img").alt = hotel;
     const tels = h.telefonos || [];
