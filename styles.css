@@ -205,7 +205,7 @@ footer a:hover { text-decoration: underline; }
 
 @media (max-width: 940px) {
   .menu-btn { display: grid; }
-  .barra { min-height: 76px; }
+  .barra { min-height: 64px; }
   nav { position: absolute; left: 0; right: 0; top: 100%; margin: 0; background: var(--papel); border-bottom: 1px solid var(--linea); box-shadow: 0 24px 40px -20px rgba(23, 38, 32, .35);
         padding: 8px max(24px, env(safe-area-inset-left)) calc(24px + env(safe-area-inset-bottom)); max-height: calc(100dvh - var(--alto-cabecera)); overflow: auto; overscroll-behavior: contain;
         visibility: hidden; opacity: 0; transform: translateY(-12px); transition: opacity .28s ease, transform .35s cubic-bezier(.2,.7,.2,1), visibility 0s linear .35s; }
@@ -227,7 +227,11 @@ footer a:hover { text-decoration: underline; }
   .carrusel { height: 440px; }
 }
 @media (max-width: 760px) {
-  :root { --alto-cabecera: 76px; }
+  :root { --alto-cabecera: 56px; }
+  .barra { min-height: 56px; gap: 12px; }
+  .logo { padding: 4px 0; }
+  .logo img { height: 34px; }
+  .menu-btn { width: 40px; height: 40px; }
   .wrap { padding-left: max(20px, env(safe-area-inset-left)); padding-right: max(20px, env(safe-area-inset-right)); }
   section { padding: 56px 0; }
   #menu-rest { padding-top: 32px; }
