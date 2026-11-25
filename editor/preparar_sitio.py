@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Prepara únicamente los archivos públicos de la web para Sites."""
+"""Prepara en dist/ únicamente los archivos públicos de la web (para subirlos a otro hosting)."""
 from pathlib import Path
 import shutil
 

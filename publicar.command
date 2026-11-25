@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-# Sincroniza el menú y guarda una copia de los cambios en GitHub.
+# Sincroniza el menú y publica la web en GitHub Pages.
 # En Mac: doble clic sobre este archivo. En la terminal: ./publicar.command
-# La dirección principal se publica con Sites desde Codex.
+# Al subir los cambios a GitHub, la web se actualiza sola en 1 o 2 minutos:
+# https://agustin627.github.io/hofrosa-web/
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -17,9 +18,9 @@ else
   git add -A
   git commit -q -m "Actualización del menú y la web ($(date '+%Y-%m-%d %H:%M'))"
   git push -q
-  echo "Cambios guardados en GitHub."
+  echo "Cambios publicados. La web se actualiza en 1 o 2 minutos."
 fi
-echo "Para actualizar la dirección principal, pida a Codex que publique el sitio:"
-echo "https://hotelfrontera.gracefulperiwinkle9.chatgpt.site/"
+echo "Dirección de la web:"
+echo "https://agustin627.github.io/hofrosa-web/"
 echo
 read -r -p "Pulse Enter para cerrar…" _ || true

@@ -25,11 +25,11 @@ Abra `http://127.0.0.1:8080`. Use la vista por HTTP para comprobar también Goog
 
 ## Publicación
 
-La dirección principal de la web es https://hotelfrontera.gracefulperiwinkle9.chatgpt.site/ y se publica con Sites. La configuración del sitio se guarda en `.openai/hosting.json`.
+La web está publicada gratis en GitHub Pages: https://agustin627.github.io/hofrosa-web/
 
-Después de cambiar el menú con el editor, puede usar `publicar.command` para sincronizar la copia pública y guardar los cambios en GitHub. Para actualizar la dirección principal, pida a Codex que publique el sitio con Sites; subir un commit a GitHub por sí solo no actualiza esa dirección.
+Después de cambiar el menú (con el editor o desde el panel del servidor de pedidos), haga doble clic en `publicar.command` (o ejecute `./publicar.command`): sincroniza la copia pública, sube los cambios a GitHub y la web se actualiza sola en 1 o 2 minutos.
 
-`python3 editor/preparar_sitio.py` prepara `dist/` con los archivos públicos. La publicación no incluye el editor, sus ajustes ni los respaldos. El contenido sigue siendo editable desde la aplicación de Python.
+GitHub Pages publica la rama `main` tal como está. Los ajustes del editor (`editor/ajustes.json`) y los respaldos (`editor/respaldos/`) no se suben, porque están en `.gitignore`. Si algún día se usa otro hosting, `python3 editor/preparar_sitio.py` prepara en `dist/` solo los archivos públicos, sin el editor.
 
 ## Un solo menú para la web y el menú QR
 

@@ -235,7 +235,7 @@ async function guardar() {
     if (!r.ok) throw new Error(j.error || `Error ${r.status}`);
     huella = j.huella;
     marcarLimpio("Guardado " + new Date().toLocaleTimeString("es-NI", { hour: "2-digit", minute: "2-digit" }));
-    avisar("Guardado en el menú único (QR y web). Para actualizar la página publicada, pida a Codex que publique el sitio.", "ok");
+    avisar("Guardado en el menú único (QR y web). Para actualizar la página publicada, haga doble clic en publicar.command.", "ok");
   } catch (e) {
     marcarSucio();
     avisar("No se guardó:\n" + e.message);
