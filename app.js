@@ -204,6 +204,22 @@
     </figure>`;
   }
 
+  function partesPlato(p, cat, U, notaFuerte = true) {
+    const etiquetas = (p.t || []).filter(t => W.etiquetas[t]).map(t => `<span class="etiqueta">${esc(W.etiquetas[t])}</span>`).join("")
+      + (p.agotado ? `<span class="etiqueta agotado">${esc(W.textos.agotado)}</span>` : "");
+    const tienePres = Array.isArray(p.pres) && p.pres.length;
+    const precio = tienePres ? "" : (p.p != null ? U.dinero(p.p) : "");
+    const pres = tienePres ? `<div class="pres">${p.pres.map(([k, v]) => `<span>${esc(W.presentaciones[k] || k)} <b translate="no" class="notranslate">${esc(U.dinero(v))}</b></span>`).join("")}</div>` : "";
+    const ops = Array.isArray(p.op) && p.op.length ? `<div class="ops">${p.op.map(o => `<span>${esc(U.tx(o))}</span>`).join("")}</div>` : "";
+    const incluye = p.incluye ?? cat.incluye;
+    let nota = "";
+    if (incluye === "desayuno") {
+      const lista = (U.C.bebidasDesayuno || []).map(id => U.platos[id] && !U.platos[id].agotado ? U.tx(U.platos[id].n) : null).filter(Boolean);
+      nota = lista.length ? fmt(W.textos.incluyeDesayuno, { lista: lista.join(", ").toLowerCase() }) : "";
+    } else if (incluye === "fuerte" && notaFuerte) nota = W.textos.incluyeFuerte;
+    return { etiquetas: etiquetas ? ` ${etiquetas}` : "", precio, pres, ops, nota };
+  }
+
   function platoHTML(p, cat, U, destacado = false, notaFuerte = true) {
     const etiquetas = (p.t || []).filter(t => W.etiquetas[t]).map(t => `<span class="etiqueta">${esc(W.etiquetas[t])}</span>`).join("")
       + (p.agotado ? `<span class="etiqueta agotado">${esc(W.textos.agotado)}</span>` : "");
@@ -236,6 +252,67 @@
       </div></div>`;
   }
 
+  /* ---------- Familias: «Hamburguesa» con «Frontera · Res · Pollo» debajo ----------
+     Los platos de una categoría que empiezan por las mismas palabras se muestran
+     juntos. Solo cambia la presentación: los datos y el menú QR siguen igual y
+     cada variante conserva su precio, descripción, etiquetas y «agotado». */
+  const sinAcentos = t => String(t).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  function agruparFamilias(platos, U) {
+    const cfg = W.agrupar || {};
+    if (cfg.activo === false) return platos.map(p => ({ p }));
+    const minimo = Math.max(2, cfg.minimo || 2);
+    const palabras = p => U.tx(p.n).trim().split(/\s+/);
+    const porPrimera = new Map();
+    for (const p of platos) {
+      const w = palabras(p);
+      if (w.length < 2) continue;  // sin resto no hay variante que nombrar
+      const k = sinAcentos(w[0]);
+      if (!porPrimera.has(k)) porPrimera.set(k, []);
+      porPrimera.get(k).push(p);
+    }
+    const familiaDe = new Map();
+    for (const miembros of porPrimera.values()) {
+      if (miembros.length < minimo) continue;
+      const ws = miembros.map(palabras);
+      let k = 1;  // palabras comunes, dejando al menos una propia en cada variante
+      while (ws.every(w => w.length > k + 1 && sinAcentos(w[k]) === sinAcentos(ws[0][k]))) k++;
+      while (k > 1 && /^(de|del|con|a|y|en)$/i.test(ws[0][k - 1])) k--;   // «Sopa de» → «Sopa»
+      const familia = { titulo: ws[0].slice(0, k).join(" "), variantes: [] };
+      miembros.forEach((p, i) => {
+        let resto = ws[i].slice(k);
+        if (resto.length > 1 && /^(de|del)$/i.test(resto[0])) resto = resto.slice(1);  // «de res» → «Res»
+        const etiqueta = resto.join(" ");
+        familia.variantes.push({ p, etiqueta: etiqueta.charAt(0).toUpperCase() + etiqueta.slice(1) });
+        familiaDe.set(p, familia);
+      });
+    }
+    const salida = [], puestas = new Set();
+    for (const p of platos) {
+      const f = familiaDe.get(p);
+      if (!f) salida.push({ p });
+      else if (!puestas.has(f)) { puestas.add(f); salida.push({ familia: f }); }
+    }
+    return salida;
+  }
+
+  function familiaHTML(f, cat, U, notaFuerte) {
+    const partes = f.variantes.map(v => ({ v, ...partesPlato(v.p, cat, U, notaFuerte) }));
+    const notaComun = partes.every(x => x.nota && x.nota === partes[0].nota) ? partes[0].nota : "";
+    const conFoto = f.variantes.find(v => mediaHTML(v.p, U));
+    const media = conFoto ? mediaHTML(conFoto.p, U) : "";
+    return `<div class="plato familia${media ? " con-foto" : ""}" data-familia="${esc(sinAcentos(f.titulo))}">
+      <div class="plato-cuerpo">
+        <div class="plato-encabezado">${media}<div class="plato-datos"><div class="fila"><span class="nombre">${esc(f.titulo)}</span></div></div></div>
+        <ul class="variantes">
+          ${partes.map(({ v, etiquetas, precio, pres, ops, nota }) => `<li class="variante${v.p.agotado ? " agotado" : ""}" data-plato="${esc(v.p.id)}">
+            <div class="fila"><span class="variante-nombre">${esc(v.etiqueta)}${etiquetas}</span>${precio ? `<span class="precio notranslate" translate="no">${esc(precio)}</span>` : ""}</div>
+            ${v.p.d ? `<div class="desc">${esc(U.tx(v.p.d))}</div>` : ""}${ops}${pres}${nota && !notaComun ? `<div class="desc">${esc(nota)}</div>` : ""}
+          </li>`).join("")}
+        </ul>
+        ${notaComun ? `<div class="desc nota-familia">${esc(notaComun)}</div>` : ""}
+      </div></div>`;
+  }
+
   function seleccionarRecomendados(entradas) {
     const R = W.recomendaciones;
     const candidatos = entradas.filter(({ p }) => !p.agotado && (p.t || []).some(t => R.etiquetas.includes(t)));
@@ -264,7 +341,9 @@
       </div></div>
       ${c.nota ? `<p class="nota-c">${esc(U.tx(c.nota))}</p>` : ""}
       ${todosFuertes && !notaEnGrupo ? `<p class="nota-c">${esc(W.textos.incluyeFuerte)}</p>` : ""}
-      ${c.platos.map(p => platoHTML(p, c, U, false, !todosFuertes && !notaEnGrupo)).join("")}
+      ${agruparFamilias(c.platos, U).map(e => e.familia
+        ? familiaHTML(e.familia, c, U, !todosFuertes && !notaEnGrupo)
+        : platoHTML(e.p, c, U, false, !todosFuertes && !notaEnGrupo)).join("")}
     </article>`;
   }
 

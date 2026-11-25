@@ -185,6 +185,16 @@ section { padding: 80px 0; }
 .pres b { color: var(--acento); font-weight: 600; }
 .ops { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 .ops span { font-size: 14px; padding: 2px 8px; border: 1px solid var(--linea); color: var(--suave); border-radius: 2px; }
+/* Familias de platos: un título y sus variantes con precio */
+.variantes { list-style: none; margin: 10px 0 0; padding: 0 0 0 14px; border-left: 2px solid var(--linea); display: grid; gap: 12px; }
+.variante .fila { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 18px; align-items: baseline; }
+.variante-nombre { font-weight: 600; font-size: 17px; line-height: 1.35; min-width: 0; }
+.variante-nombre .etiqueta { margin-left: 6px; font-size: 13px; font-weight: 400; vertical-align: 1px; }
+.plato .variante .precio { font-size: 19px; }
+.variante .desc { font-size: 15px; margin-top: 2px; }
+.variante .ops, .variante .pres { margin-top: 6px; }
+.variante.agotado .variante-nombre, .variante.agotado .precio { text-decoration: line-through; opacity: .65; }
+.nota-familia { margin-top: 10px; }
 .plato.agotado .nombre, .plato.agotado .precio { text-decoration: line-through; opacity: .65; }
 .etiquetas { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
 .etiqueta { display: inline-block; font-size: 14px; padding: 1px 8px; background: #e9eade; color: #495936; border-radius: 2px; }

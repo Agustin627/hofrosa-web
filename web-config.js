@@ -18,6 +18,9 @@ window.WEB = {
   recomendaciones: { etiquetas: ["casa", "popular"], maximo: 3, porCategoria: 1 },
   // Los ids también funcionan con el menú en vivo, aunque todavía no incluya la etiqueta.
   compartir: { etiquetas: ["compartir"], ids: ["papas", "tostones"], maximo: 3 },
+  // Platos de una categoría que empiezan igual («Hamburguesa Frontera / de res / de pollo»)
+  // se muestran juntos: «Hamburguesa» y debajo «Frontera · Res · Pollo». activo: false = desactivar.
+  agrupar: { activo: true, minimo: 2 },
   simboloPorPrecio: false,           // la moneda y el IVA se anuncian sobre la carta
   // Fotos reales: por id de plato/categoría, con rutas locales de esta web.
   // También se admiten p.foto y c.foto del servidor de pedidos si no hay una ruta aquí.
