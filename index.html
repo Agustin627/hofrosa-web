@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#233b32">
-<meta name="description" content="Hotel Frontera en Ocotal, Nicaragua. Explore nuestra carta de desayunos, almuerzo, cena y bar, conozca el hotel y consulte por su reserva.">
-<title>Hotel Frontera Ocotal</title>
-<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta name="description" content="Hotel Frontera y Restaurante Las Margaritas en Ocotal, Nicaragua. Explore la carta, conozca el hotel y consulte por su reserva.">
+<title>Hotel Frontera · Restaurante Las Margaritas</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=frontera">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20261124-183634">
+<link rel="stylesheet" href="styles.css?v=20261124-menu-interactivo">
 </head>
 <body>
 <a class="saltar-contenido" href="#contenido">Saltar al contenido</a>
@@ -57,7 +57,7 @@
     <div class="wrap portada">
       <div>
         <span class="lema" data-hotel="lema">¡Su límite para descansar!</span>
-        <h1><span class="notranslate" translate="no">Hotel Frontera</span><br>en Ocotal</h1>
+        <h1><span class="notranslate" translate="no" data-hotel="nombre">Hotel Frontera</span><br>en Ocotal</h1>
         <p>En el km 226.5 de la Panamericana Norte, a pocos kilómetros de Honduras. Habitaciones cómodas, seguridad las 24 horas, restaurante, bar y piscina.</p>
         <div class="botones">
           <a href="tel:+50527322668" class="btn" data-hotel="reservar">Reservar: 2732-2668</a>
@@ -103,12 +103,12 @@
 
       <div class="bloque">
         <div class="texto">
-          <h3>Restaurante y bar</h3>
+          <h3>Restaurante <span class="notranslate" translate="no" data-hotel="restaurante">Las Margaritas</span></h3>
           <p>Abierto a huéspedes y a visitantes. Desayunos típicos nicas desde temprano, platos fuertes de res, cerdo, pollo y mariscos, y un bar con cócteles, cerveza bien helada y ron Flor de Caña.</p>
           <p><a href="#menu-rest">Ver el menú completo</a></p>
         </div>
         <div class="par">
-          <div class="trazo"><img class="foto" loading="lazy" src="assets/imagenes/slide-comedor.webp" alt="Comedor del restaurante"></div>
+          <div class="trazo"><img class="foto" loading="lazy" src="assets/imagenes/slide-comedor.webp" alt="Comedor del Restaurante Las Margaritas"></div>
           <div class="trazo"><img class="foto" loading="lazy" src="assets/imagenes/el-hotel-4.webp" alt=""></div>
         </div>
       </div>
@@ -141,13 +141,36 @@
   <!-- 3. Menú: todo sale de los datos del menú (servidor de pedidos o copia local) -->
   <section id="menu-rest">
     <div class="wrap">
-      <h2 class="titulo-sec">Nuestro menú</h2>
-      <p class="sub-sec" id="menu-sub">Abra una sección para ver sus platos y precios.</p>
+      <p class="identidad-menu">Restaurante · <span class="notranslate" translate="no" data-hotel="nombre">Hotel Frontera</span></p>
+      <h2 class="titulo-sec notranslate" translate="no" data-hotel="restaurante">Las Margaritas</h2>
+      <p class="sub-sec" id="menu-sub">Algo rico para cada momento. Explore la carta o encuentre su plato.</p>
       <div class="barra-menu">
         <div class="pestanas" role="tablist" aria-label="Momentos del día" id="pestanas"></div>
+        <form class="buscar-menu" id="buscador-menu" role="search" hidden>
+          <label for="buscar-plato">Buscar en toda la carta</label>
+          <div class="campo-busqueda">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg>
+            <input id="buscar-plato" type="search" placeholder="Plato, ingrediente o categoría" autocomplete="off" maxlength="100" enterkeyhint="search" aria-controls="carta" aria-describedby="estado-carta">
+            <button type="button" id="limpiar-busqueda" aria-label="Borrar búsqueda" hidden>✕</button>
+          </div>
+        </form>
       </div>
       <p class="horario" id="horario" aria-live="polite"></p>
       <p class="nota-precios" id="nota-precios"></p>
+      <div class="explorar-carta" id="explorar-carta" hidden>
+        <div class="selector-categoria">
+          <label for="categoria-menu">Categoría</label>
+          <select id="categoria-menu" aria-controls="carta"><option value="">Todas las categorías</option></select>
+        </div>
+        <div class="filtros-menu" role="group" aria-label="Filtrar la carta">
+          <button type="button" data-filtro="recomendados" aria-pressed="false" aria-controls="carta">Recomendados</button>
+          <button type="button" data-filtro="disponibles" aria-pressed="false" aria-controls="carta">Disponibles</button>
+        </div>
+      </div>
+      <div class="resumen-carta">
+        <p id="estado-carta" role="status" aria-live="polite" aria-atomic="true"></p>
+        <button type="button" id="restablecer-menu" class="control-carta" hidden>Limpiar filtros</button>
+      </div>
       <div id="carta" role="tabpanel" tabindex="0" aria-label="Carta del restaurante"><p class="aviso">Cargando el menú…</p></div>
       <noscript><p class="aviso">Active JavaScript para consultar la carta o llámenos al <a href="tel:+50527322668">2732-2668</a>.</p></noscript>
     </div>
@@ -188,7 +211,7 @@
         <p>Entrada 2:00 p.m. · Salida 12:00 m.d.</p>
       </div>
     </div>
-    <p class="legal">© Hotel Frontera, Ocotal · <span data-hotel="lema">¡Su límite para descansar!</span></p>
+    <p class="legal">© <span class="notranslate" translate="no" data-hotel="nombre">Hotel Frontera</span>, Ocotal · Restaurante <span class="notranslate" translate="no" data-hotel="restaurante">Las Margaritas</span></p>
     <div class="traductor notranslate" translate="no">
       <a href="https://translate.google.com/" target="_blank" rel="noopener">Google Translate</a>
       <div id="google_translate_element"></div>
@@ -196,9 +219,9 @@
   </div>
 </footer>
 
-<script src="web-config.js?v=20261124-183634"></script>
-<script src="menu-datos.js?v=20261124-183634"></script>
-<script src="idiomas.js?v=20261124-183634"></script>
-<script src="app.js?v=20261124-183634"></script>
+<script src="web-config.js?v=20261124-menu-interactivo"></script>
+<script src="menu-datos.js?v=20261124-menu-interactivo"></script>
+<script src="idiomas.js?v=20261124-menu-interactivo"></script>
+<script src="app.js?v=20261124-menu-interactivo"></script>
 </body>
 </html>

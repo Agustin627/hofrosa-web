@@ -222,6 +222,8 @@ async function cargar() {
 }
 async function guardar() {
   if (!sucio) return;
+  const invalido = document.querySelector("#vista input:invalid");
+  if (invalido) { invalido.reportValidity(); return; }
   $("#guardar").disabled = true;
   $("#estado").textContent = "Guardando…";
   try {
@@ -342,7 +344,7 @@ function tarjetaPlato(cid, c, p, i) {
   const cuerpo = h("div", { class: "plato-cuerpo" });
   const rejilla = h("div", { class: "rejilla" },
     campo("Nombre", h("input", { value: tx(p.n), oninput: e => { setTx(p, "n", e.target.value); tarjeta.querySelector(".plato-titulo").firstChild.textContent = e.target.value || "(sin nombre)"; cambiar(); } })),
-    conPres ? null : campo(`Precio (${menu.config.moneda || "C$"})`, h("input", { type: "number", min: "0", step: "0.01", inputmode: "decimal", value: p.p ?? "",
+    conPres ? null : campo(`Precio (${menu.config.moneda || "C$"})`, h("input", { type: "number", min: "0", step: "1", inputmode: "numeric", required: true, title: "Precio entero, sin centavos. Ejemplo: 150", value: p.p ?? "",
       oninput: e => { const n = parseFloat(e.target.value); if (Number.isFinite(n)) p.p = n; else delete p.p; tarjeta.querySelector(".plato-precio").textContent = resumenPrecio(p); cambiar(); } })),
     h("div", { class: "ancho" }, campo("Descripción", h("textarea", { rows: "2", value: tx(p.d), oninput: e => { setTx(p, "d", e.target.value, true); cambiar(); } }))),
     h("div", { class: "ancho" }, campo("Opciones para elegir (separadas por comas)", h("input", { value: (p.op || []).map(tx).join(", "), placeholder: "Ej.: A la plancha, Empanizado, Al ajillo",
@@ -350,7 +352,7 @@ function tarjetaPlato(cid, c, p, i) {
     campo("Acompañamiento incluido", selectIncluye("incluye" in p ? p.incluye : "__", v => { if (v === "__") delete p.incluye; else p.incluye = v; cambiar(); })),
   );
   cuerpo.append(bloqueFoto("platos", p.id, p, tx(p.n)));
-  cuerpo.append(rejilla);
+  cuerpo.append(rejilla, h("p", { class: "ayuda" }, "Use precios enteros, como 150 o 190, también en cada presentación. La carta los muestra sin símbolo monetario ni centavos; la moneda se indica una sola vez sobre el menú. Los importes no se redondean automáticamente."));
 
   // Etiquetas y agotado
   cuerpo.append(h("div", { style: "margin-top:12px" }, h("label", {}, "Etiquetas"),
@@ -371,7 +373,7 @@ function tarjetaPlato(cid, c, p, i) {
   if (conPres) {
     p.pres.forEach((fila, j) => pres.append(h("div", { class: "pres-fila" },
       h("input", { value: fila[0], list: "lista-pres", "aria-label": "Presentación", oninput: e => { fila[0] = e.target.value.trim(); tarjeta.querySelector(".plato-precio").textContent = resumenPrecio(p); cambiar(); } }),
-      h("input", { type: "number", min: "0", step: "0.01", value: fila[1], "aria-label": "Precio", oninput: e => { const n = parseFloat(e.target.value); fila[1] = Number.isFinite(n) ? n : 0; tarjeta.querySelector(".plato-precio").textContent = resumenPrecio(p); cambiar(); } }),
+      h("input", { type: "number", min: "0", step: "1", inputmode: "numeric", required: true, title: "Precio entero, sin centavos. Ejemplo: 150", value: fila[1], "aria-label": "Precio entero, sin centavos", oninput: e => { const n = parseFloat(e.target.value); fila[1] = Number.isFinite(n) ? n : null; tarjeta.querySelector(".plato-precio").textContent = resumenPrecio(p); cambiar(); } }),
       h("button", { class: "btn peq peligro", type: "button", "aria-label": "Quitar presentación", disabled: p.pres.length === 1,
         onclick: () => { p.pres.splice(j, 1); cambiar(); pintar(); } }, "✕"))));
     pres.append(h("button", { class: "btn peq", type: "button", onclick: () => { p.pres.push([PRESENTACIONES.find(x => !p.pres.some(f => f[0] === x)) || "otra", 0]); cambiar(); pintar(); } }, "+ Presentación"),
@@ -551,6 +553,7 @@ function vistaAjustes() {
   const ids = Object.values(menu.categorias).flatMap(c => c.platos.map(p => [p.id, tx(p.n)]));
   C.bebidasDesayuno ||= [];
   const precios = h("div", { class: "tarjeta" }, h("h2", {}, "Precios"),
+    h("p", { class: "ayuda", style: "margin-top:0" }, "Los precios de la carta son enteros: 150, 190… sin símbolo en cada plato. La moneda, el IVA y la propina se explican sobre la carta."),
     h("div", { class: "rejilla" },
       campo("Moneda", h("input", { value: C.moneda || "C$", oninput: e => { C.moneda = e.target.value.trim() || "C$"; marcarSucio(); } })),
       campo("IVA (%)", h("input", { type: "number", min: "0", max: "99", step: "0.01", value: Math.round((C.iva ?? 0.15) * 10000) / 100,
@@ -571,8 +574,10 @@ function vistaAjustes() {
     h("input", { value: t.texto || "", placeholder: "Como se ve: 2732-2668", "aria-label": "Texto visible", oninput: e => { t.texto = e.target.value; marcarSucio(); } }),
     h("input", { value: t.tel || "", placeholder: "Para marcar: +50527322668", "aria-label": "Número para marcar", oninput: e => { t.tel = e.target.value.replace(/[^\d+]/g, ""); marcarSucio(); } }),
     h("button", { class: "btn peq peligro", type: "button", "aria-label": "Quitar", onclick: quitar }, "✕"));
-  const contacto = h("div", { class: "tarjeta" }, h("h2", {}, "Contacto"),
+  const contacto = h("div", { class: "tarjeta" }, h("h2", {}, "Identidad y contacto"),
     h("div", { class: "rejilla" },
+      campo("Nombre del hotel", h("input", { value: H.nombre ?? "Hotel Frontera", required: true, oninput: e => { H.nombre = e.target.value; marcarSucio(); } })),
+      campo("Nombre del restaurante", h("input", { value: H.restaurante ?? "Las Margaritas", required: true, oninput: e => { H.restaurante = e.target.value; marcarSucio(); } })),
       campo("Lema", h("input", { value: tx(H.lema), oninput: e => { H.lema = e.target.value; marcarSucio(); } })),
       campo("Correo", h("input", { type: "email", value: H.correo || "", oninput: e => { H.correo = e.target.value.trim(); marcarSucio(); } })),
       h("div", { class: "ancho" }, campo("Dirección", h("textarea", { rows: "2", value: tx(H.direccion), oninput: e => { H.direccion = e.target.value; marcarSucio(); } })))),

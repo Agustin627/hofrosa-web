@@ -16,8 +16,6 @@ window.WEB = {
   presentaciones: { botella: "Botella", media: "Media", trago: "Trago" },
   // Se filtran por el momento activo y se excluyen agotados. [] = desactivar.
   recomendaciones: { etiquetas: ["casa", "popular"], maximo: 3, porCategoria: 1 },
-  // Los ids también funcionan con el menú en vivo, aunque todavía no incluya la etiqueta.
-  compartir: { etiquetas: ["compartir"], ids: ["papas", "tostones"], maximo: 3 },
   // Platos de una categoría que empiezan igual («Hamburguesa Frontera / de res / de pollo»)
   // se muestran juntos: «Hamburguesa» y debajo «Frontera · Res · Pollo». activo: false = desactivar.
   agrupar: { activo: true, minimo: 2 },
@@ -36,13 +34,19 @@ window.WEB = {
   textos: {
     recomendados: "Recomendados",
     notaRecomendados: "Una selección de la carta.",
-    compartir: "Para compartir",
-    notaCompartir: "Para el centro de la mesa.",
     verCartaCompleta: "Ver menú completo",
     cerrarSecciones: "Cerrar todas las secciones",
     unaOpcion: "{n} opción",
     numeroOpciones: "{n} opciones",
     sinPlatos: "No hay platos en esta sección.",
+    sinResultados: "No encontramos platos con esta combinación.",
+    ayudaSinResultados: "Pruebe otro nombre o limpie los filtros para explorar la carta.",
+    todasCategorias: "Todas las categorías",
+    opcionesPlato: "Ver opciones de preparación",
+    resultado: "{n} opción · {contexto}",
+    resultados: "{n} opciones · {contexto}",
+    todaLaCarta: "Toda la carta",
+    limpiarFiltros: "Limpiar filtros",
     agotado: "Agotado",
     incluyeDesayuno: "Incluye una bebida a elegir: {lista}.",
     incluyeFuerte: "Acompañado de ensalada, arroz y papas.",
@@ -53,7 +57,7 @@ window.WEB = {
     horarioLinea: "{nombre}: {desde} a {hasta}",
     tel: "Tel.",
     cel: "Cel.",
-    monedaLocal: "córdobas (C$)",
+    monedaLocal: "córdobas",
     fotoReferencia: "Foto de referencia",
     referenciaBreve: "Referencia",
     avisoFotos: "Fotos de referencia de platos similares. La presentación real puede variar.",

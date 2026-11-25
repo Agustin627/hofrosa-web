@@ -130,6 +130,8 @@
       if (!opcional(C.horario, h => objeto(h) && Object.values(h).every(v => objeto(v)
         && typeof v.desde === "string" && typeof v.hasta === "string"))) return false;
       if (!opcional(C.hotel, h => objeto(h) && opcional(h.lema, texto) && opcional(h.direccion, texto)
+        && opcional(h.nombre, v => typeof v === "string" && Boolean(v.trim()))
+        && opcional(h.restaurante, v => typeof v === "string" && Boolean(v.trim()))
         && opcional(h.correo, v => typeof v === "string")
         && opcional(h.telefonos, v => lista(v, t => objeto(t) && typeof t.tel === "string" && typeof t.texto === "string"))
         && opcional(h.celular, t => objeto(t) && typeof t.tel === "string" && typeof t.texto === "string"))) return false;
@@ -210,7 +212,7 @@
     const tienePres = Array.isArray(p.pres) && p.pres.length;
     const precio = tienePres ? "" : (p.p != null ? U.dinero(p.p) : "");
     const pres = tienePres ? `<div class="pres">${p.pres.map(([k, v]) => `<span>${esc(W.presentaciones[k] || k)} <b translate="no" class="notranslate">${esc(U.dinero(v))}</b></span>`).join("")}</div>` : "";
-    const ops = Array.isArray(p.op) && p.op.length ? `<div class="ops">${p.op.map(o => `<span>${esc(U.tx(o))}</span>`).join("")}</div>` : "";
+    const ops = Array.isArray(p.op) && p.op.length ? `<details class="detalle-plato"><summary>${esc(W.textos.opcionesPlato)}</summary><div class="ops">${p.op.map(o => `<span>${esc(U.tx(o))}</span>`).join("")}</div></details>` : "";
     const incluye = p.incluye ?? cat.incluye;
     let nota = "";
     if (incluye === "desayuno") {
@@ -221,18 +223,7 @@
   }
 
   function platoHTML(p, cat, U, destacado = false, notaFuerte = true) {
-    const etiquetas = (p.t || []).filter(t => W.etiquetas[t]).map(t => `<span class="etiqueta">${esc(W.etiquetas[t])}</span>`).join("")
-      + (p.agotado ? `<span class="etiqueta agotado">${esc(W.textos.agotado)}</span>` : "");
-    const tienePres = Array.isArray(p.pres) && p.pres.length;
-    const precio = tienePres ? "" : (p.p != null ? U.dinero(p.p) : "");
-    const pres = tienePres ? `<div class="pres">${p.pres.map(([k, v]) => `<span>${esc(W.presentaciones[k] || k)} <b translate="no" class="notranslate">${esc(U.dinero(v))}</b></span>`).join("")}</div>` : "";
-    const ops = Array.isArray(p.op) && p.op.length ? `<div class="ops">${p.op.map(o => `<span>${esc(U.tx(o))}</span>`).join("")}</div>` : "";
-    const incluye = p.incluye ?? cat.incluye;
-    let nota = "";
-    if (incluye === "desayuno") {
-      const lista = (U.C.bebidasDesayuno || []).map(id => U.platos[id] && !U.platos[id].agotado ? U.tx(U.platos[id].n) : null).filter(Boolean);
-      nota = lista.length ? fmt(W.textos.incluyeDesayuno, { lista: lista.join(", ").toLowerCase() }) : "";
-    } else if (incluye === "fuerte" && notaFuerte) nota = W.textos.incluyeFuerte;
+    const { etiquetas, precio, pres, ops, nota } = partesPlato(p, cat, U, notaFuerte);
     const detalles = `
       ${p.d ? `<div class="desc">${esc(U.tx(p.d))}</div>` : ""}
       ${ops}${pres}${nota ? `<div class="desc">${esc(nota)}</div>` : ""}`;
@@ -328,7 +319,7 @@
 
   // Si el grupo ya trae su nota (p. ej. «Con ensalada, arroz y papas»), no se repite
   // en cada categoría ni en cada plato.
-  function categoriaHTML(cid, c, U, notaEnGrupo = false) {
+  function categoriaHTML(cid, c, U, notaEnGrupo = false, { agrupar = true, contexto = "", notas = [] } = {}) {
     const todosFuertes = c.platos.every(p => (p.incluye ?? c.incluye) === "fuerte");
     const configurada = W.imagenes.categorias[cid];
     const imagen = typeof configurada === "string" ? { src: configurada } : configurada;
@@ -337,11 +328,13 @@
     return `<article class="cat trazo" data-categoria="${esc(cid)}">
       ${foto ? `<figure class="cat-imagen"><img data-menu-foto src="${esc(foto)}" alt="${esc(U.tx(imagen?.alt || c.nombre))}" width="960" height="640" loading="lazy">${referencia ? `<figcaption>${esc(W.textos.fotoReferencia)}</figcaption>` : ""}</figure>` : ""}
       <div class="cat-cabecera"><div><h4>${esc(U.tx(c.nombre))}</h4>
+        ${contexto ? `<p class="contexto-c">${esc(contexto)}</p>` : ""}
         ${c.resumen ? `<p class="resumen-c">${esc(U.tx(c.resumen))}</p>` : ""}
       </div></div>
       ${c.nota ? `<p class="nota-c">${esc(U.tx(c.nota))}</p>` : ""}
+      ${notas.map(nota => `<p class="nota-c">${esc(nota)}</p>`).join("")}
       ${todosFuertes && !notaEnGrupo ? `<p class="nota-c">${esc(W.textos.incluyeFuerte)}</p>` : ""}
-      ${agruparFamilias(c.platos, U).map(e => e.familia
+      ${(agrupar ? agruparFamilias(c.platos, U) : c.platos.map(p => ({ p }))).map(e => e.familia
         ? familiaHTML(e.familia, c, U, !todosFuertes && !notaEnGrupo)
         : platoHTML(e.p, c, U, false, !todosFuertes && !notaEnGrupo)).join("")}
     </article>`;
@@ -350,6 +343,11 @@
   function pintarContacto(C, tx) {
     const h = C.hotel;
     if (!h) return;
+    const hotel = h.nombre || "Hotel Frontera", restaurante = h.restaurante || "Las Margaritas";
+    document.querySelectorAll('[data-hotel="nombre"]').forEach(el => el.textContent = hotel);
+    document.querySelectorAll('[data-hotel="restaurante"]').forEach(el => el.textContent = restaurante);
+    document.title = `${hotel} · Restaurante ${restaurante}`;
+    $(".logo img").alt = hotel;
     const tels = h.telefonos || [];
     if (h.lema) document.querySelectorAll('[data-hotel="lema"]').forEach(el => el.textContent = tx(h.lema));
     document.querySelectorAll('[data-hotel="direccion"]').forEach(el => { el.textContent = tx(h.direccion); });
@@ -367,45 +365,66 @@
   function iniciarMenu(D, U, vivo) {
     const ids = Object.keys(D.momentos || {});
     const pest = $("#pestanas"), carta = $("#carta"), hor = $("#horario");
+    const buscar = $("#buscar-plato"), selector = $("#categoria-menu");
     const nombre = id => W.momentos[id] || (id.charAt(0).toUpperCase() + id.slice(1));
     const abiertosPorMomento = new Map();
-    let momentoActual;
+    const filtros = { categoria: "", recomendados: false, disponibles: false };
+    let momentoActual, consulta = "", relojBusqueda;
+
+    // Solo se indexan categorías publicadas en algún momento del menú.
+    // Los mismos platos pueden pertenecer a varios momentos sin duplicar resultados.
+    const categoriasPorMomento = new Map(ids.map(id => [id, new Set(D.momentos[id].grupos.flatMap(g => g.cats))]));
+    const categoriasPublicadas = new Set([...categoriasPorMomento.values()].flatMap(cats => [...cats]));
+    const catalogo = Object.entries(D.categorias).filter(([cid, c]) => categoriasPublicadas.has(cid) && c.platos.length);
+    const momentosDeCategoria = cid => ids.filter(id => categoriasPorMomento.get(id).has(cid)).map(nombre).join(" · ");
+    const notasDeCategoria = (cid, global) => [...new Set((global ? ids : [momentoActual]).flatMap(id => D.momentos[id].grupos
+      .filter(g => g.cats.includes(cid) && g.nota).map(g => U.tx(g.nota))).filter(Boolean))];
+    const textoBusqueda = v => typeof v === "object" && !Array.isArray(v) && v !== null ? Object.values(v).join(" ") : U.tx(v);
+    const indice = new Map(catalogo.flatMap(([cid, c]) => c.platos.map(p => [p.id, sinAcentos([
+      textoBusqueda(p.n), textoBusqueda(p.d), textoBusqueda(c.nombre), textoBusqueda(c.resumen),
+      ...(p.op || []).map(textoBusqueda),
+    ].join(" "))])));
+    const esRecomendado = p => !p.agotado && (p.t || []).some(t => W.recomendaciones.etiquetas.includes(t));
+    const hayFiltros = () => Boolean(consulta || filtros.categoria || filtros.recomendados || filtros.disponibles);
+
+    function recordarSecciones() {
+      const secciones = [...carta.querySelectorAll(".seccion-menu")];
+      if (momentoActual && secciones.length) abiertosPorMomento.set(momentoActual, new Set(secciones.filter(s => s.open).map(s => s.id)));
+    }
 
     function actualizarControl() {
       const boton = carta.querySelector("[data-expandir-carta]");
       if (!boton) return;
-      const secciones = [...carta.querySelectorAll(".seccion-menu")];
-      const accion = secciones.every(s => s.open) ? "cerrar" : "abrir";
-      // No se reemplaza el texto ya traducido cuando la acción no ha cambiado.
+      const cerrar = [...carta.querySelectorAll(".seccion-menu")].every(s => s.open);
+      const accion = cerrar ? "cerrar" : "abrir";
       if (boton.dataset.accion !== accion) {
         boton.dataset.accion = accion;
-        boton.textContent = accion === "cerrar" ? W.textos.cerrarSecciones : W.textos.verCartaCompleta;
+        boton.textContent = cerrar ? W.textos.cerrarSecciones : W.textos.verCartaCompleta;
       }
     }
 
     function abrirDestinoHash(enfocar = false) {
-      let id;
-      try { id = decodeURIComponent(location.hash.slice(1)); } catch { return; }
-      const destino = document.getElementById(id);
+      let ancla;
+      try { ancla = decodeURIComponent(location.hash.slice(1)); } catch { return; }
+      const destino = document.getElementById(ancla);
       if (!destino || !carta.contains(destino)) return;
       const seccion = destino.closest(".seccion-menu");
-      if (!seccion) return;
-      seccion.open = true;
+      if (seccion) seccion.open = true;
       actualizarControl();
       const desplazar = () => {
-        const tapa = cabecera.getBoundingClientRect().height + barraMenu.getBoundingClientRect().height + 8;
-        window.scrollTo({ top: seccion.getBoundingClientRect().top + window.scrollY - tapa, behavior: "instant" });
+        const tapa = cabecera.getBoundingClientRect().height + barraMenu.getBoundingClientRect().height + 12;
+        window.scrollTo({ top: destino.getBoundingClientRect().top + window.scrollY - tapa, behavior: "instant" });
       };
       requestAnimationFrame(() => {
         desplazar();
-        if (enfocar) seccion.querySelector("summary").focus({ preventScroll: true });
+        if (enfocar) (seccion?.querySelector("summary") || carta).focus({ preventScroll: true });
       });
-      // Al abrir la web con #ancla, fuentes e imágenes pueden mover la página después.
       if (document.readyState !== "complete") window.addEventListener("load", () => requestAnimationFrame(desplazar), { once: true });
       document.fonts?.ready.then(() => requestAnimationFrame(desplazar));
     }
 
     carta.addEventListener("click", e => {
+      if (e.target.closest("[data-limpiar-filtros]")) { restablecer(); buscar.focus({ preventScroll: true }); return; }
       if (!e.target.closest("[data-expandir-carta]")) return;
       const secciones = [...carta.querySelectorAll(".seccion-menu")];
       const abrir = !secciones.every(s => s.open);
@@ -416,7 +435,6 @@
       if (e.target.matches(".seccion-menu")) actualizarControl();
     }, true);
     window.addEventListener("hashchange", () => abrirDestinoHash(true));
-    // Una foto ausente o rota deja la carta de texto, sin huecos ni ilustraciones.
     $("#menu-rest").addEventListener("error", e => {
       const img = e.target;
       if (!(img instanceof HTMLImageElement) || !img.hasAttribute("data-menu-foto")) return;
@@ -425,95 +443,139 @@
       caja.remove();
     }, true);
 
-    // Horarios en el pie
     const hhmm = h => /^\d:/.test(h || "") ? "0" + h : (h || "");
     const horario = Object.fromEntries(Object.entries(U.C.horario || {}).map(([k, v]) => [k, { desde: hhmm(v.desde), hasta: hhmm(v.hasta) }]));
     const lineas = ids.filter(id => horario[id]).map(id => `<li>${esc(fmt(W.textos.horarioLinea, { nombre: nombre(id), desde: U.hora(horario[id].desde), hasta: U.hora(horario[id].hasta) }))}</li>`);
     if (lineas.length && $('[data-hotel="horarios"]')) $('[data-hotel="horarios"]').innerHTML = lineas.join("");
-
     $("#nota-precios").textContent = fmt(W.textos.sinIva, {
       moneda: U.C.moneda === "C$" || !U.C.moneda ? W.textos.monedaLocal : U.C.moneda,
       iva: Math.round((U.C.iva ?? 0.15) * 100) + " %",
     });
-
     pest.innerHTML = ids.map(id => `<button class="trazo" type="button" role="tab" id="tab-${esc(id)}" data-id="${esc(id)}" aria-selected="false" aria-controls="carta" tabindex="-1">${esc(nombre(id))}</button>`).join("");
+    $("#buscador-menu").hidden = false;
+    $("#explorar-carta").hidden = false;
 
+    function pintarCarta() {
+      recordarSecciones();
+      const buscando = Boolean(consulta);
+      const base = buscando ? catalogo : catalogo.filter(([cid]) => categoriasPorMomento.get(momentoActual).has(cid));
+      if (!base.some(([cid]) => cid === filtros.categoria)) filtros.categoria = "";
+      // Las opciones y los conteos salen de la misma carta que edita Python.
+      const claveSelector = base.map(([cid, c]) => cid + ":" + U.tx(c.nombre)).join("|");
+      if (selector.dataset.opciones !== claveSelector) {
+        selector.innerHTML = `<option value="">${esc(W.textos.todasCategorias)}</option>` + base.map(([cid, c]) => `<option value="${esc(cid)}">${esc(U.tx(c.nombre))}</option>`).join("");
+        selector.dataset.opciones = claveSelector;
+      }
+      selector.value = filtros.categoria;
+      const palabras = sinAcentos(consulta).split(/\s+/).filter(Boolean);
+      const coincide = p => palabras.every(palabra => indice.get(p.id).includes(palabra))
+        && (!filtros.recomendados || esRecomendado(p)) && (!filtros.disponibles || !p.agotado);
+      const categorias = base.filter(([cid]) => !filtros.categoria || cid === filtros.categoria)
+        .map(([cid, c]) => [cid, { ...c, platos: c.platos.filter(coincide) }]).filter(([, c]) => c.platos.length);
+      const entradas = categorias.flatMap(([cid, c]) => c.platos.map(p => ({ cid, c, p })));
+      const total = new Set(entradas.map(({ p }) => p.id)).size;
+      const filtrando = hayFiltros();
+      $("#estado-carta").textContent = fmt(total === 1 ? W.textos.resultado : W.textos.resultados, {
+        n: total, contexto: buscando ? W.textos.todaLaCarta : nombre(momentoActual),
+      });
+      $("#restablecer-menu").hidden = !filtrando;
+      $("#limpiar-busqueda").hidden = !buscar.value;
+      document.querySelectorAll("[data-filtro]").forEach(b => b.setAttribute("aria-pressed", String(filtros[b.dataset.filtro])));
+      const h = horario[momentoActual];
+      hor.textContent = buscando ? W.textos.todaLaCarta + " · " + ids.map(nombre).join(" · ")
+        : h ? fmt(W.textos.horario, { desde: U.hora(h.desde), hasta: U.hora(h.hasta) }) : "";
+      // En búsqueda los resultados abarcan todos los momentos; el panel lo anuncia.
+      carta.setAttribute("role", buscando ? "region" : "tabpanel");
+      if (buscando) { carta.removeAttribute("aria-labelledby"); carta.setAttribute("aria-label", W.textos.todaLaCarta); }
+      else { carta.setAttribute("aria-labelledby", "tab-" + momentoActual); carta.removeAttribute("aria-label"); }
+
+      if (!total) {
+        carta.innerHTML = `<div class="sin-resultados"><h3>${esc(W.textos.sinResultados)}</h3><p>${esc(W.textos.ayudaSinResultados)}</p><button class="btn claro" type="button" data-limpiar-filtros>${esc(W.textos.limpiarFiltros)}</button></div>`;
+        return;
+      }
+      const hayFotosReferencia = entradas.some(({ p }) => Boolean(p.foto && p.fotoReferencia) || Boolean(W.imagenes.platos?.[p.id]?.fotoReferencia))
+        || categorias.some(([cid, c]) => Boolean(c.foto && c.fotoReferencia) || Boolean(W.imagenes.categorias[cid]?.fotoReferencia));
+      const avisoFotos = hayFotosReferencia ? `<p class="aviso-fotos">${esc(W.textos.avisoFotos)}</p>` : "";
+      if (filtrando) {
+        // Los resultados están abiertos y no se repiten como recomendaciones.
+        carta.innerHTML = avisoFotos + `<div class="cats resultados-carta">${categorias.map(([cid, c]) => {
+          const notas = notasDeCategoria(cid, buscando);
+          return categoriaHTML(cid, c, U, Boolean(notas.length), {
+            agrupar: !buscando, contexto: buscando ? momentosDeCategoria(cid) : "", notas,
+          });
+        }).join("")}</div>`;
+        return;
+      }
+      const recomendados = seleccionarRecomendados(entradas);
+      const porId = new Map(categorias);
+      const grupos = D.momentos[momentoActual].grupos.map((g, i) => ({
+        ...g, ancla: `carta-grupo-${i}`, categorias: g.cats.filter(cid => porId.has(cid)).map(cid => [cid, porId.get(cid)]),
+      })).filter(g => g.categorias.length);
+      const abiertos = abiertosPorMomento.get(momentoActual) ?? new Set([grupos[0]?.ancla]);
+      carta.innerHTML = avisoFotos + `
+        ${recomendados.length ? `<div class="seleccion-carta" id="carta-recomendados"><div class="cabecera-seleccion"><h3>${esc(W.textos.recomendados)}</h3><p>${esc(W.textos.notaRecomendados)}</p></div><div class="especiales">${recomendados.map(({ p, c }) => platoHTML(p, c, U, true)).join("")}</div></div>` : ""}
+        <div class="guia-carta"><button class="control-carta" type="button" data-expandir-carta aria-controls="carta-secciones">${esc(W.textos.verCartaCompleta)}</button></div>
+        <div id="carta-secciones" class="carta-secciones">
+          ${grupos.map(g => `<details class="seccion-menu" id="${esc(g.ancla)}"${abiertos.has(g.ancla) ? " open" : ""}>
+            <summary><h3 class="seccion-titulo">
+              <span class="seccion-textos"><span class="seccion-nombre">${esc(U.tx(g.n))}</span><span class="seccion-pista">${esc(g.categorias.map(([, c]) => U.tx(c.nombre)).join(" · "))}</span></span>
+              <span class="seccion-cantidad">${esc(fmt(g.categorias.reduce((n, [, c]) => n + c.platos.length, 0) === 1 ? W.textos.unaOpcion : W.textos.numeroOpciones, { n: g.categorias.reduce((n, [, c]) => n + c.platos.length, 0) }))}</span>
+              <span class="seccion-indicador" aria-hidden="true"></span>
+            </h3></summary><div class="contenido-seccion">${g.nota ? `<p class="nota-seccion">${esc(U.tx(g.nota))}</p>` : ""}<div class="cats">${g.categorias.map(([cid, c]) => categoriaHTML(cid, c, U, Boolean(g.nota))).join("")}</div></div>
+          </details>`).join("")}
+        </div>`;
+      actualizarControl();
+    }
+
+    function aplicarBusqueda() {
+      clearTimeout(relojBusqueda);
+      consulta = buscar.value.trim();
+      pintarCarta();
+    }
+    function restablecer() {
+      clearTimeout(relojBusqueda);
+      consulta = buscar.value = "";
+      Object.assign(filtros, { categoria: "", recomendados: false, disponibles: false });
+      pintarCarta();
+    }
     function mostrar(id, enfocar) {
-      const m = D.momentos[id];
-      if (!m) return;
-      if (momentoActual) abiertosPorMomento.set(momentoActual, new Set([...carta.querySelectorAll(".seccion-menu[open]")].map(s => s.id)));
+      if (!D.momentos[id]) return;
+      recordarSecciones();
       momentoActual = id;
+      // Elegir un momento termina la búsqueda global y conserva los filtros útiles.
+      clearTimeout(relojBusqueda);
+      consulta = buscar.value = "";
       pest.querySelectorAll("button").forEach(b => {
         const sel = b.dataset.id === id;
         b.setAttribute("aria-selected", String(sel));
         b.tabIndex = sel ? 0 : -1;
-        if (sel) {
-          if (enfocar) b.focus({ preventScroll: true });
-        }
+        if (sel && enfocar) b.focus({ preventScroll: true });
       });
-      carta.setAttribute("aria-labelledby", "tab-" + id);
-      carta.removeAttribute("aria-label");
-      const h = horario[id];
-      hor.textContent = h ? fmt(W.textos.horario, { desde: U.hora(h.desde), hasta: U.hora(h.hasta) }) : "";
-      const grupos = (m.grupos || []).map((g, i) => ({
-        ...g, ancla: `carta-grupo-${i}`,
-        categorias: (g.cats || []).map(cid => [cid, D.categorias[cid]]).filter(([, c]) => c?.platos?.length),
-      })).filter(g => g.categorias.length);
-      const categorias = [...new Map(grupos.flatMap(g => g.categorias)).entries()];
-      const entradas = categorias.flatMap(([cid, c]) => c.platos.map(p => ({ cid, c, p })));
-      const recomendados = seleccionarRecomendados(entradas);
-      const compartir = entradas.filter(({ p }) => !p.agotado && ((p.t || []).some(t => W.compartir.etiquetas.includes(t)) || (W.compartir.ids || []).includes(p.id))).slice(0, W.compartir.maximo);
-      const secciones = [
-        ...(recomendados.length ? [{
-          ancla: "carta-recomendados", n: W.textos.recomendados,
-          resumen: W.textos.notaRecomendados, cantidad: recomendados.length,
-          contenido: `<div class="especiales">${recomendados.map(({ p, c }) => platoHTML(p, c, U, true)).join("")}</div>`,
-        }] : []),
-        ...(compartir.length ? [{
-          ancla: "carta-compartir", n: W.textos.compartir,
-          resumen: W.textos.notaCompartir, cantidad: compartir.length,
-          contenido: `<div class="compartir-grid">${compartir.map(({ p, c }) => `<div class="cat trazo">${platoHTML(p, c, U)}</div>`).join("")}</div>`,
-        }] : []),
-        ...grupos.map(g => ({
-          ...g,
-          resumen: g.categorias.map(([, c]) => U.tx(c.nombre)).join(" · "),
-          cantidad: g.categorias.reduce((n, [, c]) => n + c.platos.length, 0),
-          contenido: `${g.nota ? `<p class="nota-seccion">${esc(U.tx(g.nota))}</p>` : ""}<div class="cats">${g.categorias.map(([cid, c]) => categoriaHTML(cid, c, U, Boolean(g.nota))).join("")}</div>`,
-        })),
-      ];
-      const abiertos = abiertosPorMomento.get(id) || new Set();
-      const hayFotosReferencia = entradas.some(({ p }) => Boolean(p.foto && p.fotoReferencia) || Boolean(W.imagenes.platos?.[p.id]?.fotoReferencia))
-        || categorias.some(([cid, c]) => Boolean(c.foto && c.fotoReferencia) || Boolean(W.imagenes.categorias[cid]?.fotoReferencia));
-      carta.innerHTML = entradas.length ? `
-        ${hayFotosReferencia ? `<p class="aviso-fotos">${esc(W.textos.avisoFotos)}</p>` : ""}
-        <div class="guia-carta">
-          <button class="control-carta" type="button" data-expandir-carta aria-controls="carta-secciones">${esc(W.textos.verCartaCompleta)}</button>
-        </div>
-        <div id="carta-secciones" class="carta-secciones">
-          ${secciones.map(s => `<details class="seccion-menu" id="${esc(s.ancla)}"${abiertos.has(s.ancla) ? " open" : ""}>
-            <summary><h3 class="seccion-titulo">
-              <span class="seccion-textos"><span class="seccion-nombre">${esc(U.tx(s.n))}</span><span class="seccion-pista">${esc(U.tx(s.resumen))}</span></span>
-              <span class="seccion-cantidad">${esc(fmt(s.cantidad === 1 ? W.textos.unaOpcion : W.textos.numeroOpciones, { n: s.cantidad }))}</span>
-              <span class="seccion-indicador" aria-hidden="true"></span>
-            </h3></summary>
-            <div class="contenido-seccion">${s.contenido}</div>
-          </details>`).join("")}
-        </div>
-      ` : `<p class="aviso">${esc(W.textos.sinPlatos)}</p>`;
-      actualizarControl();
+      // El DOM anterior pertenece a otra pestaña; se recuerda antes de cambiarla.
+      carta.replaceChildren();
+      pintarCarta();
     }
-
+    buscar.addEventListener("input", () => {
+      clearTimeout(relojBusqueda);
+      $("#limpiar-busqueda").hidden = !buscar.value;
+      relojBusqueda = setTimeout(aplicarBusqueda, 180);
+    });
+    $("#buscador-menu").addEventListener("submit", e => { e.preventDefault(); aplicarBusqueda(); });
+    $("#limpiar-busqueda").addEventListener("click", () => { buscar.value = ""; aplicarBusqueda(); buscar.focus({ preventScroll: true }); });
+    selector.addEventListener("change", () => { filtros.categoria = selector.value; pintarCarta(); });
+    document.querySelectorAll("[data-filtro]").forEach(b => b.addEventListener("click", () => {
+      filtros[b.dataset.filtro] = !filtros[b.dataset.filtro]; pintarCarta();
+    }));
+    $("#restablecer-menu").addEventListener("click", () => { restablecer(); buscar.focus({ preventScroll: true }); });
     pest.addEventListener("click", e => { const b = e.target.closest("button"); if (b) mostrar(b.dataset.id); });
     pest.addEventListener("keydown", e => {
       const i = ids.indexOf(document.activeElement?.dataset?.id);
       if (i < 0) return;
       const n = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: ids.length - 1 }[e.key];
       if (n === undefined) return;
-      e.preventDefault();
-      mostrar(ids[(n + ids.length) % ids.length], true);
+      e.preventDefault(); mostrar(ids[(n + ids.length) % ids.length], true);
     });
 
-    // Pestaña inicial según la hora del restaurante
     let ahora = "";
     try {
       ahora = new Date().toLocaleTimeString("en-GB", { timeZone: U.C.zonaHoraria || "America/Managua", hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
@@ -536,6 +598,10 @@
   }).catch(e => {
     console.error("No se pudo mostrar la carta.", e);
     $("#pestanas").replaceChildren();
+    $("#buscador-menu").hidden = true;
+    $("#explorar-carta").hidden = true;
+    $("#restablecer-menu").hidden = true;
+    $("#estado-carta").textContent = "";
     $("#carta").removeAttribute("aria-labelledby");
     $("#carta").setAttribute("aria-label", "Carta no disponible");
     $("#carta").innerHTML = `<p class="aviso" role="status">${esc(fmt(W.textos.sinMenu, { tel: "2732-2668" }))} <a href="tel:+50527322668">Llamar al restaurante</a></p>`;

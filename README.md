@@ -59,6 +59,12 @@ Todo el contenido se mantiene en español. El selector carga Google Translate al
 
 ## Organización de la carta
 
-Cada momento muestra secciones desplegables cerradas inicialmente, con sus categorías y el número real de opciones. Se pueden abrir varias para comparar o usar «Ver menú completo». Al abrir una sección aparecen todos sus platos, sin otro nivel de desplegables. La apertura se recuerda al alternar momentos durante la visita.
+La identidad es Hotel Frontera y Restaurante Las Margaritas. Los nombres se pueden cambiar desde el editor de Python mediante `config.hotel.nombre` y `config.hotel.restaurante`, junto con el resto de los datos del menú.
 
-El diseño aplica la evidencia sobre la complejidad de elección y el efecto de las categorías: [Chernev et al., 2015](https://doi.org/10.1016/j.jcps.2014.08.002) y [Mogilner et al., 2008](https://doi.org/10.1086/588698). Los acordeones son una decisión de interfaz basada en esos principios; estos estudios no prueban que este diseño concreto reduzca el tiempo de pedido. La sobrecarga depende del contexto y no existe un límite universal de platos que deba imponerse a la carta: [Scheibehenne et al., 2010](https://doi.org/10.1086/651235).
+La carta conserva las pestañas por momento y añade una búsqueda global por nombre del plato, ingredientes, opciones y categoría, sin distinguir tildes. Al buscar también aparecen coincidencias de otros momentos, con su contexto visible. El selector «Todas las categorías» y los filtros «Recomendados» (etiquetas `casa` o `popular`) y «Disponibles» permiten acotar los resultados.
+
+Cada momento presenta recomendaciones breves visibles sin desplegarlas y secciones desplegables: las categorías iniciales se abren, y las restantes secciones se pueden abrir para comparar o mediante «Ver menú completo». Los ingredientes, las presentaciones y sus precios permanecen visibles; las opciones de preparación de un plato se consultan en su desplegable. La apertura de las secciones se recuerda durante la visita.
+
+Los precios se presentan como `150` o `190`, sin símbolo monetario ni centavos en cada plato; una leyenda general informa la moneda y conserva el aviso «No incluyen IVA (15 %) ni propina». Los importes enteros siguen siendo editables desde Python. Platos, precios, categorías, momentos, etiquetas, disponibilidad, opciones y fotos proceden del menú de la API o de `menu-datos.js` como respaldo.
+
+Las decisiones combinan evidencia sobre presentación de precios y dificultad de elección con criterios de interacción. Los estudios no prueban que esta interfaz concreta aumente las ventas ni establecen un límite universal de platos. La [investigación y sus límites](docs/investigacion-menu.md) distinguen los hallazgos científicos de las decisiones de diseño.

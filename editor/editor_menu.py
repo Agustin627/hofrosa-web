@@ -351,6 +351,11 @@ def es_numero(v):
     return isinstance(v, (int, float)) and not isinstance(v, bool) and v >= 0 and v == v and v != float("inf")
 
 
+def es_precio_entero(v):
+    """Un importe exacto, sin redondear los centavos de los datos."""
+    return es_numero(v) and v % 1 == 0
+
+
 def validar(d):
     errores = []
     if not isinstance(d, dict):
@@ -400,11 +405,11 @@ def validar(d):
             pres = p.get("pres")
             if pres is not None:
                 if not isinstance(pres, list) or not pres or not all(
-                        isinstance(x, list) and len(x) == 2 and isinstance(x[0], str) and x[0].strip() and es_numero(x[1])
+                        isinstance(x, list) and len(x) == 2 and isinstance(x[0], str) and x[0].strip() and es_precio_entero(x[1])
                         for x in pres):
-                    errores.append(f"Las presentaciones de {donde} necesitan nombre y precio.")
-            elif not es_numero(p.get("p")):
-                errores.append(f"Falta el precio de {donde}.")
+                    errores.append(f"Las presentaciones de {donde} necesitan nombre y precio entero, sin centavos (p. ej. 150).")
+            elif not es_precio_entero(p.get("p")):
+                errores.append(f"El precio de {donde} debe ser un número entero, sin centavos (p. ej. 150).")
             if not isinstance(p.get("t", []), list) or not all(isinstance(t, str) for t in p.get("t", [])):
                 errores.append(f"Etiquetas inválidas en {donde}.")
             if "op" in p and (not isinstance(p["op"], list) or not all(es_texto(o) and texto_es(o).strip() for o in p["op"])):
@@ -471,6 +476,9 @@ def validar(d):
             if not isinstance(hotel, dict):
                 errores.append("Los datos de contacto no son válidos.")
             else:
+                for campo in ("nombre", "restaurante"):
+                    if campo in hotel and not (isinstance(hotel[campo], str) and hotel[campo].strip()):
+                        errores.append(f"«{campo}» debe ser un texto con nombre en los datos del hotel.")
                 telefonos = hotel.get("telefonos", [])
                 if not isinstance(telefonos, list):
                     errores.append("Los teléfonos deben ser una lista.")
