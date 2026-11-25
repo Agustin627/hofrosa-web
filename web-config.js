@@ -50,7 +50,7 @@ window.WEB = {
     agotado: "Agotado",
     incluyeDesayuno: "Incluye una bebida a elegir: {lista}.",
     incluyeFuerte: "Acompañado de ensalada, arroz y papas.",
-    sinIva: "Precios en {moneda}. No incluyen IVA ({iva}) ni propina.",
+    sinIva: "Precios en {moneda}. No incluyen IVA ni propina.",
     horario: "Servimos de {desde} a {hasta}",
     sinMenu: "No se pudo cargar el menú. Llámenos al {tel}.",
     reservar: "Reservar: {tel}",

@@ -449,7 +449,6 @@
     if (lineas.length && $('[data-hotel="horarios"]')) $('[data-hotel="horarios"]').innerHTML = lineas.join("");
     $("#nota-precios").textContent = fmt(W.textos.sinIva, {
       moneda: U.C.moneda === "C$" || !U.C.moneda ? W.textos.monedaLocal : U.C.moneda,
-      iva: Math.round((U.C.iva ?? 0.15) * 100) + " %",
     });
     pest.innerHTML = ids.map(id => `<button class="trazo" type="button" role="tab" id="tab-${esc(id)}" data-id="${esc(id)}" aria-selected="false" aria-controls="carta" tabindex="-1">${esc(nombre(id))}</button>`).join("");
     $("#buscador-menu").hidden = false;
@@ -468,7 +467,10 @@
       }
       selector.value = filtros.categoria;
       const palabras = sinAcentos(consulta).split(/\s+/).filter(Boolean);
-      const coincide = p => palabras.every(palabra => indice.get(p.id).includes(palabra))
+      // «Té» debe coincidir con la palabra completa, no con «Frontera».
+      const coincide = p => palabras.every(palabra => palabra.length <= 2
+        ? indice.get(p.id).split(/[^\p{L}\p{N}]+/u).includes(palabra)
+        : indice.get(p.id).includes(palabra))
         && (!filtros.recomendados || esRecomendado(p)) && (!filtros.disponibles || !p.agotado);
       const categorias = base.filter(([cid]) => !filtros.categoria || cid === filtros.categoria)
         .map(([cid, c]) => [cid, { ...c, platos: c.platos.filter(coincide) }]).filter(([, c]) => c.platos.length);

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="titulo">
+  <title id="titulo">Hotel Frontera</title>
+  <rect width="64" height="64" rx="10" fill="#fcfaf5"/>
+  <path fill="#800000" stroke="#800000" stroke-width="4" stroke-linejoin="round"
+    transform="translate(5 22) scale(.24)"
+    d="M2 54
+       C24 65 42 72 59 70
+       C83 68 105 43 128 13
+       C135 4 141 2 147 2
+       C165 2 177 28 193 56
+       C198 66 202 73 207 68
+       C212 64 217 57 222 51
+       L222 61
+       C216 71 211 80 204 79
+       C198 80 193 71 186 59
+       C173 33 161 10 147 10
+       C140 9 137 13 130 22
+       C111 48 87 76 65 79
+       C42 84 18 73 2 56Z"/>
+</svg>

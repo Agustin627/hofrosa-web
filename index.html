@@ -6,11 +6,14 @@
 <meta name="theme-color" content="#233b32">
 <meta name="description" content="Hotel Frontera y Restaurante Las Margaritas en Ocotal, Nicaragua. Explore la carta, conozca el hotel y consulte por su reserva.">
 <title>Hotel Frontera · Restaurante Las Margaritas</title>
-<link rel="icon" type="image/svg+xml" href="favicon.svg?v=frontera">
+<link rel="icon" href="favicon-frontera.ico" sizes="16x16 32x32 48x48">
+<link rel="icon" type="image/png" href="favicon-frontera-32.png" sizes="32x32">
+<link rel="icon" type="image/svg+xml" href="favicon-frontera.svg" sizes="any">
+<link rel="apple-touch-icon" href="apple-touch-icon-frontera.png" sizes="180x180">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20261124-menu-interactivo">
+<link rel="stylesheet" href="styles.css?v=20261124-231436">
 </head>
 <body>
 <a class="saltar-contenido" href="#contenido">Saltar al contenido</a>
@@ -67,11 +70,12 @@
       <div class="carrusel" role="region" aria-roledescription="carrusel" aria-label="Fotos del hotel">
         <div class="diapositivas" aria-live="off">
           <figure class="diapositiva activa"><img src="assets/imagenes/el-hotel-6.webp" alt="Piscina del Hotel Frontera al atardecer" width="1142" height="580" fetchpriority="high"></figure>
-          <figure class="diapositiva"><img data-src="assets/imagenes/galeria-2.webp" alt="Fachada del hotel" width="1142" height="580"></figure>
-          <figure class="diapositiva"><img data-src="assets/imagenes/el-hotel-1.webp" alt="Entrada y jardín del hotel" width="1142" height="580"></figure>
-          <figure class="diapositiva"><img data-src="assets/imagenes/el-hotel-2.webp" alt="Pasillo de las habitaciones" width="1142" height="580"></figure>
-          <figure class="diapositiva"><img data-src="assets/imagenes/galeria-3.webp" alt="Salón de eventos" width="1142" height="580"></figure>
-          <figure class="diapositiva"><img data-src="assets/imagenes/el-hotel-3.webp" alt="Bar del hotel" width="1142" height="580"></figure>
+          <figure class="diapositiva"><img data-src="assets/imagenes/carrusel-0afd21ed.jpg" alt="Parqueo y habitaciones del Hotel Frontera entre palmeras" width="1000" height="747"></figure>
+          <figure class="diapositiva"><img data-src="assets/imagenes/carrusel-043334ad.jpg" alt="Terraza y barra junto a la piscina del Hotel Frontera" width="1000" height="685"></figure>
+          <figure class="diapositiva"><img data-src="assets/imagenes/carrusel-0f7cbb1a.jpg" alt="Piscina y patio del hotel con montañas al fondo" width="1000" height="750"></figure>
+          <figure class="diapositiva"><img data-src="assets/imagenes/carrusel-043332f4.jpg" alt="Piscina del Hotel Frontera frente a la terraza" width="1000" height="563"></figure>
+          <figure class="diapositiva"><img data-src="assets/imagenes/carrusel-04333485.jpg" alt="Barra del hotel con sillas de mimbre y revestimiento de piedra" width="1000" height="1500"></figure>
+          <figure class="diapositiva"><img data-src="assets/imagenes/carrusel-0afd21b9.jpg" alt="Pasillo cubierto con plantas y vista a la piscina del hotel" width="1000" height="747"></figure>
         </div>
         <div class="carrusel-controles" hidden>
           <button class="carrusel-pausa" type="button" aria-label="Pausar las fotos"><span aria-hidden="true"></span></button>
@@ -144,8 +148,18 @@
       <p class="identidad-menu">Restaurante · <span class="notranslate" translate="no" data-hotel="nombre">Hotel Frontera</span></p>
       <h2 class="titulo-sec notranslate" translate="no" data-hotel="restaurante">Las Margaritas</h2>
       <p class="sub-sec" id="menu-sub">Algo rico para cada momento. Explore la carta o encuentre su plato.</p>
+      <aside class="aviso-precios" aria-label="Precios e impuestos">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7v.5"/></svg>
+        <p class="nota-precios" id="nota-precios">Precios en córdobas. No incluyen IVA ni propina.</p>
+      </aside>
       <div class="barra-menu">
-        <div class="pestanas" role="tablist" aria-label="Momentos del día" id="pestanas"></div>
+        <div class="momentos-carta">
+          <div class="pestanas" role="tablist" aria-label="Momentos del día" id="pestanas"></div>
+          <div class="horario-contexto">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+            <p class="horario" id="horario" aria-live="polite"></p>
+          </div>
+        </div>
         <form class="buscar-menu" id="buscador-menu" role="search" hidden>
           <label for="buscar-plato">Buscar en toda la carta</label>
           <div class="campo-busqueda">
@@ -155,8 +169,6 @@
           </div>
         </form>
       </div>
-      <p class="horario" id="horario" aria-live="polite"></p>
-      <p class="nota-precios" id="nota-precios"></p>
       <div class="explorar-carta" id="explorar-carta" hidden>
         <div class="selector-categoria">
           <label for="categoria-menu">Categoría</label>
@@ -219,9 +231,9 @@
   </div>
 </footer>
 
-<script src="web-config.js?v=20261124-menu-interactivo"></script>
-<script src="menu-datos.js?v=20261124-menu-interactivo"></script>
-<script src="idiomas.js?v=20261124-menu-interactivo"></script>
-<script src="app.js?v=20261124-menu-interactivo"></script>
+<script src="web-config.js?v=20261124-231436"></script>
+<script src="menu-datos.js?v=20261124-231436"></script>
+<script src="idiomas.js?v=20261124-231436"></script>
+<script src="app.js?v=20261124-231436"></script>
 </body>
 </html>

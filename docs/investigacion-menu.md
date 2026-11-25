@@ -70,7 +70,7 @@ Estas son decisiones de producto informadas por los principios anteriores, no ef
 - Filtros con estado visible: “Recomendados” usa las etiquetas existentes `casa` o `popular`; “Disponibles” excluye platos marcados como agotados. La interfaz no convierte esas etiquetas en cifras de ventas ni reseñas.
 - Coincidencias de otros momentos acompañadas de su contexto. Una búsqueda vacía permite volver a explorar por momento.
 - Ingredientes, presentaciones y sus precios visibles; opciones de preparación desplegables; categorías iniciales abiertas y posibilidad de ampliar el resto de la carta. Los recomendados breves aparecen directamente, sin acordeón.
-- Precios enteros sin símbolo ni centavos en cada plato y una leyenda general de moneda. Se conserva el aviso “No incluyen IVA (15 %) ni propina”; la refactorización no cambia la política de impuestos.
+- Precios enteros sin símbolo ni centavos en cada plato y una leyenda general de moneda. El aviso “No incluyen IVA ni propina” se muestra destacado bajo el título de la carta, separado del horario y sin porcentaje; el valor de impuestos se conserva para los cálculos.
 - Identidad editable: `config.hotel.nombre` para Hotel Frontera y `config.hotel.restaurante` para Restaurante Las Margaritas.
 - Una misma fuente de contenido: menú de la API cuando está disponible y `menu-datos.js` como respaldo. El editor de Python mantiene nombres, precios, descripciones, categorías, momentos, etiquetas, disponibilidad, opciones y fotos.
 

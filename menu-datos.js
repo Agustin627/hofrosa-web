@@ -2,7 +2,7 @@
    La web la usa si no puede leer el menú en vivo del servidor.
    Se puede editar con: python3 editor/editor_menu.py */
 window.MENU_RESPALDO = {
- "version": 8,
+ "version": 10,
  "config": {
   "zonaHoraria": "America/Managua",
   "horario": {
@@ -42,12 +42,14 @@ window.MENU_RESPALDO = {
    "web": "https://www.hotelfronteraocotal.com",
    "webTexto": "hotelfronteraocotal.com",
    "correo": "hotelfronterasa@yahoo.com",
-   "lema": "¡Su límite para descansar!"
+   "lema": "¡Su límite para descansar!",
+   "nombre": "Hotel Frontera",
+   "restaurante": "Las Margaritas"
   },
   "bebidasDesayuno": [
    "jugo-naranja",
-   "te-helado",
-   "cafe"
+   "cafe",
+   "te"
   ]
  },
  "categorias": {
@@ -111,7 +113,7 @@ window.MENU_RESPALDO = {
       "es": "Huevos rancheros"
      },
      "d": {
-      "es": "Dos huevos en salsa ranchera, frijoles molidos y tostadas."
+      "es": "Dos huevos con salsa, frijoles molidos y tostadas."
      }
     },
     {
@@ -318,7 +320,7 @@ window.MENU_RESPALDO = {
      "id": "cafe",
      "p": 30,
      "n": {
-      "es": "Café negro"
+      "es": "Café"
      },
      "d": {
       "es": "Recién hecho."
@@ -392,23 +394,10 @@ window.MENU_RESPALDO = {
      }
     },
     {
-     "id": "te-helado",
-     "p": 55,
-     "n": {
-      "es": "Té helado"
-     },
-     "d": {
-      "es": "Té frío con hielo y limón."
-     }
-    },
-    {
      "id": "jamaica",
      "p": 70,
      "n": {
-      "es": "Rosa de Jamaica"
-     },
-     "d": {
-      "es": "Refresco de flor de Jamaica."
+      "es": "Té rosa de Jamaica"
      }
     },
     {
@@ -482,9 +471,6 @@ window.MENU_RESPALDO = {
      ],
      "n": {
       "es": "Ceviche mixto"
-     },
-     "d": {
-      "es": "Camarón y corvina curados en limón, con cebolla, chiltoma y culantro."
      }
     },
     {
@@ -492,9 +478,6 @@ window.MENU_RESPALDO = {
      "p": 270,
      "n": {
       "es": "Ceviche de camarón"
-     },
-     "d": {
-      "es": "Camarón curado en jugo de limón, fresco y ácido."
      }
     },
     {
@@ -502,9 +485,6 @@ window.MENU_RESPALDO = {
      "p": 270,
      "n": {
       "es": "Ceviche de corvina"
-     },
-     "d": {
-      "es": "Corvina en jugo de limón con cebolla y culantro."
      }
     },
     {
@@ -512,9 +492,6 @@ window.MENU_RESPALDO = {
      "p": 270,
      "n": {
       "es": "Coctel de camarones"
-     },
-     "d": {
-      "es": "Camarones en salsa coctel, bien fríos."
      }
     },
     {
@@ -535,9 +512,6 @@ window.MENU_RESPALDO = {
      ],
      "n": {
       "es": "Tostones con queso"
-     },
-     "d": {
-      "es": "Plátano verde frito y aplastado, con queso frito. Para compartir."
      }
     }
    ]
@@ -560,9 +534,6 @@ window.MENU_RESPALDO = {
      "p": 280,
      "n": {
       "es": "Ensalada chef"
-     },
-     "d": {
-      "es": "Lechuga con jamón, queso, huevo y vegetales frescos."
      }
     },
     {
@@ -570,9 +541,6 @@ window.MENU_RESPALDO = {
      "p": 280,
      "n": {
       "es": "Ensalada de atún"
-     },
-     "d": {
-      "es": "Atún sobre lechuga y vegetales frescos."
      }
     },
     {
@@ -590,9 +558,6 @@ window.MENU_RESPALDO = {
      "p": 280,
      "n": {
       "es": "Ensalada de pollo"
-     },
-     "d": {
-      "es": "Pollo a la plancha sobre lechuga y vegetales frescos."
      }
     }
    ]
@@ -615,9 +580,6 @@ window.MENU_RESPALDO = {
      "p": 330,
      "n": {
       "es": "Sopa de mariscos"
-     },
-     "d": {
-      "es": "Caldo marinero con camarón, pescado y mariscos, servido bien caliente."
      },
      "sug": [
       "tostones",
@@ -695,9 +657,6 @@ window.MENU_RESPALDO = {
      "p": 260,
      "n": {
       "es": "Sopa de pollo"
-     },
-     "d": {
-      "es": "Como la de casa: caldo de pollo con verduras."
      }
     }
    ]
@@ -721,9 +680,6 @@ window.MENU_RESPALDO = {
      "p": 420,
      "n": {
       "es": "Cordon bleu"
-     },
-     "d": {
-      "es": "Pechuga de pollo rellena de jamón y queso, empanizada y dorada."
      }
     },
     {
@@ -733,7 +689,7 @@ window.MENU_RESPALDO = {
       "es": "Pollo a su gusto"
      },
      "d": {
-      "es": "Pechuga de pollo a la plancha, empanizada o en salsa de hongos."
+      "es": "A la plancha, empanizado o en salsa de hongos."
      },
      "op": [
       {
@@ -782,34 +738,15 @@ window.MENU_RESPALDO = {
      "n": {
       "es": "Lengua en salsa"
      },
-     "d": {
-      "es": "Lengua de res cocida lentamente, en salsa de la casa."
-     },
      "t": [
       "casa"
      ]
-    },
-    {
-     "id": "costilla-cerdo",
-     "p": 440,
-     "t": [
-      "casa"
-     ],
-     "n": {
-      "es": "Costilla de cerdo"
-     },
-     "d": {
-      "es": "Costilla de cerdo ahumada, jugosa y dorada."
-     }
     },
     {
      "id": "brocheta-mixta",
      "p": 440,
      "n": {
       "es": "Brocheta mixta"
-     },
-     "d": {
-      "es": "Carnes y vegetales ensartados, asados a la parrilla."
      }
     },
     {
@@ -817,9 +754,6 @@ window.MENU_RESPALDO = {
      "p": 390,
      "n": {
       "es": "Brocheta de pollo"
-     },
-     "d": {
-      "es": "Trozos de pollo y vegetales a la parrilla."
      }
     },
     {
@@ -827,19 +761,13 @@ window.MENU_RESPALDO = {
      "p": 410,
      "n": {
       "es": "Brocheta de res"
-     },
-     "d": {
-      "es": "Trozos de res y vegetales a la parrilla."
      }
     },
     {
      "id": "cerdo",
      "p": 440,
      "n": {
-      "es": "Cerdo ahumado"
-     },
-     "d": {
-      "es": "Chuleta o costilla de cerdo ahumada, jugosa y dorada."
+      "es": "Chuleta o costilla de cerdo ahumada"
      },
      "op": [
       {
@@ -860,7 +788,7 @@ window.MENU_RESPALDO = {
       "es": "Res a su gusto"
      },
      "d": {
-      "es": "Corte de res a la parrilla: churrasco con chimichurri, en salsa jalapeña, encebollado o a la plancha."
+      "es": "Churrasco, en salsa jalapeña, encebollado o a la plancha."
      },
      "op": [
       {
@@ -924,7 +852,7 @@ window.MENU_RESPALDO = {
      "id": "corvina",
      "p": 450,
      "n": {
-      "es": "Filete de corvina"
+      "es": "Corvina"
      },
      "d": {
       "es": "Empanizada, al ajillo o a la plancha."
@@ -949,10 +877,13 @@ window.MENU_RESPALDO = {
       "es": "Pasta con camarones"
      },
      "d": {
-      "es": "Pasta con camarones salteados."
+      "es": "No incluye ensalada, arroz ni papas."
      }
     }
-   ]
+   ],
+   "nota": {
+    "es": "Los platos de camarones y corvina incluyen ensalada, arroz y papas. La pasta con camarones no los incluye."
+   }
   },
   "sandwiches": {
    "icono": "hamburguesa",
@@ -986,9 +917,6 @@ window.MENU_RESPALDO = {
      "p": 150,
      "n": {
       "es": "Hamburguesa de res"
-     },
-     "d": {
-      "es": "Carne de res a la plancha en pan suave."
      }
     },
     {
@@ -996,9 +924,6 @@ window.MENU_RESPALDO = {
      "p": 140,
      "n": {
       "es": "Hamburguesa de pollo"
-     },
-     "d": {
-      "es": "Pollo en pan suave."
      }
     },
     {
@@ -1027,9 +952,6 @@ window.MENU_RESPALDO = {
      "p": 110,
      "n": {
       "es": "Emparedado de jamón y queso"
-     },
-     "d": {
-      "es": "El clásico, tostado."
      }
     },
     {
@@ -1042,7 +964,7 @@ window.MENU_RESPALDO = {
       "es": "Paninis de la región"
      },
      "d": {
-      "es": "Pan prensado y tostado. Elija el Norteño, el Hípico o el Segovia."
+      "es": "Elija Norteño, Hípico o Segovia."
      },
      "op": [
       {
@@ -1076,9 +998,6 @@ window.MENU_RESPALDO = {
      "p": 260,
      "n": {
       "es": "Deditos de pollo"
-     },
-     "d": {
-      "es": "Tiras de pollo empanizadas y doradas."
      }
     },
     {
@@ -1086,9 +1005,6 @@ window.MENU_RESPALDO = {
      "p": 270,
      "n": {
       "es": "Deditos de pescado"
-     },
-     "d": {
-      "es": "Tiras de pescado empanizadas."
      }
     },
     {
@@ -1133,9 +1049,6 @@ window.MENU_RESPALDO = {
      "n": {
       "es": "Affogato Frontera"
      },
-     "d": {
-      "es": "Helado de vainilla bañado en café caliente."
-     },
      "sug": [
       "agua"
      ]
@@ -1158,9 +1071,6 @@ window.MENU_RESPALDO = {
      ],
      "n": {
       "es": "Buñuelos en miel"
-     },
-     "d": {
-      "es": "Buñuelos de yuca y queso bañados en miel, receta tradicional nicaragüense."
      }
     },
     {
@@ -1168,9 +1078,6 @@ window.MENU_RESPALDO = {
      "p": 120,
      "n": {
       "es": "Café bombón"
-     },
-     "d": {
-      "es": "Café espresso sobre leche condensada."
      },
      "sug": [
       "agua"
@@ -1181,9 +1088,6 @@ window.MENU_RESPALDO = {
      "p": 108,
      "n": {
       "es": "Cikolat Frontera"
-     },
-     "d": {
-      "es": "El postre de chocolate de la casa."
      }
     }
    ],
@@ -1195,7 +1099,7 @@ window.MENU_RESPALDO = {
     "es": "Cócteles"
    },
    "resumen": {
-    "es": "Margarita, sangría y clásicos"
+    "es": "Clásicos, michelada y sangría"
    },
    "sug": [
     "tostones",
@@ -1210,9 +1114,6 @@ window.MENU_RESPALDO = {
      ],
      "n": {
       "es": "Margarita"
-     },
-     "d": {
-      "es": "Tequila, licor de naranja y limón, con borde de sal."
      }
     },
     {
@@ -1220,9 +1121,6 @@ window.MENU_RESPALDO = {
      "p": 256,
      "n": {
       "es": "Caipiroska"
-     },
-     "d": {
-      "es": "Vodka con limón macerado y azúcar."
      }
     },
     {
@@ -1230,9 +1128,6 @@ window.MENU_RESPALDO = {
      "p": 256,
      "n": {
       "es": "Bloody Mary"
-     },
-     "d": {
-      "es": "Vodka, jugo de tomate y especias."
      }
     },
     {
@@ -1240,10 +1135,28 @@ window.MENU_RESPALDO = {
      "p": 256,
      "n": {
       "es": "Laguna azul"
-     },
-     "d": {
-      "es": "Vodka, curazao azul y limonada."
      }
+    },
+    {
+     "id": "michelada",
+     "p": 190,
+     "t": [
+      "popular"
+     ],
+     "n": {
+      "es": "Michelada"
+     },
+     "op": [
+      {
+       "es": "Toña"
+      },
+      {
+       "es": "Victoria"
+      },
+      {
+       "es": "Miller"
+      }
+     ]
     },
     {
      "id": "sangria",
@@ -1253,9 +1166,6 @@ window.MENU_RESPALDO = {
      ],
      "n": {
       "es": "Sangría Frontera"
-     },
-     "d": {
-      "es": "Vino tinto con fruta, receta de la casa."
      }
     }
    ],
@@ -1279,9 +1189,6 @@ window.MENU_RESPALDO = {
      "p": 220,
      "n": {
       "es": "Piña colada"
-     },
-     "d": {
-      "es": "Ron, piña y crema de coco."
      }
     },
     {
@@ -1289,9 +1196,6 @@ window.MENU_RESPALDO = {
      "p": 220,
      "n": {
       "es": "Daiquirí"
-     },
-     "d": {
-      "es": "Ron y fruta frappé, de fresa o de mango."
      },
      "op": [
       {
@@ -1321,37 +1225,13 @@ window.MENU_RESPALDO = {
     "es": "Cervezas"
    },
    "resumen": {
-    "es": "Toña, Victoria y micheladas"
+    "es": "Toña, Victoria y cervezas importadas"
    },
    "sug": [
     "tostones",
     "ceviche-mixto"
    ],
    "platos": [
-    {
-     "id": "michelada",
-     "p": 190,
-     "t": [
-      "popular"
-     ],
-     "n": {
-      "es": "Michelada"
-     },
-     "d": {
-      "es": "Con Toña, Victoria o Miller, limón y sal en el borde."
-     },
-     "op": [
-      {
-       "es": "Toña"
-      },
-      {
-       "es": "Victoria"
-      },
-      {
-       "es": "Miller"
-      }
-     ]
-    },
     {
      "id": "cer-imp",
      "p": 120,
@@ -1507,9 +1387,6 @@ window.MENU_RESPALDO = {
      "p": 735,
      "n": {
       "es": "Viña Esmeralda"
-     },
-     "d": {
-      "es": "Vino blanco español, aromático y fresco."
      },
      "sug": [
       "camarones",
@@ -1772,7 +1649,7 @@ window.MENU_RESPALDO = {
       "es": "Platos fuertes"
      },
      "nota": {
-      "es": "Con ensalada, arroz y papas."
+      "es": "Los platos fuertes incluyen ensalada, arroz y papas, excepto la pasta con camarones."
      },
      "cats": [
       "carnes",
