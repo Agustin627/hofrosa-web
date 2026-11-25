@@ -2,7 +2,7 @@
    La web la usa si no puede leer el menú en vivo del servidor.
    Se puede editar con: python3 editor/editor_menu.py */
 window.MENU_RESPALDO = {
- "version": 7,
+ "version": 8,
  "config": {
   "zonaHoraria": "America/Managua",
   "horario": {
@@ -13,10 +13,14 @@ window.MENU_RESPALDO = {
    "almuerzo": {
     "desde": "10:30",
     "hasta": "21:00"
+   },
+   "bar": {
+    "desde": "10:30",
+    "hasta": "21:00"
    }
   },
   "moneda": "C$",
-  "tipoCambio": 36.6243,
+  "tipoCambio": 36.62,
   "iva": 0.15,
   "idiomaBase": "es",
   "hotel": {
@@ -65,7 +69,8 @@ window.MENU_RESPALDO = {
      "id": "criollo",
      "p": 165,
      "t": [
-      "popular"
+      "popular",
+      "tipico"
      ],
      "n": {
       "es": "Desayuno criollo"
@@ -82,7 +87,7 @@ window.MENU_RESPALDO = {
      "id": "segovia",
      "p": 144,
      "t": [
-      "popular"
+      "tipico"
      ],
      "n": {
       "es": "Desayuno Segovia"
@@ -127,7 +132,7 @@ window.MENU_RESPALDO = {
      "id": "omelette",
      "p": 152,
      "t": [
-      "casa"
+      "popular"
      ],
      "n": {
       "es": "Omelette Frontera"
@@ -161,9 +166,6 @@ window.MENU_RESPALDO = {
     {
      "id": "waffle",
      "p": 147,
-     "t": [
-      "popular"
-     ],
      "incluye": "desayuno",
      "sug": [
       "x-huevos",
@@ -204,7 +206,10 @@ window.MENU_RESPALDO = {
      },
      "d": {
       "es": "Dos panqueques con miel y mantequilla."
-     }
+     },
+     "t": [
+      "popular"
+     ]
     },
     {
      "id": "frutas",
@@ -218,7 +223,10 @@ window.MENU_RESPALDO = {
      },
      "d": {
       "es": "Papaya, sandía, piña y banano, según la temporada. Con miel de abeja, si la desea."
-     }
+     },
+     "t": [
+      "popular"
+     ]
     }
    ]
   },
@@ -963,7 +971,8 @@ window.MENU_RESPALDO = {
      "id": "hamb-frontera",
      "p": 200,
      "t": [
-      "popular"
+      "popular",
+      "casa"
      ],
      "n": {
       "es": "Hamburguesa Frontera"
