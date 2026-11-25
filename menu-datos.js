@@ -2,7 +2,7 @@
    La web la usa si no puede leer el menú en vivo del servidor.
    Se puede editar con: python3 editor/editor_menu.py */
 window.MENU_RESPALDO = {
- "version": 6,
+ "version": 7,
  "config": {
   "zonaHoraria": "America/Managua",
   "horario": {
@@ -776,6 +776,22 @@ window.MENU_RESPALDO = {
      },
      "d": {
       "es": "Lengua de res cocida lentamente, en salsa de la casa."
+     },
+     "t": [
+      "casa"
+     ]
+    },
+    {
+     "id": "costilla-cerdo",
+     "p": 440,
+     "t": [
+      "casa"
+     ],
+     "n": {
+      "es": "Costilla de cerdo"
+     },
+     "d": {
+      "es": "Costilla de cerdo ahumada, jugosa y dorada."
      }
     },
     {
@@ -1815,14 +1831,6 @@ window.MENU_RESPALDO = {
       "ron",
       "whisky",
       "destilados"
-     ]
-    },
-    {
-     "n": {
-      "es": "Para picar"
-     },
-     "cats": [
-      "entradas"
      ]
     }
    ]

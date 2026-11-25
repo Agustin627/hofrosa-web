@@ -29,15 +29,25 @@ La web está publicada gratis en GitHub Pages: https://agustin627.github.io/hofr
 
 Después de cambiar el menú con el editor, haga doble clic en `publicar.command` (o ejecute `./publicar.command`) para subir los cambios; se ven en 1 o 2 minutos.
 
+## Un solo menú para la web y el menú QR
+
+La carta es una sola: `datos/menu.json` del servidor de pedidos (`../menu-digital-hofrosa/servidor-pedidos`), el mismo que usan el menú QR de las mesas y su panel de administración. `menu-datos.js` es solo la copia pública que lee esta web (sin mesas, claves ni traducciones) y se regenera sola:
+
+- Al guardar en el editor de esta web: si el servidor de pedidos está encendido, el cambio entra por su API (como el panel, con clave, versión y registro) y el menú QR cambia al instante; si está apagado, se escribe su archivo con respaldo y lo carga al arrancar. En los dos casos se regenera `menu-datos.js`.
+- Al cambiar algo desde el panel del servidor: `publicar.command` sincroniza la copia antes de publicar (o `python3 editor/editor_menu.py --sincronizar`).
+- Las fotos se guardan en `menu/fotos/` del menú QR y se copian a `fotos/` de esta web, con la misma ruta `fotos/…`.
+
+Si el servidor está en otra carpeta o puerto, cree `editor/ajustes.json` con `{"servidorPedidos": "/ruta/a/servidor-pedidos", "puertoSeguro": 8443}`. Sin servidor, el editor edita solo la copia de la web (`--solo-web`).
+
 ## Editar el menú
 
 ```sh
 python3 editor/editor_menu.py
 ```
 
-Se abre en el navegador (`http://127.0.0.1:8090`) un editor para agregar, editar, ordenar y eliminar platos y categorías; cambiar precios, etiquetas, opciones, «agotado», secciones, horarios y contacto; y subir o quitar la foto de cada plato y de cada categoría. Guarda en `menu-datos.js` con una copia previa en `editor/respaldos/` y valida los datos antes de guardar. Funciona solo con Python 3.8+; Pillow (`editor/requirements.txt`) es opcional.
+Se abre en el navegador (`http://127.0.0.1:8090`) un editor para agregar, editar, ordenar y eliminar platos y categorías; cambiar precios, etiquetas, opciones, «agotado», secciones, horarios y contacto; y subir o quitar la foto de cada plato y de cada categoría. Valida los datos con las mismas reglas del servidor de pedidos antes de guardar. Funciona solo con Python 3.8+; Pillow (`editor/requirements.txt`) es opcional.
 
-Toda foto subida se recorta al centro a 3:2 y 960 × 640 en WebP, así que todas tienen el mismo tamaño. Se guardan en `assets/imagenes/platos/` y `assets/imagenes/categorias/` con un nombre nuevo cada vez; las anteriores no se borran, por lo que «Descartar cambios» siempre vuelve a una foto que existe.
+Toda foto subida se recorta al centro a 3:2 y 960 × 640 en WebP, así que todas tienen el mismo tamaño. Cada foto recibe un nombre nuevo; las anteriores no se borran, por lo que «Descartar cambios» siempre vuelve a una foto que existe.
 
 Una foto puede marcarse como «Foto de referencia» (no es del plato real): la web la etiqueta como tal. Al subir la foto real desde el editor, la marca desaparece.
 

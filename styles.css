@@ -41,8 +41,8 @@ button { cursor: pointer; }
 /* Cabecera y navegación */
 header { position: sticky; top: 0; z-index: 20; background: var(--papel); border-bottom: 1px solid var(--linea); padding-top: env(safe-area-inset-top); }
 .barra { display: flex; align-items: center; gap: 28px; min-height: 84px; }
-.logo { display: block; padding: 8px; }
-.logo img { height: 44px; width: auto; display: block; mix-blend-mode: multiply; }
+.logo { display: block; padding: 6px 0; }
+.logo img { height: 58px; width: auto; display: block; mix-blend-mode: multiply; }
 nav { margin-left: auto; }
 nav ul { display: flex; align-items: center; gap: 24px; list-style: none; padding: 0; }
 nav a { display: inline-block; padding: 12px 0; font-size: 16px; font-weight: 600; text-decoration: none; }
@@ -227,10 +227,10 @@ footer a:hover { text-decoration: underline; }
   .carrusel { height: 440px; }
 }
 @media (max-width: 760px) {
-  :root { --alto-cabecera: 56px; }
-  .barra { min-height: 56px; gap: 12px; }
-  .logo { padding: 4px 0; }
-  .logo img { height: 34px; }
+  :root { --alto-cabecera: 58px; }
+  .barra { min-height: 58px; gap: 12px; }
+  .logo { padding: 3px 0; }
+  .logo img { height: 48px; }
   .wrap { padding-left: max(20px, env(safe-area-inset-left)); padding-right: max(20px, env(safe-area-inset-right)); }
   section { padding: 56px 0; }
   #menu-rest { padding-top: 32px; }
@@ -244,9 +244,13 @@ footer a:hover { text-decoration: underline; }
   .bloque { gap: 26px; margin-bottom: 44px; }
   .bloque:nth-child(even) .texto { order: 0; }
   .botones .btn { flex: 1 1 auto; }
-  .par .foto { height: 200px; }
-  .tres { gap: 8px; }
-  .tres .foto { height: 140px; min-height: 0; }
+  /* Fotos del hotel en el móvil: verticales (4:5) y deslizables, aprovechando la pantalla */
+  .par { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain;
+         margin: 0 calc(-1 * max(20px, env(safe-area-inset-left))); padding: 0 max(20px, env(safe-area-inset-left)) 6px; scroll-padding: 0 20px; scrollbar-width: none; }
+  .par::-webkit-scrollbar { display: none; }
+  .par > div, .par > figure { flex: 0 0 82%; scroll-snap-align: center; border-radius: 3px; }
+  .par .foto, .tres .foto { height: auto; min-height: 0; aspect-ratio: 4 / 5; }
+  .tres figcaption { margin-top: 8px; }
   .servicios { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .cat { padding: 22px 20px; }
   .compartir-grid { grid-template-columns: minmax(0, 1fr); }
