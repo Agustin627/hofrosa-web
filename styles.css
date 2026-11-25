@@ -231,7 +231,6 @@ footer a:hover { text-decoration: underline; }
   .barra { min-height: 56px; gap: 12px; }
   .logo { padding: 4px 0; }
   .logo img { height: 34px; }
-  .menu-btn { width: 40px; height: 40px; }
   .wrap { padding-left: max(20px, env(safe-area-inset-left)); padding-right: max(20px, env(safe-area-inset-right)); }
   section { padding: 56px 0; }
   #menu-rest { padding-top: 32px; }
@@ -241,7 +240,7 @@ footer a:hover { text-decoration: underline; }
   .portada, .bloque, .pie, .cats { grid-template-columns: minmax(0, 1fr); }
   .portada { gap: 30px; }
   .portada h1 { font-size: clamp(44px, 10vw, 64px); margin: 14px 0 20px; }
-  .carrusel { height: 300px; }
+  .carrusel { height: min(120vw, 68svh); min-height: 340px; }
   .bloque { gap: 26px; margin-bottom: 44px; }
   .bloque:nth-child(even) .texto { order: 0; }
   .botones .btn { flex: 1 1 auto; }

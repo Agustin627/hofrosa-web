@@ -100,6 +100,7 @@
 <header>
   <h1>Editor del menú</h1>
   <span class="estado" id="estado">Cargando…</span>
+  <span class="estado" id="fuente" title="Dónde se guarda el menú" hidden></span>
   <span class="espacio"></span>
   <a class="btn peq" href="/web/#menu-rest" target="_blank" rel="noopener">Ver la web ↗</a>
   <button class="btn peq" id="descartar" type="button" hidden>Descartar cambios</button>
@@ -127,7 +128,8 @@
 <script>
 "use strict";
 const TOKEN = "__TOKEN__";
-const ETIQUETAS = { popular: "Recomendado", casa: "De la casa", tipico: "Típico nica", compartir: "Para compartir" };
+// Las mismas etiquetas que admite el menú QR del servidor de pedidos
+const ETIQUETAS = { popular: "Recomendado", casa: "De la casa", tipico: "Típico nica" };
 const PRESENTACIONES = ["botella", "media", "trago"];
 const NOMBRES_MOMENTOS = { desayuno: "Desayuno", almuerzo: "Almuerzo y cena", bar: "Bar" };
 
@@ -202,6 +204,12 @@ async function cargar() {
     const j = await r.json();
     if (!r.ok) throw new Error(j.error || r.statusText);
     menu = j.menu; huella = j.huella;
+    const f = $("#fuente");
+    f.hidden = false;
+    f.textContent = !j.fuente?.servidor ? "Solo la web" : j.fuente.encendido ? "Web + menú QR (servidor encendido)" : "Web + menú QR (servidor apagado)";
+    f.title = !j.fuente?.servidor ? "No se encontró el servidor de pedidos: solo cambia la copia de la web."
+      : j.fuente.encendido ? "Se guarda por el panel del servidor: el menú QR cambia al instante y la web al publicar."
+      : "Se guarda en el archivo del servidor: el menú QR lo verá al arrancar; la web al publicar.";
     menu.config ||= {};
     for (const m of Object.values(menu.momentos)) for (const g of m.grupos) g.cats ||= [];
     if (!catSel || !menu.categorias[catSel]) catSel = Object.keys(menu.categorias)[0];
@@ -225,7 +233,7 @@ async function guardar() {
     if (!r.ok) throw new Error(j.error || `Error ${r.status}`);
     huella = j.huella;
     marcarLimpio("Guardado " + new Date().toLocaleTimeString("es-NI", { hour: "2-digit", minute: "2-digit" }));
-    avisar("Cambios guardados. Recargue la web para verlos.", "ok");
+    avisar("Guardado en el menú único (QR y web). Para verlo en la web publicada, use publicar.command.", "ok");
   } catch (e) {
     marcarSucio();
     avisar("No se guardó:\n" + e.message);
@@ -479,7 +487,7 @@ async function nuevaCategoria() {
   const nombre = await preguntar("Nombre de la nueva categoría:", { campo: "", aceptar: "Crear" });
   if (!nombre) return;
   const id = idUnico(nombre, new Set(Object.keys(menu.categorias)));
-  menu.categorias[id] = { nombre: { es: nombre }, platos: [] };
+  menu.categorias[id] = { icono: "plato", nombre: { es: nombre }, platos: [] };  // el menú QR exige un icono
   catSel = id; marcarSucio(); pintar();
   avisar("Categoría creada. Para que se vea en la web, agréguela a una sección en «Momentos y secciones».", "ok");
 }

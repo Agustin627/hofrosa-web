@@ -3,13 +3,17 @@
 Editor del menú de la web del Hotel Frontera.
 
 Abre en el navegador una pantalla para modificar la carta (platos, precios,
-categorías, secciones, horarios y contacto) y guarda los cambios en
-../menu-datos.js, que es el archivo que lee la web.
+categorías, secciones, horarios y contacto). El menú es UNO solo: el
+datos/menu.json del servidor de pedidos, el mismo del menú QR. Al guardar se
+cambia ese menú (por la API del servidor si está encendido) y se regenera
+../menu-datos.js, la copia que lee la web.
 
 Uso:
-    python3 editor/editor_menu.py            abre el editor en el navegador
+    python3 editor/editor_menu.py                abre el editor en el navegador
     python3 editor/editor_menu.py --puerto 8090
     python3 editor/editor_menu.py --sin-navegador
+    python3 editor/editor_menu.py --sincronizar  copia a la web los cambios hechos en el panel del servidor
+    python3 editor/editor_menu.py --solo-web     edita solo la copia de la web
 
 Funciona solo con Python 3.8 o superior. Si además está instalado Pillow
 (python3 -m pip install -r editor/requirements.txt), el recorte de las fotos
@@ -17,7 +21,13 @@ lo hace Python; si no, lo hace el navegador con el mismo resultado.
 El editor escucha únicamente en esta computadora (127.0.0.1).
 """
 import argparse
+import copy
 import hashlib
+import importlib.util
+import shutil
+import ssl
+import urllib.error
+import urllib.request
 import io
 import json
 import os
@@ -68,6 +78,162 @@ class ErrorMenu(Exception):
     """Un problema en los datos que el usuario debe corregir."""
 
 
+# ---------------------------------------------------------------------------
+# Fuente única del menú: el servidor de pedidos (menú QR)
+# ---------------------------------------------------------------------------
+# La web y el menú QR muestran el MISMO menú: el datos/menu.json del servidor de
+# pedidos. Este editor lo modifica (por la API del servidor si está encendido,
+# o en el archivo si está apagado) y luego regenera la copia de la web
+# (menu-datos.js). Si no se encuentra el servidor, edita solo la copia de la web.
+AJUSTES = CARPETA_EDITOR / "ajustes.json"   # opcional: {"servidorPedidos": "...", "puertoSeguro": 8443}
+CONFIG_PUBLICA = ("zonaHoraria", "horario", "moneda", "tipoCambio", "iva", "idiomaBase", "hotel", "bebidasDesayuno")
+
+
+def _ajustes():
+    try:
+        return json.loads(AJUSTES.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+
+
+def carpeta_servidor():
+    ruta = os.environ.get("HOFROSA_SERVIDOR") or _ajustes().get("servidorPedidos") \
+        or CARPETA_WEB.parent / "menu-digital-hofrosa" / "servidor-pedidos"
+    ruta = Path(ruta).expanduser().resolve()
+    return ruta if (ruta / "datos" / "menu.json").is_file() and (ruta / "servidor.py").is_file() else None
+
+
+SERVIDOR = None          # Path de servidor-pedidos o None
+_modulo_servidor = None
+
+
+def modulo_servidor():
+    """El propio servidor.py: su validación garantiza que el menú QR acepte lo guardado."""
+    global _modulo_servidor
+    if _modulo_servidor is None:
+        sys.path.insert(0, str(SERVIDOR))
+        espec = importlib.util.spec_from_file_location("servidor_pedidos", SERVIDOR / "servidor.py")
+        _modulo_servidor = importlib.util.module_from_spec(espec)
+        espec.loader.exec_module(_modulo_servidor)
+    return _modulo_servidor
+
+
+def archivo_fuente():
+    return SERVIDOR / "datos" / "menu.json"
+
+
+def carpeta_fotos_servidor():
+    return SERVIDOR.parent / "menu" / "fotos"
+
+
+def _contexto_ssl():
+    ca = SERVIDOR / "datos" / "certificados" / "ca.crt"
+    return ssl.create_default_context(cafile=str(ca)) if ca.is_file() else None
+
+
+def _url_servidor(ruta):
+    return f"https://127.0.0.1:{int(_ajustes().get('puertoSeguro', 8443))}{ruta}"
+
+
+def servidor_encendido():
+    ctx = _contexto_ssl()
+    if not ctx:
+        return False
+    try:
+        with urllib.request.urlopen(_url_servidor("/api/estado"), timeout=1.5, context=ctx) as r:
+            return r.status == 200
+    except (OSError, urllib.error.URLError, ssl.SSLError):
+        return False
+
+
+def _clave_admin():
+    try:
+        return json.loads((SERVIDOR / "datos" / "config.json").read_text(encoding="utf-8"))["claveAdmin"]
+    except (OSError, ValueError, KeyError) as e:
+        raise ErrorMenu("No encontré la clave de administración del servidor de pedidos (datos/config.json).") from e
+
+
+def validar_con_servidor(datos):
+    srv = modulo_servidor()
+    try:
+        srv.validar_menu(copy.deepcopy(datos))
+    except srv.ErrorPeticion as e:
+        cuerpo = getattr(e, "cuerpo", {}) or {}
+        raise ErrorMenu("El menú QR no acepta este cambio: " + str(cuerpo.get("mensaje") or e)) from e
+
+
+def guardar_en_fuente(datos, huella_esperada):
+    """Guarda en el menú del servidor de pedidos. Devuelve la nueva huella."""
+    actual = archivo_fuente().read_text(encoding="utf-8")
+    if huella(actual) != huella_esperada:
+        raise ErrorMenu("El menú cambió fuera del editor (por ejemplo, desde el panel del servidor) desde que lo abrió. "
+                        "Recargue la página para ver la versión actual (sus cambios no guardados se perderán).")
+    datos = copy.deepcopy(datos)
+    datos.pop("populares", None)
+    validar_con_servidor(datos)
+    if servidor_encendido():
+        # Igual que el panel de administración: queda en su registro y el menú QR cambia al instante
+        datos["versionBase"] = datos.get("version")
+        peticion = urllib.request.Request(_url_servidor("/api/admin/menu"), method="PUT",
+                                          data=json.dumps(datos, ensure_ascii=False).encode("utf-8"),
+                                          headers={"Content-Type": "application/json", "X-Clave": _clave_admin()})
+        try:
+            with urllib.request.urlopen(peticion, timeout=15, context=_contexto_ssl()) as r:
+                json.loads(r.read() or b"{}")
+        except urllib.error.HTTPError as e:
+            try:
+                cuerpo = json.loads(e.read())
+                detalle = cuerpo.get("mensaje") or cuerpo.get("error")
+            except ValueError:
+                detalle = None
+            raise ErrorMenu(detalle or f"El servidor de pedidos rechazó el cambio (error {e.code}).") from e
+        except (OSError, urllib.error.URLError) as e:
+            raise ErrorMenu(f"No se pudo hablar con el servidor de pedidos: {e}") from e
+    else:
+        # Servidor apagado: se escribe el archivo como lo haría él; lo cargará al arrancar
+        srv = modulo_servidor()
+        CARPETA_RESPALDOS.mkdir(parents=True, exist_ok=True)
+        (CARPETA_RESPALDOS / f"menu-json-{datetime.now():%Y%m%d-%H%M%S-%f}.json").write_text(actual, encoding="utf-8")
+        for viejo in sorted(CARPETA_RESPALDOS.glob("menu-json-*.json"))[:-MAX_RESPALDOS]:
+            viejo.unlink(missing_ok=True)
+        datos["version"] = int(datos.get("version") or 1) + 1
+        texto = json.dumps(datos, ensure_ascii=False, indent=2)
+        srv.escribir_atomico(str(archivo_fuente()), texto)
+        datos_js = SERVIDOR.parent / "menu" / "js" / "datos.js"
+        if datos_js.parent.is_dir():
+            srv.escribir_atomico(str(datos_js), srv.CABECERA_DATOS_JS + "window.MENU_DATOS = " + texto + ";\n")
+    nuevo = archivo_fuente().read_text(encoding="utf-8")
+    exportar_web(json.loads(nuevo))
+    return huella(nuevo)
+
+
+def exportar_web(datos):
+    """Copia pública del menú para la web: sin mesas, claves, traducciones ni datos internos."""
+    publico = copy.deepcopy(datos)
+    for clave in ("traducciones", "populares", "versionBase"):
+        publico.pop(clave, None)
+    config = publico.get("config") or {}
+    publico["config"] = {k: config[k] for k in CONFIG_PUBLICA if k in config}
+    # Las fotos del menú QR (fotos/…) se copian a la web con la misma ruta
+    destino = CARPETA_WEB / "fotos"
+    for c in publico.get("categorias", {}).values():
+        for obj in [c] + c.get("platos", []):
+            foto = str(obj.get("foto") or "")
+            if foto.startswith("fotos/"):
+                origen = carpeta_fotos_servidor() / foto[len("fotos/"):]
+                if origen.is_file():
+                    destino.mkdir(exist_ok=True)
+                    if not (destino / origen.name).exists():
+                        shutil.copy2(origen, destino / origen.name)
+    texto = serializar(publico)
+    if not ARCHIVO_MENU.exists() or ARCHIVO_MENU.read_text(encoding="utf-8") != texto:
+        fd, temporal = tempfile.mkstemp(prefix=".menu-", suffix=".js", dir=CARPETA_WEB)
+        with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as f:
+            f.write(texto)
+        os.chmod(temporal, 0o644)
+        os.replace(temporal, ARCHIVO_MENU)
+
+
 def normalizar_foto(datos):
     """Orienta, recorta al centro y codifica una imagen real, nunca solo su cabecera."""
     if Image is None:
@@ -102,6 +268,16 @@ def normalizar_foto(datos):
 # Lectura y escritura de menu-datos.js
 # ---------------------------------------------------------------------------
 def leer_menu():
+    if SERVIDOR:
+        texto = archivo_fuente().read_text(encoding="utf-8")
+        try:
+            return json.loads(texto), huella(texto)
+        except json.JSONDecodeError as e:
+            raise ErrorMenu(f"El menu.json del servidor no es válido (línea {e.lineno}): {e.msg}") from e
+    return leer_copia_web()
+
+
+def leer_copia_web():
     texto = ARCHIVO_MENU.read_text(encoding="utf-8")
     m = re.search(re.escape(VARIABLE) + r"\s*=\s*", texto)
     if not m:
@@ -125,6 +301,13 @@ def serializar(datos):
 
 
 def guardar_menu(datos, huella_esperada):
+    """Guarda en la fuente única (servidor de pedidos) o, sin él, solo en la copia de la web."""
+    if SERVIDOR:
+        return guardar_en_fuente(datos, huella_esperada)
+    return guardar_copia_web(datos, huella_esperada)
+
+
+def guardar_copia_web(datos, huella_esperada):
     """Guarda con respaldo previo y escritura atómica. Devuelve la nueva huella."""
     actual = ARCHIVO_MENU.read_text(encoding="utf-8")
     if huella(actual) != huella_esperada:
@@ -404,7 +587,8 @@ class Editor(SimpleHTTPRequestHandler):
                 datos, h = leer_menu()
             except (OSError, ErrorMenu) as e:
                 return self.responder_json(500, {"error": str(e)})
-            return self.responder_json(200, {"menu": datos, "huella": h})
+            fuente = {"servidor": bool(SERVIDOR), "encendido": bool(SERVIDOR) and servidor_encendido()}
+            return self.responder_json(200, {"menu": datos, "huella": h, "fuente": fuente})
         if ruta.startswith("/web/") or ruta == "/web":
             # Vista previa de la web real (sirve la carpeta del sitio)
             self.path = self.path[4:] or "/"
@@ -435,7 +619,9 @@ class Editor(SimpleHTTPRequestHandler):
                 ext = comprobar_foto_recortada(datos)
         except ErrorMenu as e:
             return self.responder_json(415, {"error": str(e)})
-        carpeta = CARPETA_FOTOS / tipo
+        # Con el servidor de pedidos, las fotos van a su carpeta fotos/ (la que exige el menú QR)
+        # y se copian a la web con la misma ruta; sin él, a assets/imagenes/<tipo>/.
+        carpeta = carpeta_fotos_servidor() if SERVIDOR else CARPETA_FOTOS / tipo
         carpeta.mkdir(parents=True, exist_ok=True)
         with self.candado:
             nombre = f"{ident}-{datetime.now():%Y%m%d-%H%M%S}-{secrets.token_hex(2)}{ext}"
@@ -444,6 +630,10 @@ class Editor(SimpleHTTPRequestHandler):
                 f.write(datos)
             os.chmod(temporal, 0o644)
             os.replace(temporal, carpeta / nombre)
+        if SERVIDOR:
+            (CARPETA_WEB / "fotos").mkdir(exist_ok=True)
+            shutil.copy2(carpeta / nombre, CARPETA_WEB / "fotos" / nombre)
+            return self.responder_json(200, {"foto": f"fotos/{nombre}"})
         return self.responder_json(200, {"foto": f"{RUTA_FOTOS}{tipo}/{nombre}"})
 
     def do_PUT(self):
@@ -482,7 +672,26 @@ def main():
     ap = argparse.ArgumentParser(description="Editor del menú de la web del Hotel Frontera")
     ap.add_argument("--puerto", type=int, default=8090)
     ap.add_argument("--sin-navegador", action="store_true")
+    ap.add_argument("--sincronizar", action="store_true",
+                    help="solo regenera la copia de la web (menu-datos.js) desde el menú del servidor de pedidos")
+    ap.add_argument("--solo-web", action="store_true", help="editar solo la copia de la web (sin el servidor de pedidos)")
     args = ap.parse_args()
+
+    global SERVIDOR
+    SERVIDOR = None if args.solo_web else carpeta_servidor()
+    if args.sincronizar:
+        if not SERVIDOR:
+            print("No se encontró el servidor de pedidos; la web conserva su copia actual del menú.")
+            return
+        exportar_web(json.loads(archivo_fuente().read_text(encoding="utf-8")))
+        print(f"Copia de la web actualizada desde {archivo_fuente()}")
+        return
+    if SERVIDOR:
+        print(f"Menú único: {archivo_fuente()} (lo usan el menú QR y la web)")
+        print("Servidor de pedidos " + ("ENCENDIDO: los cambios se guardan por su panel y el menú QR cambia al instante."
+                                       if servidor_encendido() else "apagado: los cambios se guardan en su archivo y los verá al arrancarlo."))
+    else:
+        print("Aviso: no se encontró el servidor de pedidos; solo se edita la copia de la web (menu-datos.js).")
 
     try:
         validar(leer_menu()[0])

@@ -5,6 +5,9 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
+# El menú es uno solo (el del servidor de pedidos / menú QR): se copia a la web antes de publicar
+python3 editor/editor_menu.py --sincronizar
+
 if [ -z "$(git status --porcelain)" ]; then
   echo "No hay cambios nuevos que publicar."
 else

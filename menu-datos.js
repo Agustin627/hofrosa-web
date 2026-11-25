@@ -18,7 +18,6 @@ window.MENU_RESPALDO = {
   "moneda": "C$",
   "tipoCambio": 36.6243,
   "iva": 0.15,
-  "minutosParaQuitar": 5,
   "idiomaBase": "es",
   "hotel": {
    "direccion": "Km 226.5 carretera Panamericana Norte, contiguo a gasolinera Uno Ramos. Ocotal, Nueva Segovia.",
@@ -41,69 +40,11 @@ window.MENU_RESPALDO = {
    "correo": "hotelfronterasa@yahoo.com",
    "lema": "¡Su límite para descansar!"
   },
-  "mesas": [
-   {
-    "id": "1",
-    "nombre": "Mesa 1",
-    "zona": "pasillo"
-   },
-   {
-    "id": "2",
-    "nombre": "Mesa 2",
-    "zona": "pasillo"
-   },
-   {
-    "id": "3",
-    "nombre": "Mesa 3",
-    "zona": "pasillo"
-   },
-   {
-    "id": "4",
-    "nombre": "Mesa 4",
-    "zona": "pasillo"
-   },
-   {
-    "id": "5",
-    "nombre": "Mesa 5",
-    "zona": "pasillo"
-   },
-   {
-    "id": "6",
-    "nombre": "Mesa 6",
-    "zona": "pasillo"
-   }
-  ],
-  "habitaciones": "36",
-  "zonas": [
-   {
-    "id": "pasillo",
-    "nombre": "Pasillo"
-   }
-  ],
-  "mejoras": [
-   "bebidas",
-   "codigos-mesa",
-   "bebida-desayuno",
-   "sugerencias-2"
-  ],
-  "acompanantes": [
-   "jugo-naranja",
-   "te-helado",
-   "gaseosa@0",
-   "gaseosa@1",
-   "gaseosa@2",
-   "gaseosa@3",
-   "gaseosa@4",
-   "gaseosa@5",
-   "gaseosa@6"
-  ],
-  "mesaMayor": 30,
   "bebidasDesayuno": [
    "jugo-naranja",
    "te-helado",
    "cafe"
-  ],
-  "soloMenu": true
+  ]
  },
  "categorias": {
   "des-tipicos": {
@@ -571,9 +512,6 @@ window.MENU_RESPALDO = {
     {
      "id": "papas",
      "p": 120,
-     "t": [
-      "compartir"
-     ],
      "n": {
       "es": "Papas fritas"
      },
@@ -585,8 +523,7 @@ window.MENU_RESPALDO = {
      "id": "tostones",
      "p": 120,
      "t": [
-      "tipico",
-      "compartir"
+      "tipico"
      ],
      "n": {
       "es": "Tostones con queso"
@@ -819,32 +756,6 @@ window.MENU_RESPALDO = {
    ],
    "platos": [
     {
-     "id": "lengua",
-     "p": 490,
-     "n": {
-      "es": "Lengua en salsa"
-     },
-     "d": {
-      "es": "Lengua de res cocida lentamente, en salsa de la casa."
-     },
-     "t": [
-      "casa"
-     ]
-    },
-    {
-     "id": "costilla-cerdo",
-     "p": 440,
-     "t": [
-      "casa"
-     ],
-     "n": {
-      "es": "Costilla de cerdo"
-     },
-     "d": {
-      "es": "Costilla de cerdo ahumada, jugosa y dorada."
-     }
-    },
-    {
      "id": "surtido",
      "p": 586,
      "t": [
@@ -855,6 +766,16 @@ window.MENU_RESPALDO = {
      },
      "d": {
       "es": "Un poco de todo: la selección de carnes de la casa."
+     }
+    },
+    {
+     "id": "lengua",
+     "p": 490,
+     "n": {
+      "es": "Lengua en salsa"
+     },
+     "d": {
+      "es": "Lengua de res cocida lentamente, en salsa de la casa."
      }
     },
     {
@@ -1825,6 +1746,9 @@ window.MENU_RESPALDO = {
      "n": {
       "es": "Platos fuertes"
      },
+     "nota": {
+      "es": "Con ensalada, arroz y papas."
+     },
      "cats": [
       "carnes",
       "mariscos",
@@ -1891,6 +1815,14 @@ window.MENU_RESPALDO = {
       "ron",
       "whisky",
       "destilados"
+     ]
+    },
+    {
+     "n": {
+      "es": "Para picar"
+     },
+     "cats": [
+      "entradas"
      ]
     }
    ]
