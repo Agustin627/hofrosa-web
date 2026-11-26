@@ -22,7 +22,8 @@ Abra `http://127.0.0.1:8080`. Use la vista por HTTP para comprobar también Goog
 - `idiomas.js`: selector español, inglés y chino simplificado mediante Google Translate.
 - `assets/imagenes/`: fotografías y logo locales (`platos/` y `categorias/` para la carta).
 - `editor/`: aplicación en Python para modificar el menú (`editor_menu.py`) y publicar (`publicar.py`).
-- `precios/`: editor de precios de la web (con token de GitHub).
+- `precios/`: editor de precios de la web (detrás de Cloudflare Access).
+- `worker/`, `wrangler.jsonc`, `_headers`, `.assetsignore`: la web en Cloudflare (API de precios, cabeceras de seguridad, archivos que no se publican).
 
 ## Fotografías del hotel
 
@@ -36,34 +37,57 @@ El auditorio **Segovia** es el de sillas de madera; **Aurora**, el de sillas bla
 
 ## Publicación
 
-La web está publicada gratis en GitHub Pages: https://agustin627.github.io/hofrosa-web/
+La web va a estar en **https://hotelfronteraocotal.com** con Cloudflare (Workers con archivos estáticos). La copia en GitHub Pages (https://agustin627.github.io/hofrosa-web/) sigue funcionando como respaldo, sin precios en vivo ni editor. Para cambiar de dominio, cambie el enlace `canonical` de `index.html`: `publicar.command` toma la dirección de ahí.
 
-Después de cambiar el menú (con el editor o desde el panel del servidor de pedidos), haga doble clic en `publicar.command` (o ejecute `./publicar.command`). Lo hace `editor/publicar.py`:
+Después de cambiar el menú (con el editor, desde el panel del servidor de pedidos o en `/precios/`), haga doble clic en `publicar.command` (o ejecute `./publicar.command`). Lo hace `editor/publicar.py`:
 
-1. Trae de GitHub lo publicado desde otro lugar: precios cambiados en la web (`precios/`) o cambios hechos en otra computadora.
+1. Trae los precios guardados en el editor de la web (`/api/precios-web`) y lo publicado en GitHub desde otro lugar (otra computadora, Codex).
 2. Pasa esos precios al menú único (servidor de pedidos / menú QR). Si el mismo precio cambió en los dos lados, gana el cambio más reciente y lo avisa en pantalla.
-3. Regenera `menu-datos.js` desde el menú único, guarda todo en un commit y lo sube. La web se actualiza sola en 1 o 2 minutos.
+3. Regenera `menu-datos.js` desde el menú único, guarda todo en un commit y lo sube a GitHub. Cloudflare publica la web sola en 1 o 2 minutos.
 
-Nunca fuerza la subida: si GitHub y esta computadora cambiaron el mismo archivo (que no sea el menú), se detiene, no sube nada y no se pierde nada.
+Nunca fuerza la subida: si GitHub y esta computadora cambiaron el mismo archivo (que no sea el menú), se detiene, no sube nada y no se pierde nada. Si la web no responde, publica igual: los precios siguen guardados en la web y se traen la próxima vez.
 
-GitHub Pages publica la rama `main` tal como está. Los ajustes del editor (`editor/ajustes.json`) y los respaldos (`editor/respaldos/`) no se suben, porque están en `.gitignore`, igual que archivos con aspecto de secreto (`*.token`, `*.key`, `.env`…). Si algún día se usa otro hosting, `python3 editor/preparar_sitio.py` prepara en `dist/` solo los archivos públicos, sin el editor.
+Qué se publica: Cloudflare sube solo los archivos de la web; `.assetsignore` deja afuera el editor, los documentos, el Worker y los archivos con aspecto de secreto. En GitHub Pages se ve todo el repositorio (que es público). `editor/ajustes.json` y `editor/respaldos/` nunca se suben (`.gitignore`).
 
 ## Cambiar precios desde la web
 
-Dirección: https://agustin627.github.io/hofrosa-web/precios/ (no está enlazada desde la web pública).
+Dirección: https://hotelfronteraocotal.com/precios/ (no está enlazada desde la web pública).
 
-- **Quién puede:** solo quien tenga un *token fino* de GitHub (empieza con `github_pat_`) con permiso **Contents: Read and write** sobre **este repositorio solamente**. La página tiene un enlace que crea el token con esos permisos ya elegidos (vence en 90 días); en *Repository access* hay que marcar *Only select repositories → hofrosa-web*. Los tokens clásicos (`ghp_`) se rechazan porque abren todos los repositorios.
-- **Qué cambia:** solo los números de precio de `menu-datos.js`. Antes de publicar, la página comprueba que nada más cambió, pide confirmar los precios que cambian más de 50 % o quedan en cero, y publica sobre la versión exacta que leyó: si otra persona publicó entretanto, recarga y conserva lo que no choca.
-- **Dónde queda:** cada publicación es un commit con la lista de cambios (historial en la misma página y en GitHub). Para deshacer, se vuelve a poner el precio anterior o se revierte el commit en GitHub.
-- **Menú QR:** recibe los precios nuevos al abrir `publicar.command` en esta computadora (paso 2 de la publicación).
-- **Seguridad** (basada en OWASP Top 10:2025 y sus hojas de referencia):
-  - Sin servidor propio ni claves en el código: GitHub decide quién escribe.
-  - Política de seguridad estricta: solo archivos propios y `api.github.com`, Trusted Types (nada de HTML armado con texto), sin formularios hacia afuera, sin referer, sin funcionar dentro de un marco ni abierta por otra ventana.
-  - El token vive solo en memoria. Si se pide recordarlo, se guarda cifrado (AES-GCM de 256 bits) con una clave derivada de una frase de 12+ caracteres (PBKDF2-SHA256, 600 000 iteraciones). Tras un error se espera cada vez más; a los 10 errores se borra.
-  - Se bloquea sola a los 15 minutos sin uso o si queda 5 minutos en segundo plano.
-  - Se comprueba el SHA del archivo que entrega GitHub (detecta un menú alterado o incompleto) y que antes de los datos solo haya comentarios.
-- **Si se pierde o se filtra el token:** bórrelo en GitHub (*Settings → Developer settings → Personal access tokens*) y cree otro. En otro dispositivo, use «Olvidar este dispositivo».
-- **Recomendado:** activar la verificación en dos pasos de la cuenta de GitHub. Todas las webs de `agustin627.github.io` comparten el mismo origen; con un dominio propio la web queda aislada y se podrían usar cabeceras de seguridad de verdad.
+- **Cómo se entra:** Cloudflare Access pide el correo y manda un código de 6 dígitos. Solo pasan los correos autorizados; a los demás no les llega ni la página. No hay contraseñas ni tokens que guardar o que se puedan robar.
+- **Qué cambia:** solo los números de precio. Antes de guardar se revisa la lista y se confirman los precios que cambian más de 50 % o quedan en cero. Si otra persona guardó entretanto, se recarga sin pisar su cambio.
+- **Dónde queda:** en Cloudflare (un Durable Object), con registro de quién, cuándo y qué. La web pública muestra el precio nuevo en menos de un minuto (`/api/menu`).
+- **Menú QR:** recibe los precios al abrir `publicar.command` en la computadora del hotel. Mientras tanto, el editor avisa «En el menú QR sigue … hasta publicar».
+- **Seguridad** (OWASP Top 10:2025, OWASP Cheat Sheets y documentación de Cloudflare):
+  - Access protege `/precios` y `/precios/*` antes de que la petición llegue a la web.
+  - El Worker vuelve a comprobar cada petición: firma RS256 del JWT de Access con las claves públicas del equipo, emisor, audiencia (AUD), vigencia y que el correo esté en `CORREOS_ADMIN`. Si falta algo de la configuración, no entra nadie.
+  - Guardar exige JSON del mismo origen (`Origin`, `Sec-Fetch-Site`): un sitio ajeno no puede cambiar precios aunque la sesión esté abierta (CSRF).
+  - Solo se aceptan precios enteros de 0 a 1 000 000 de productos que existen. La versión del Durable Object evita que dos personas se pisen.
+  - Cabeceras de seguridad reales (`_headers`): HSTS, CSP, `frame-ancestors`, `nosniff`, `Permissions-Policy`. El editor además usa Trusted Types y no guarda nada en el navegador.
+  - Sin direcciones `*.workers.dev` ni de vista previa (no pasarían por Access).
+
+### Poner la web en Cloudflare (una sola vez)
+
+Necesita la cuenta de GitHub y acceso al lugar donde se compró el dominio. Active la verificación en dos pasos en Cloudflare y en GitHub: esas cuentas son las llaves de la web. Los nombres de los botones pueden variar un poco según el idioma del panel.
+
+Antes de empezar, abra `publicar.command` una vez: sube a GitHub los archivos que Cloudflare necesita (`wrangler.jsonc`, `worker/`, `_headers`).
+
+Hoy `hotelfronteraocotal.com` muestra otra página («Hotel Frontera en Ocotal, Nicaragua»); al terminar el paso 3, la reemplaza esta web. Mientras tanto la web nueva se ve en GitHub Pages, y `publicar.command` lo recuerda al final.
+
+1. **Cuenta y dominio.** Cree una cuenta gratis en https://dash.cloudflare.com y elija *Agregar un dominio* → `hotelfronteraocotal.com` → plan *Free*. Cloudflare copia los registros DNS que ya tiene el dominio: revíselos y, si el hotel tiene correo con ese dominio (registros MX), déjelos. Cloudflare le dará dos *nameservers*: póngalos en el sitio donde se compró el dominio y espere a que el dominio figure como *Activo*.
+2. **Publicar la web.** *Workers y Pages* → *Crear* → *Importar un repositorio* → conecte GitHub (solo `hofrosa-web`) → nombre del proyecto **`hofrosa-web`** (igual que en `wrangler.jsonc`) → comando de compilación vacío, comando de implementación `npx wrangler deploy` → *Implementar*. Desde ahí, cada `publicar.command` actualiza la web sola.
+3. **Dominio.** En el Worker `hofrosa-web` → *Configuración* → *Dominios y rutas* → *Agregar* → *Dominio personalizado* → `hotelfronteraocotal.com`. Si avisa que ya existe un registro DNS con ese nombre (el de la web vieja), bórrelo en *DNS* y vuelva a intentar. Para `www`: *Reglas* → *Reglas de redirección* → plantilla *Redirigir de WWW a raíz*.
+4. **Zero Trust.** En el menú, *Zero Trust*: elija un nombre de equipo (por ejemplo `hotelfrontera`) y el plan *Free*. Pide una tarjeta, pero no cobra.
+5. **Código al correo.** *Configuración* → *Autenticación* → *Métodos de inicio de sesión* → *Agregar nuevo* → *One-time PIN*.
+6. **Proteger el editor.** *Access* → *Aplicaciones* → *Agregar una aplicación* → *Autoalojada* (Self-hosted). Nombre: «Precios de la carta». Duración de la sesión: 8 horas. Agregue **dos** destinos: `hotelfronteraocotal.com` con ruta `precios` y `hotelfronteraocotal.com` con ruta `precios/*`. Política: *Permitir*, *Incluir* → *Correos* → su correo (y el de quien más pueda cambiar precios). Método de inicio: *One-time PIN*. Guarde y copie la **etiqueta de audiencia (AUD)** de la aplicación.
+7. **Decirle al Worker quién entra.** En el Worker `hofrosa-web` → *Configuración* → *Variables y secretos* → agregue tres de tipo **Secreto**:
+   - `ACCESS_EQUIPO`: el nombre de equipo del paso 4 (solo el nombre, sin `.cloudflareaccess.com`).
+   - `ACCESS_AUD`: la etiqueta AUD del paso 6.
+   - `CORREOS_ADMIN`: los mismos correos de la política, separados por comas.
+
+   Use el tipo *Secreto* (así los correos no quedan a la vista en el panel) y guarde con *Implementar*. Publicar desde GitHub no los borra.
+8. **Probar.** Abra https://hotelfronteraocotal.com/precios/ → escriba su correo → copie el código → debe ver «Conectado como …». Cambie un precio, guárdelo y mire la carta en la web: el precio nuevo aparece en menos de un minuto. En una ventana privada, con otro correo, no debe llegar ningún código.
+
+Para agregar o quitar a alguien: cambie la política de Access **y** `CORREOS_ADMIN`. Para cerrar sesiones abiertas: *Zero Trust* → *Usuarios* → revocar. Los ingresos quedan en *Zero Trust* → *Registros* → *Access*.
 
 ## Un solo menú para la web y el menú QR
 
@@ -71,7 +95,7 @@ La carta es una sola: `datos/menu.json` del servidor de pedidos (`../menu-digita
 
 - Al guardar en el editor de esta web: si el servidor de pedidos está encendido, el cambio entra por su API (como el panel, con clave, versión y registro) y el menú QR cambia al instante; si está apagado, se escribe su archivo con respaldo y lo carga al arrancar. En los dos casos se regenera `menu-datos.js`.
 - Al cambiar algo desde el panel del servidor: `publicar.command` sincroniza la copia antes de publicar (o `python3 editor/editor_menu.py --sincronizar`).
-- Al cambiar precios en la web (`precios/`): el cambio queda en GitHub y `publicar.command` lo pasa al menú único (por la API si el servidor está encendido, con su registro) antes de regenerar la copia. Así la copia nunca vuelve a los precios viejos.
+- Al cambiar precios en la web (`/precios/`): el cambio queda en Cloudflare y la web lo muestra al momento; `publicar.command` lo pasa al menú único (por la API si el servidor está encendido, con su registro) antes de regenerar la copia. Así la copia nunca vuelve a los precios viejos.
 - Las fotos se guardan en `menu/fotos/` del menú QR y se copian a `fotos/` de esta web, con la misma ruta `fotos/…`. Solo se copian nombres simples de esa carpeta: nunca una ruta con `..`.
 
 Si el servidor está en otra carpeta o puerto, cree `editor/ajustes.json` con `{"servidorPedidos": "/ruta/a/servidor-pedidos", "puertoSeguro": 8443}`. Sin servidor, el editor edita solo la copia de la web (`--solo-web`).

@@ -9,6 +9,9 @@ window.WEB = {
   // Dirección del servidor de pedidos, p. ej. "https://192.168.1.50:8443".
   // Vacío = usar solo la copia local menu-datos.js.
   servidor: "",
+  // Menú en vivo de esta misma web (Cloudflare): trae los precios cambiados en /precios/.
+  // Donde no existe (GitHub Pages, vista local), se usa la copia menu-datos.js sin aviso.
+  menuEnVivo: "api/menu",
   esperaMs: 4000,                    // tiempo máximo para esperar al servidor
   idioma: "es",                     // contenido original; Google traduce la página al idioma elegido
   momentos: { desayuno: "Desayuno", almuerzo: "Almuerzo y cena", bar: "Bar" },

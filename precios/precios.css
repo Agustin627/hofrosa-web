@@ -75,6 +75,8 @@ input[type=password], input[type=search], input[type=text], select {
   font-family: inherit; font-size: 1rem; font-weight: 600; line-height: 1.2; border-radius: 4px; cursor: pointer; border: 2px solid var(--tinta);
 }
 .boton { background: var(--tinta); color: #fff; }
+a.boton, a.boton-sec { text-decoration: none; }
+.cargando { color: var(--suave); padding: 24px 0; }
 .boton-sec { background: #fff; color: var(--tinta); }
 .boton[disabled], .boton-sec[disabled] { opacity: .45; cursor: not-allowed; }
 .boton.peligro { background: var(--mal); border-color: var(--mal); }

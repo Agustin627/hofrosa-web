@@ -1,22 +1,27 @@
 #!/usr/bin/env python3
 """
-Publica la web del Hotel Frontera en GitHub Pages. Lo usa publicar.command.
+Publica la web del Hotel Frontera. Lo usa publicar.command.
 
-  1. Trae de GitHub lo que se publicó desde otro lugar, por ejemplo precios
-     cambiados en la web (precios/) o cambios hechos en otra computadora.
+  1. Trae los precios cambiados en el editor de la web (/precios/, en Cloudflare)
+     y lo que se publicó en GitHub desde otro lugar (otra computadora, Codex).
   2. Pasa esos precios al menú único (servidor de pedidos / menú QR). Si el mismo
      precio cambió en los dos lados, gana el cambio más reciente y se avisa.
   3. Regenera la copia de la web (menu-datos.js) desde el menú único.
-  4. Guarda todo en un commit y lo sube. GitHub Pages actualiza la web en 1 o 2 minutos.
+  4. Guarda todo en un commit y lo sube a GitHub. Cloudflare (y GitHub Pages)
+     actualizan la web en 1 o 2 minutos.
 
 Nunca fuerza la subida ni borra trabajo: si algo no se puede unir solo, se detiene,
 explica qué pasó y no sube nada.
 
 Uso:  python3 editor/publicar.py
 """
+import json
+import os
 import re
 import subprocess
 import sys
+import urllib.error
+import urllib.request
 from datetime import datetime
 from pathlib import Path
 
@@ -27,7 +32,7 @@ import editor_menu as em  # noqa: E402  (mismo editor: mismas reglas y mismo for
 
 ARCHIVO = "menu-datos.js"
 PAGINAS_CON_VERSION = ("index.html", "precios/index.html")
-DIRECCION = "https://agustin627.github.io/hofrosa-web/"
+RESPALDO_DIRECCION = "https://agustin627.github.io/hofrosa-web/"
 INTENTOS = 3
 
 
@@ -54,6 +59,47 @@ def git_en_pantalla(*args):
 def archivo_en(rev):
     r = subprocess.run(["git", "show", f"{rev}:{ARCHIVO}"], cwd=RAIZ, capture_output=True, timeout=60)
     return r.stdout.decode("utf-8") if r.returncode == 0 else None
+
+
+def url_sitio():
+    """La dirección de la web es la del enlace canonical de index.html (un solo lugar para cambiarla)."""
+    try:
+        m = re.search(r'<link rel="canonical" href="(https://[^"]+)"', (RAIZ / "index.html").read_text(encoding="utf-8"))
+    except OSError:
+        m = None
+    return m.group(1) if m else RESPALDO_DIRECCION
+
+
+ULTIMA_CONSULTA = {"motivo": None}   # qué respondió el editor de la web la última vez
+
+
+def direccion_api():
+    """Dónde pedir los precios cambiados en la web (HOFROSA_PRECIOS_WEB sirve para las pruebas)."""
+    return os.environ.get("HOFROSA_PRECIOS_WEB") or url_sitio().rstrip("/") + "/api/precios-web"
+
+
+def traer_precios_web():
+    """Precios cambiados en el editor de la web que falta pasar al menú QR.
+    Devuelve (lista, None) o (None, motivo): «sin-editor» si la web todavía no está en
+    Cloudflare (no hay nada que traer) o «sin-conexion» si no respondió."""
+    url = direccion_api()
+    if ".github.io/" in url:
+        return None, "sin-editor"   # GitHub Pages no tiene editor de precios
+    try:
+        peticion = urllib.request.Request(url, headers={"Accept": "application/json", "User-Agent": "hofrosa-publicar/1"})
+        with urllib.request.urlopen(peticion, timeout=20) as r:
+            if "json" not in (r.headers.get("Content-Type") or ""):
+                return None, "sin-editor"
+            datos = json.loads(r.read(2_000_000).decode("utf-8"))
+    except urllib.error.HTTPError as e:
+        return None, ("sin-conexion" if e.code >= 500 else "sin-editor")
+    except (urllib.error.URLError, OSError):
+        return None, "sin-conexion"
+    except (ValueError, UnicodeDecodeError):
+        return None, "sin-editor"
+    if not isinstance(datos, dict) or not isinstance(datos.get("pendientes"), list):
+        return None, "sin-editor"
+    return datos["pendientes"], None
 
 
 def hay_cambios():
@@ -128,6 +174,23 @@ def publicar():
             momento_web = int(momento) if momento else 0
 
         # 1. Precios cambiados en la web → menú único. Va primero: si falla, git queda intacto.
+        #    a) Los del editor de precios (Cloudflare)
+        if em.SERVIDOR:
+            pendientes, motivo = traer_precios_web()
+            ULTIMA_CONSULTA["motivo"] = motivo
+            if motivo == "sin-conexion":
+                print("Aviso: no se pudieron consultar los precios cambiados en la web. Se publica igual;\n"
+                      "       quedan guardados en la web y se traerán la próxima vez.", flush=True)
+            elif pendientes:
+                try:
+                    aplicados, choques, ignorados = em.importar_pendientes_web(pendientes)
+                except em.ErrorMenu as e:
+                    raise Alto("No se pudieron pasar al menú QR los precios cambiados en la web:\n"
+                               f"{e}\nNo se publicó nada: la web conserva sus precios.") from e
+                informe["aplicados"] += aplicados
+                informe["choques"] += choques
+                informe["ignorados"] += ignorados
+        #    b) Los que llegaron por GitHub (otra computadora, Codex)
         if em.SERVIDOR and texto_base and texto_web and texto_base != texto_web:
             try:
                 aplicados, choques, ignorados = em.importar_precios_web(texto_base, texto_web, momento_web)
@@ -219,7 +282,11 @@ def main():
     print("\n" + ("Cambios publicados. La web se actualiza en 1 o 2 minutos." if subido else "No hay cambios nuevos que publicar."))
     if not em.SERVIDOR:
         print("Aviso: no se encontró el servidor de pedidos; se publicó la copia de la web tal como está.")
-    print("Dirección de la web:\n" + DIRECCION)
+    sitio = url_sitio()
+    if ULTIMA_CONSULTA["motivo"] == "sin-editor" and ".github.io/" not in direccion_api():
+        print(f"Aviso: {sitio} todavía no tiene la web nueva con el editor de precios (falta terminar\n"
+              f"       de configurar Cloudflare; vea el README). Mientras tanto se ve en {RESPALDO_DIRECCION}")
+    print("Dirección de la web:\n" + sitio)
     return 0
 
 

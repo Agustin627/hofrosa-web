@@ -1,0 +1,27 @@
+// Configuración de Cloudflare Workers para la web (archivos estáticos + API de precios).
+// Cloudflare la usa al publicar desde GitHub (Workers Builds) con: npx wrangler deploy
+{
+  "name": "hofrosa-web",
+  "main": "worker/index.js",
+  "compatibility_date": "2026-11-01",
+  // Solo el dominio propio (protegido por Access). Sin direcciones *.workers.dev ni de vista previa,
+  // que no pasan por Access.
+  "workers_dev": false,
+  "preview_urls": false,
+  "assets": {
+    "directory": "./",
+    "binding": "ASSETS",
+    // El Worker atiende solo la API; todo lo demás lo sirve Cloudflare directamente.
+    "run_worker_first": ["/api/*", "/precios/api/*"],
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "none"
+  },
+  "durable_objects": {
+    "bindings": [{ "name": "PRECIOS", "class_name": "Precios" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Precios"] }],
+  // ACCESS_EQUIPO, ACCESS_AUD y CORREOS_ADMIN se cargan en el panel de Cloudflare (como secretos):
+  // no se borran al publicar desde GitHub.
+  "keep_vars": true,
+  "observability": { "enabled": true }
+}

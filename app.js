@@ -147,22 +147,30 @@
     return true;
   }
 
-  /* ---------- Carga de datos: servidor en vivo o copia local ---------- */
+  /* ---------- Carga de datos: menú en vivo o copia local ---------- */
+  async function pedirMenu(url) {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), W.esperaMs);
+    try {
+      const r = await fetch(url, { signal: ctrl.signal, cache: "no-store" });
+      if (!r.ok) throw new Error(`Respuesta del menú: ${r.status}`);
+      const d = await r.json();
+      if (!menuValido(d)) throw new Error("Formato de menú no válido");
+      return d;
+    } finally { clearTimeout(t); }
+  }
   async function cargar() {
-    if (W.servidor) {
-      const ctrl = new AbortController();
-      const t = setTimeout(() => ctrl.abort(), W.esperaMs);
-      try {
-        const r = await fetch(W.servidor.replace(/\/+$/, "") + "/api/menu", { signal: ctrl.signal, cache: "no-store" });
-        if (!r.ok) throw new Error(`Respuesta del menú: ${r.status}`);
-        const d = await r.json();
-        if (!menuValido(d)) throw new Error("Formato de menú no válido");
-        return { datos: d, vivo: true };
-      } catch (e) {
-        console.warn("Menú en vivo no disponible, se usa la copia local.", e);
-      } finally { clearTimeout(t); }
+    // 1. Esta misma web en Cloudflare: la carta con los precios cambiados en /precios/
+    if (W.menuEnVivo) {
+      try { return { datos: await pedirMenu(W.menuEnVivo), vivo: W.menuEnVivo }; }
+      catch (e) { console.info("Sin menú en vivo en esta web; se usa la copia publicada.", e.message); }
     }
-    return { datos: menuValido(window.MENU_RESPALDO) ? window.MENU_RESPALDO : null, vivo: false };
+    // 2. El servidor de pedidos del hotel, si se configuró
+    if (W.servidor) {
+      try { return { datos: await pedirMenu(W.servidor.replace(/\/+$/, "") + "/api/menu"), vivo: W.servidor }; }
+      catch (e) { console.warn("Menú en vivo no disponible, se usa la copia local.", e); }
+    }
+    return { datos: menuValido(window.MENU_RESPALDO) ? window.MENU_RESPALDO : null, vivo: "" };
   }
 
   /* ---------- Utilidades que dependen de los datos ---------- */
@@ -608,7 +616,7 @@
     });
     mostrar(enHora || ids.find(id => id !== "desayuno") || ids[0]);
     abrirDestinoHash();
-    if (vivo) console.info("Menú cargado en vivo desde", W.servidor);
+    if (vivo) console.info("Menú cargado en vivo desde", vivo);
   }
 
   cargar().then(({ datos, vivo }) => {

@@ -419,6 +419,34 @@ def importar_precios_web(texto_base, texto_web, momento_web):
     return nombrar(aplicados), nombrar(choques), nombrar(ignorados)
 
 
+def importar_pendientes_web(pendientes):
+    """Pasa al menú único los precios cambiados en el editor de la web (Cloudflare, /precios/).
+    pendientes: lista de {"id", "pres", "n", "desde", "valor", "cuando"} que entrega
+    /api/precios-web. Tres vías por precio: «desde» es el precio publicado cuando se cambió.
+    Devuelve el informe (aplicados, choques, ignorados), con nombres para mostrar."""
+    cambios, momentos = {}, {}
+    for p in pendientes if isinstance(pendientes, list) else []:
+        if not (isinstance(p, dict) and isinstance(p.get("id"), str) and ID_VALIDO.fullmatch(p["id"])
+                and isinstance(p.get("pres") or "", str) and isinstance(p.get("n") or 0, int)
+                and es_numero(p.get("desde")) and precio_aceptable(p.get("valor"))
+                and isinstance(p.get("cuando"), (int, float)) and not isinstance(p.get("cuando"), bool)):
+            continue   # lo que no tenga la forma esperada no se aplica (datos de afuera: no se confía)
+        clave = (p["id"], p.get("pres") or "", p.get("n") or 0)
+        cambios[clave] = (p["desde"], p["valor"])
+        momentos[clave] = p["cuando"] / 1000
+    if not cambios:
+        return [], [], []
+    texto = archivo_fuente().read_text(encoding="utf-8")
+    fuente = json.loads(texto)
+    nombres = {clave: nombre_precio(fuente, clave) for clave in cambios}
+    aplicados, choques, ignorados = fusionar_precios(
+        cambios, fuente, lambda clave: momentos[clave] >= momento_cambio_en_fuente(nombre_plato(fuente, clave[0])))
+    if aplicados or any(c[-1] == "web" for c in choques):
+        guardar_en_fuente(fuente, huella(texto))
+    nombrar = lambda lista: [(nombres[x[0]],) + tuple(x[1:]) for x in lista]
+    return nombrar(aplicados), nombrar(choques), nombrar(ignorados)
+
+
 # ---------------------------------------------------------------------------
 # Lectura y escritura de menu-datos.js
 # ---------------------------------------------------------------------------

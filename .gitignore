@@ -3,7 +3,7 @@ __pycache__/
 editor/respaldos/
 editor/ajustes.json
 dist/
-# Nunca subir secretos: tokens de GitHub, claves o contraseñas guardadas en archivos
+# Nunca subir secretos: tokens, claves o contraseñas guardadas en archivos
 .env
 .env.*
 *.token
@@ -11,3 +11,8 @@ dist/
 *clave*.txt
 *.key
 *.pem
+.dev.vars
+.dev.vars.*
+# Archivos de trabajo de Cloudflare (wrangler)
+.wrangler/
+node_modules/
