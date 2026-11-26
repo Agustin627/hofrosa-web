@@ -82,8 +82,8 @@
       "versionesDisponibles": 2,
       "seleccionada": true,
       "archivo": "assets/imagenes/espacios/piscina-corredor.webp",
-      "categoria": "terraza",
-      "alt": "Corredor con mesas junto a la piscina de Hotel Frontera",
+      "categoria": "restaurante",
+      "alt": "Pasillo del comedor con mesas y plantas junto a la piscina",
       "dimensionesWeb": [
         1350,
         1800
@@ -204,8 +204,8 @@
       "versionesDisponibles": 2,
       "seleccionada": true,
       "archivo": "assets/imagenes/espacios/terraza-mesas.webp",
-      "categoria": "terraza",
-      "alt": "Mesas de la terraza cubierta junto a la piscina",
+      "categoria": "restaurante",
+      "alt": "Pasillo del comedor junto a la piscina, con mesas y sillas de metal",
       "dimensionesWeb": [
         1350,
         1800
@@ -1189,7 +1189,7 @@
       "seleccionada": true,
       "archivo": "assets/imagenes/espacios/patio-noche.webp",
       "categoria": "piscina",
-      "alt": "Patio y piscina de Hotel Frontera iluminados por la noche",
+      "alt": "Piscina frente al bar iluminado por la noche",
       "dimensionesWeb": [
         1350,
         1800
@@ -1248,7 +1248,7 @@
       "fuente": "IMG_1158.HEIC",
       "archivo": "assets/imagenes/espacios/piscina-guirnaldas-noche.webp",
       "categoria": "piscina",
-      "alt": "Piscina de Hotel Frontera por la noche con guirnaldas iluminadas y reflejos en el agua",
+      "alt": "Luces junto a la piscina reflejadas en el agua por la noche",
       "procedencia": "Render de resolución completa del álbum iCloud proporcionado por el usuario",
       "recursoICloud": "CPLAsset.resJPEGFullRes",
       "dimensionesFuente": [

@@ -25,7 +25,9 @@ Abra `http://127.0.0.1:8080`. Use la vista por HTTP para comprobar también Goog
 
 ## Fotografías del hotel
 
-Las fotografías nuevas están en `assets/imagenes/espacios/`, optimizadas en WebP a partir de los originales del álbum facilitado por el propietario. La portada alterna vistas de día y de noche; «Más fotos del hotel» incluye otras vistas de las instalaciones, la piscina iluminada y el restaurante nocturno.
+Las fotografías nuevas están en `assets/imagenes/espacios/`, optimizadas en WebP a partir de los originales del álbum facilitado por el propietario. La portada alterna vistas de día y de noche. «Más fotos del hotel» muestra cuatro vistas complementarias: parqueo, sala de descanso, recepción y vista desde la terraza superior. La selección evita repetir fotografías de la portada y las secciones principales, así como tomas casi idénticas del mismo ángulo.
+
+El pasillo con mesas y sillas de metal junto a la piscina forma parte del comedor; su fotografía está en la sección del restaurante. La terraza del bar está en la planta superior.
 
 En habitaciones se muestran las fotos de la doble y la triple. La imagen antigua asignada a «Sencilla» era otra toma de la misma habitación doble; se omite hasta disponer de una fotografía confirmada de la sencilla.
 
