@@ -249,17 +249,25 @@ section { padding: 80px 0; }
 .etiqueta.agotado { background: var(--relleno); color: var(--suave); }
 .aviso { text-align: center; padding: 28px; color: var(--suave); }
 /* Ubicación y acceso al hotel */
-.ubicacion-grid { display: grid; grid-template-columns: minmax(260px, .76fr) minmax(0, 1.24fr); gap: 48px; align-items: center; }
-.ubicacion-texto { min-width: 0; padding: 20px 0; }
-.ubicacion-texto h3 { font-size: clamp(32px, 3.5vw, 42px); margin-top: 12px; }
-.ubicacion-direccion { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--linea); font-style: normal; font-size: 22px; line-height: 1.45; }
-.ubicacion-referencia { margin-top: 14px; color: var(--suave); font-size: 16px; line-height: 1.6; max-width: 38ch; }
-.ubicacion-texto .botones { margin-top: 28px; }
-.ubicacion-texto .btn { max-width: 100%; }
-.mapa-hotel { min-width: 0; overflow: hidden; border: 1px solid var(--linea); border-radius: 3px; background: var(--relleno); }
-.mapa-hotel iframe { display: block; width: 100%; max-width: 100%; height: 460px; border: 0; }
-.mapa-pie { padding: 14px 18px; border-top: 1px solid var(--linea); }
-.mapa-pie p { color: var(--suave); font-size: 14px; line-height: 1.5; }
+.ubicacion-grid { display: grid; grid-template-columns: minmax(280px, .78fr) minmax(0, 1.22fr); align-items: stretch; overflow: hidden; border: 1px solid var(--linea); border-radius: 12px; background: var(--papel); box-shadow: 0 20px 50px -28px rgba(23, 38, 32, .35); }
+.ubicacion-texto { min-width: 0; display: flex; flex-direction: column; align-items: flex-start; padding: 36px; background: var(--tinta); color: #fcfaf5; }
+.ubicacion-texto .sello { display: flex; align-items: center; gap: 8px; color: #dfc595; }
+.ubicacion-texto svg, .mapa-cabecera svg { flex: 0 0 20px; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.ubicacion-texto h3 { font-size: clamp(34px, 3.5vw, 44px); margin-top: 20px; }
+.ubicacion-restaurante { margin-top: 8px; color: #e1e5dd; font-size: 16px; }
+.ubicacion-direccion { margin-top: 24px; padding-top: 24px; border-top: 1px solid #526257; font-style: normal; font-size: 18px; line-height: 1.6; }
+.ubicacion-referencia { display: grid; gap: 4px; margin-top: 18px; color: #d1d8cf; font-size: 14px; line-height: 1.5; }
+.ubicacion-referencia > span:first-child { color: #dfc595; font-weight: 600; }
+.ubicacion-texto .botones { width: 100%; margin-top: auto; padding-top: 28px; }
+.ubicacion-texto .btn { width: 100%; max-width: 100%; gap: 10px; min-height: 50px; border-radius: 6px; background: #f4ecd9; border-color: #f4ecd9; color: var(--tinta); }
+.ubicacion-texto :focus-visible { outline-color: #dfc595; }
+@media (hover: hover) { .ubicacion-texto .btn:hover { background: #fff; border-color: #fff; } }
+.mapa-hotel { min-width: 0; display: flex; flex-direction: column; background: #e9ede6; }
+.mapa-cabecera { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px 16px; min-height: 64px; padding: 8px 22px; border-bottom: 1px solid var(--linea); background: var(--papel); }
+.mapa-etiqueta { display: inline-flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 600; }
+.mapa-etiqueta svg { color: var(--acento); }
+.mapa-cabecera a { display: inline-flex; align-items: center; min-height: 44px; padding: 6px 0; color: var(--acento); font-size: 14px; font-weight: 600; }
+.mapa-hotel iframe { display: block; flex: 1 0 440px; width: 100%; max-width: 100%; min-height: 440px; height: 440px; border: 0; }
 
 footer { background: var(--tinta); color: #f4f1e7; padding: 56px 0 calc(28px + env(safe-area-inset-bottom)); }
 .pie { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 48px; }
@@ -275,8 +283,8 @@ footer a:hover { text-decoration: underline; }
 .traductor .goog-te-combo { min-height: 36px; max-width: 100%; font-size: 14px; }
 
 @media (max-width: 940px) {
-  .ubicacion-grid { grid-template-columns: minmax(0, 1fr); gap: 28px; }
-  .ubicacion-texto { max-width: 38rem; padding: 0; }
+  .ubicacion-grid { grid-template-columns: minmax(0, 1fr); }
+  .ubicacion-texto { padding: 28px 32px; }
   .momentos-carta { display: block; }
   .pestanas { justify-content: center; }
   .horario-contexto { max-width: 100%; margin: 6px 0 0; }
@@ -305,11 +313,12 @@ footer a:hover { text-decoration: underline; }
 }
 @media (max-width: 760px) {
   .galeria-hotel { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 14px; padding: 16px; }
-  .ubicacion-grid { gap: 24px; }
-  .ubicacion-direccion { margin-top: 20px; font-size: 20px; }
-  .ubicacion-texto .botones { margin-top: 24px; }
-  .mapa-hotel iframe { height: 350px; }
-  .mapa-pie { padding: 12px 16px; }
+  .ubicacion-texto { padding: 26px 24px; }
+  .ubicacion-texto h3 { margin-top: 16px; }
+  .ubicacion-direccion { margin-top: 20px; padding-top: 20px; font-size: 18px; }
+  .ubicacion-texto .botones { padding-top: 24px; }
+  .mapa-hotel iframe { flex-basis: 350px; min-height: 350px; height: 350px; }
+  .mapa-cabecera { padding: 8px 16px; }
   :root { --alto-cabecera: 58px; }
   .barra { min-height: 58px; gap: 12px; }
   .logo { padding: 3px 0; }
