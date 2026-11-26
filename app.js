@@ -4,6 +4,10 @@
   const $ = s => document.querySelector(s);
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
   const fmt = (plantilla, datos) => plantilla.replace(/\{(\w+)\}/g, (_, k) => datos[k] ?? "");
+  // Clave propia del objeto (no heredada: «constructor», «toString»…). Object.hasOwn no existe
+  // en iPhone con iOS anterior a 15.4: con él, la carta no se mostraba en esos teléfonos.
+  const propia = (obj, k) => obj != null && Object.prototype.hasOwnProperty.call(obj, k);
+  const de = (obj, k) => (propia(obj, k) ? obj[k] : undefined);
 
   /* ---------- Menú móvil de navegación ---------- */
   const btn = $(".menu-btn"), nav = $("#nav"), velo = $(".velo"), textoBtn = $(".menu-texto");
@@ -33,7 +37,9 @@
   }, true);
   // Si el foco sale del menú abierto (Tab), se cierra para no dejarlo tapando la página
   $("header").addEventListener("focusout", e => { if (abierto() && e.relatedTarget && !e.relatedTarget.closest("header")) cerrarNav(); });
-  matchMedia("(min-width:941px)").addEventListener("change", cerrarNav);
+  const anchoEscritorio = matchMedia("(min-width:941px)");
+  if (anchoEscritorio.addEventListener) anchoEscritorio.addEventListener("change", cerrarNav);
+  else if (anchoEscritorio.addListener) anchoEscritorio.addListener(cerrarNav);   // Safari anterior a 14
 
   /* ---------- Carrusel de la portada: fundido suave entre fotos ---------- */
   (() => {
@@ -74,7 +80,8 @@
     document.addEventListener("visibilitychange", arrancar);
     quieto.addEventListener?.("change", e => { pausadoPorUsuario = e.matches; marcarPausa(); arrancar(); });
     // Solo avanza mientras se ve: ahorra datos y batería
-    if ("IntersectionObserver" in window) new IntersectionObserver(([e]) => { enVista = e.isIntersecting; arrancar(); }).observe(caja);
+    // Si llegan varios avisos juntos, vale el último (el estado actual)
+    if ("IntersectionObserver" in window) new IntersectionObserver(avisos => { enVista = avisos[avisos.length - 1].isIntersecting; arrancar(); }).observe(caja);
     // Deslizar con el dedo
     let x0 = null;
     caja.addEventListener("touchstart", e => { x0 = e.touches[0].clientX; }, { passive: true });
@@ -122,7 +129,7 @@
       && opcional(c.incluye, v => typeof v === "string") && opcional(c.foto, v => typeof v === "string")
       && opcional(c.fotoReferencia, v => typeof v === "boolean"))) return false;
     if (!Object.values(D.momentos).every(m => objeto(m) && lista(m.grupos, g => objeto(g) && texto(g.n)
-      && opcional(g.nota, texto) && lista(g.cats, id => typeof id === "string" && Object.hasOwn(D.categorias, id))))) return false;
+      && opcional(g.nota, texto) && lista(g.cats, id => typeof id === "string" && propia(D.categorias, id))))) return false;
     const C = D.config;
     if (C != null) {
       if (!objeto(C) || !opcional(C.bebidasDesayuno, v => lista(v, id => typeof id === "string"))
@@ -168,7 +175,7 @@
     const tx = v => {
       if (v == null) return "";
       const es = typeof v === "string" ? v : (v.es ?? Object.values(v)[0] ?? "");
-      return (typeof v === "object" && v[idioma]) || cache[es] || es;
+      return (typeof v === "object" && de(v, idioma)) || de(cache, es) || es;
     };
     const moneda = C.moneda || "C$";
     const dinero = n => {
@@ -185,7 +192,7 @@
       return `${(H % 12) || 12}:${m[2]} ${H < 12 ? "a.m." : "p.m."}`;
     };
     // Índice de platos por id (para nombrar bebidas incluidas, etc.)
-    const platos = {};
+    const platos = Object.create(null);
     for (const c of Object.values(D.categorias || {})) for (const p of c.platos || []) platos[p.id] = p;
     // Fotos subidas desde el panel viven en el servidor de pedidos
     // «fotos/…» son las que sube el panel del servidor de pedidos; el resto
@@ -196,7 +203,7 @@
 
   // Las fotos de la web son locales; p.foto puede venir del servidor de pedidos.
   function mediaHTML(p, U, grande = false) {
-    const configurada = W.imagenes.platos?.[p.id];
+    const configurada = de(W.imagenes?.platos, p.id);
     const imagen = typeof configurada === "string" ? { src: configurada } : configurada;
     const foto = configurada !== undefined ? imagen?.src : U.urlFoto(p.foto);
     if (!foto) return "";
@@ -208,11 +215,11 @@
   }
 
   function partesPlato(p, cat, U, notaFuerte = true) {
-    const etiquetas = (p.t || []).filter(t => W.etiquetas[t]).map(t => `<span class="etiqueta">${esc(W.etiquetas[t])}</span>`).join("")
+    const etiquetas = (p.t || []).filter(t => de(W.etiquetas, t)).map(t => `<span class="etiqueta">${esc(de(W.etiquetas, t))}</span>`).join("")
       + (p.agotado ? `<span class="etiqueta agotado">${esc(W.textos.agotado)}</span>` : "");
     const tienePres = Array.isArray(p.pres) && p.pres.length;
     const precio = tienePres ? "" : (p.p != null ? U.dinero(p.p) : "");
-    const pres = tienePres ? `<div class="pres">${p.pres.map(([k, v]) => `<span>${esc(W.presentaciones[k] || k)} <b translate="no" class="notranslate">${esc(U.dinero(v))}</b></span>`).join("")}</div>` : "";
+    const pres = tienePres ? `<div class="pres">${p.pres.map(([k, v]) => `<span>${esc(de(W.presentaciones, k) || k)} <b translate="no" class="notranslate">${esc(U.dinero(v))}</b></span>`).join("")}</div>` : "";
     const ops = Array.isArray(p.op) && p.op.length ? `<details class="detalle-plato"><summary>${esc(W.textos.opcionesPlato)}</summary><div class="ops">${p.op.map(o => `<span>${esc(U.tx(o))}</span>`).join("")}</div></details>` : "";
     const incluye = p.incluye ?? cat.incluye;
     let nota = "";
@@ -322,7 +329,7 @@
   // en cada categoría ni en cada plato.
   function categoriaHTML(cid, c, U, notaEnGrupo = false, { agrupar = true, contexto = "", notas = [] } = {}) {
     const todosFuertes = c.platos.every(p => (p.incluye ?? c.incluye) === "fuerte");
-    const configurada = W.imagenes.categorias[cid];
+    const configurada = de(W.imagenes?.categorias, cid);
     const imagen = typeof configurada === "string" ? { src: configurada } : configurada;
     const foto = configurada !== undefined ? imagen?.src : U.urlFoto(c.foto);
     const referencia = configurada !== undefined ? imagen?.fotoReferencia : c.fotoReferencia;
@@ -362,7 +369,7 @@
     $(".logo img").alt = hotel;
     const tels = h.telefonos || [];
     if (h.lema) document.querySelectorAll('[data-hotel="lema"]').forEach(el => el.textContent = tx(h.lema));
-    document.querySelectorAll('[data-hotel="direccion"]').forEach(el => { el.textContent = tx(h.direccion); });
+    if (h.direccion) document.querySelectorAll('[data-hotel="direccion"]').forEach(el => { el.textContent = tx(h.direccion); });
     if (tels[0]) {
       document.querySelectorAll('[data-hotel="reservar"]').forEach(r => { r.href = "tel:" + tels[0].tel; r.textContent = fmt(W.textos.reservar, { tel: tels[0].texto }); });
       document.querySelectorAll('[data-hotel="tel1"]').forEach(a => { a.href = "tel:" + tels[0].tel; });
@@ -378,7 +385,7 @@
     const ids = Object.keys(D.momentos || {});
     const pest = $("#pestanas"), carta = $("#carta"), hor = $("#horario");
     const buscar = $("#buscar-plato"), selector = $("#categoria-menu");
-    const nombre = id => W.momentos[id] || (id.charAt(0).toUpperCase() + id.slice(1));
+    const nombre = id => de(W.momentos, id) || (id.charAt(0).toUpperCase() + id.slice(1));
     const abiertosPorMomento = new Map();
     const filtros = { categoria: "", recomendados: false, disponibles: false };
     let momentoActual, consulta = "", relojBusqueda;
@@ -507,8 +514,8 @@
         carta.innerHTML = `<div class="sin-resultados"><h3>${esc(W.textos.sinResultados)}</h3><p>${esc(W.textos.ayudaSinResultados)}</p><button class="btn claro" type="button" data-limpiar-filtros>${esc(W.textos.limpiarFiltros)}</button></div>`;
         return;
       }
-      const hayFotosReferencia = entradas.some(({ p }) => Boolean(p.foto && p.fotoReferencia) || Boolean(W.imagenes.platos?.[p.id]?.fotoReferencia))
-        || categorias.some(([cid, c]) => Boolean(c.foto && c.fotoReferencia) || Boolean(W.imagenes.categorias[cid]?.fotoReferencia));
+      const hayFotosReferencia = entradas.some(({ p }) => Boolean(p.foto && p.fotoReferencia) || Boolean(de(W.imagenes?.platos, p.id)?.fotoReferencia))
+        || categorias.some(([cid, c]) => Boolean(c.foto && c.fotoReferencia) || Boolean(de(W.imagenes?.categorias, cid)?.fotoReferencia));
       const avisoFotos = hayFotosReferencia ? `<p class="aviso-fotos">${esc(W.textos.avisoFotos)}</p>` : "";
       if (filtrando) {
         // Los resultados están abiertos y no se repiten como recomendaciones.

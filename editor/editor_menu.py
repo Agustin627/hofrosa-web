@@ -42,7 +42,7 @@ from datetime import datetime
 from http import HTTPStatus
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import unquote, urlparse
 
 try:
     from PIL import Image, ImageOps, UnidentifiedImageError
@@ -70,6 +70,9 @@ CABECERA = (
     "   Se puede editar con: python3 editor/editor_menu.py */\n"
 )
 ID_VALIDO = re.compile(r"[a-z0-9-]{1,40}")
+# Fotos del menú QR: siempre «fotos/<nombre>», sin carpetas ni «..» (igual que exige el servidor)
+FOTO_SERVIDOR = re.compile(r"fotos/([A-Za-z0-9._-]{1,80}\.(?:jpe?g|png|webp|avif))")
+PRECIO_MAXIMO = 1_000_000
 HORA_VALIDA = re.compile(r"([01]\d|2[0-3]):[0-5]\d")
 INCLUYE = {"", "desayuno", "fuerte"}
 
@@ -214,17 +217,22 @@ def exportar_web(datos):
         publico.pop(clave, None)
     config = publico.get("config") or {}
     publico["config"] = {k: config[k] for k in CONFIG_PUBLICA if k in config}
-    # Las fotos del menú QR (fotos/…) se copian a la web con la misma ruta
+    # Las fotos del menú QR (fotos/…) se copian a la web con la misma ruta. Solo nombres
+    # simples dentro de la carpeta de fotos: una ruta con «..» podría copiar a la web
+    # (y publicar en GitHub) cualquier archivo de la computadora, como las claves.
     destino = CARPETA_WEB / "fotos"
+    carpeta = carpeta_fotos_servidor().resolve() if SERVIDOR else None
     for c in publico.get("categorias", {}).values():
         for obj in [c] + c.get("platos", []):
-            foto = str(obj.get("foto") or "")
-            if foto.startswith("fotos/"):
-                origen = carpeta_fotos_servidor() / foto[len("fotos/"):]
-                if origen.is_file():
-                    destino.mkdir(exist_ok=True)
-                    if not (destino / origen.name).exists():
-                        shutil.copy2(origen, destino / origen.name)
+            m = FOTO_SERVIDOR.fullmatch(str(obj.get("foto") or ""))
+            if not m or carpeta is None:
+                continue
+            origen = (carpeta / m.group(1)).resolve()
+            if origen.parent != carpeta or not origen.is_file():
+                continue
+            destino.mkdir(exist_ok=True)
+            if not (destino / origen.name).exists():
+                shutil.copy2(origen, destino / origen.name)
     texto = serializar(publico)
     if not ARCHIVO_MENU.exists() or ARCHIVO_MENU.read_text(encoding="utf-8") != texto:
         fd, temporal = tempfile.mkstemp(prefix=".menu-", suffix=".js", dir=CARPETA_WEB)
@@ -264,6 +272,153 @@ def normalizar_foto(datos):
         raise ErrorMenu("No se pudo leer la imagen. Use un JPG, PNG o WebP válido y de tamaño razonable.") from e
 
 
+def sincronizar_web():
+    """Regenera menu-datos.js desde el menú único, si el servidor de pedidos lo acepta."""
+    datos = json.loads(archivo_fuente().read_text(encoding="utf-8"))
+    validar_con_servidor(datos)
+    exportar_web(datos)
+
+
+# ---------------------------------------------------------------------------
+# Precios cambiados en la web (precios/ en GitHub) → menú único (menú QR)
+# ---------------------------------------------------------------------------
+# El editor de precios de la web cambia solo números en menu-datos.js en GitHub.
+# Al publicar desde esta computadora, esos cambios se pasan al menú único antes de
+# regenerar la copia de la web; si no, la copia vieja los borraría.
+# Cada precio se identifica por (plato, presentación, n): ("criollo", "", 0) o
+# ("centenario", "botella", 0).
+
+def precios_de(datos):
+    r = {}
+    for c in (datos.get("categorias") or {}).values():
+        if not isinstance(c, dict):
+            continue
+        for p in c.get("platos") or []:
+            if not isinstance(p, dict) or not isinstance(p.get("id"), str):
+                continue
+            pres = p.get("pres")
+            if isinstance(pres, list) and pres:
+                vistas = {}
+                for par in pres:
+                    if isinstance(par, list) and len(par) == 2 and isinstance(par[0], str):
+                        n = vistas.get(par[0], 0)
+                        vistas[par[0]] = n + 1
+                        r[(p["id"], par[0], n)] = par[1]
+            elif "p" in p:
+                r[(p["id"], "", 0)] = p["p"]
+    return r
+
+
+def nombre_plato(datos, pid):
+    for c in (datos.get("categorias") or {}).values():
+        for p in c.get("platos") or []:
+            if p.get("id") == pid:
+                return texto_es(p.get("n")) or pid
+    return pid
+
+
+def nombre_precio(datos, clave):
+    pid, pres, _ = clave
+    nombre = nombre_plato(datos, pid)
+    return f"{nombre} ({pres})" if pres else nombre
+
+
+def poner_precio(datos, clave, valor):
+    pid, pres, k = clave
+    for c in (datos.get("categorias") or {}).values():
+        for p in c.get("platos") or []:
+            if p.get("id") != pid:
+                continue
+            if not pres:
+                p["p"] = valor
+                return True
+            n = 0
+            for par in p.get("pres") or []:
+                if par[0] == pres:
+                    if n == k:
+                        par[1] = valor
+                        return True
+                    n += 1
+    return False
+
+
+def precio_aceptable(v):
+    return isinstance(v, int) and not isinstance(v, bool) and 0 <= v <= PRECIO_MAXIMO
+
+
+def cambios_de_precio(base, web):
+    """{clave: (antes, después)} de los precios que cambiaron de base a web, en productos de ambos."""
+    pb, pw = precios_de(base), precios_de(web)
+    return {k: (pb[k], pw[k]) for k in pb.keys() & pw.keys() if pb[k] != pw[k]}
+
+
+def fusionar_precios(cambios, fuente, gana_web):
+    """Aplica a «fuente» (se modifica) los cambios de la web, en tres vías:
+    - el menú único seguía con el precio de antes: se pone el de la web;
+    - ya tenía el de la web: nada que hacer;
+    - también cambió (choque): gana el cambio más reciente (gana_web(clave) decide).
+    Devuelve (aplicados, choques, ignorados)."""
+    actuales = precios_de(fuente)
+    aplicados, choques, ignorados = [], [], []
+    for clave, (antes, web) in sorted(cambios.items()):
+        if clave not in actuales:
+            ignorados.append((clave, antes, web, "ya no está en el menú QR"))
+            continue
+        if not precio_aceptable(web):
+            ignorados.append((clave, antes, web, "precio inválido"))
+            continue
+        actual = actuales[clave]
+        if actual == web:
+            continue
+        if actual == antes:
+            poner_precio(fuente, clave, web)
+            aplicados.append((clave, antes, web))
+        elif gana_web(clave):
+            poner_precio(fuente, clave, web)
+            choques.append((clave, antes, web, actual, "web"))
+        else:
+            choques.append((clave, antes, web, actual, "menú QR"))
+    return aplicados, choques, ignorados
+
+
+def momento_cambio_en_fuente(nombre):
+    """Cuándo cambió por última vez ese precio en el menú único: según el registro del
+    servidor (cambios del panel) o, si no aparece, la fecha del archivo del menú."""
+    mejor = None
+    try:
+        lineas = (SERVIDOR / "datos" / "auditoria.jsonl").read_text(encoding="utf-8").splitlines()[-3000:]
+    except OSError:
+        lineas = []
+    for linea in lineas:
+        try:
+            e = json.loads(linea)
+        except ValueError:
+            continue
+        if isinstance(e, dict) and any(str(d).startswith(f"Precio de {nombre}:") for d in e.get("detalle") or []):
+            mejor = max(mejor or 0, (e.get("en") or 0) / 1000)
+    return mejor if mejor is not None else archivo_fuente().stat().st_mtime
+
+
+def importar_precios_web(texto_base, texto_web, momento_web):
+    """Pasa al menú único los precios que cambiaron en la web (de texto_base a texto_web).
+    momento_web: fecha (segundos) del último cambio publicado en la web.
+    Devuelve el informe: (aplicados, choques, ignorados), con nombres para mostrar."""
+    base = analizar_copia_web(texto_base, "la versión anterior de menu-datos.js")
+    web = analizar_copia_web(texto_web, "la versión de GitHub de menu-datos.js")
+    cambios = cambios_de_precio(base, web)
+    if not cambios:
+        return [], [], []
+    texto = archivo_fuente().read_text(encoding="utf-8")
+    fuente = json.loads(texto)
+    nombres = {clave: nombre_precio(web, clave) for clave in cambios}
+    aplicados, choques, ignorados = fusionar_precios(
+        cambios, fuente, lambda clave: momento_web >= momento_cambio_en_fuente(nombre_plato(fuente, clave[0])))
+    if aplicados or any(c[-1] == "web" for c in choques):
+        guardar_en_fuente(fuente, huella(texto))
+    nombrar = lambda lista: [(nombres[x[0]],) + tuple(x[1:]) for x in lista]
+    return nombrar(aplicados), nombrar(choques), nombrar(ignorados)
+
+
 # ---------------------------------------------------------------------------
 # Lectura y escritura de menu-datos.js
 # ---------------------------------------------------------------------------
@@ -279,17 +434,25 @@ def leer_menu():
 
 def leer_copia_web():
     texto = ARCHIVO_MENU.read_text(encoding="utf-8")
+    return analizar_copia_web(texto), huella(texto)
+
+
+def analizar_copia_web(texto, nombre=None):
+    """Los datos de un menu-datos.js (solo el JSON: nunca se ejecuta)."""
+    nombre = nombre or ARCHIVO_MENU.name
     m = re.search(re.escape(VARIABLE) + r"\s*=\s*", texto)
     if not m:
-        raise ErrorMenu(f"No se encontró «{VARIABLE} = …» en {ARCHIVO_MENU.name}.")
+        raise ErrorMenu(f"No se encontró «{VARIABLE} = …» en {nombre}.")
     cuerpo = texto[m.end():].strip()
     if cuerpo.endswith(";"):
         cuerpo = cuerpo[:-1]
     try:
         datos = json.loads(cuerpo)
     except json.JSONDecodeError as e:
-        raise ErrorMenu(f"{ARCHIVO_MENU.name} no tiene un JSON válido (línea {e.lineno}): {e.msg}") from e
-    return datos, huella(texto)
+        raise ErrorMenu(f"{nombre} no tiene un JSON válido (línea {e.lineno}): {e.msg}") from e
+    if not isinstance(datos, dict):
+        raise ErrorMenu(f"{nombre} no tiene un menú válido.")
+    return datos
 
 
 def huella(texto):
@@ -576,6 +739,12 @@ class Editor(SimpleHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(datos)
 
+    def largo_cuerpo(self):
+        try:
+            return int(self.headers.get("Content-Length") or 0)
+        except ValueError:
+            return -1
+
     def origen_local(self):
         host = (self.headers.get("Host") or "").split(":")[0]
         return host in ("127.0.0.1", "localhost")
@@ -601,10 +770,12 @@ class Editor(SimpleHTTPRequestHandler):
             fuente = {"servidor": bool(SERVIDOR), "encendido": bool(SERVIDOR) and servidor_encendido()}
             return self.responder_json(200, {"menu": datos, "huella": h, "fuente": fuente})
         if ruta.startswith("/web/") or ruta == "/web":
-            # Vista previa de la web real (sirve la carpeta del sitio)
-            self.path = self.path[4:] or "/"
-            if ".." in self.path or self.path.startswith("/editor"):
+            # Vista previa de la web real (sirve la carpeta del sitio). La ruta se revisa ya
+            # decodificada: «//editor», «%65ditor» o «.git» no deben llegar a los archivos.
+            partes = [p for p in unquote(ruta[4:]).replace("\\", "/").split("/") if p]
+            if any(p.startswith(".") for p in partes) or (partes and partes[0] in ("editor", "dist")):
                 return self.send_error(HTTPStatus.NOT_FOUND)
+            self.path = self.path[4:] or "/"
             return super().do_GET()
         self.send_error(HTTPStatus.NOT_FOUND)
 
@@ -619,7 +790,7 @@ class Editor(SimpleHTTPRequestHandler):
         """
         if tipo not in TIPOS_FOTO or not ID_VALIDO.fullmatch(ident):
             return self.responder_json(400, {"error": "Destino de la foto inválido."})
-        largo = int(self.headers.get("Content-Length") or 0)
+        largo = self.largo_cuerpo()
         if largo <= 0 or largo > MAX_FOTO:
             return self.responder_json(413, {"error": "La foto está vacía o pesa más de 12 MB."})
         datos = self.rfile.read(largo)
@@ -660,7 +831,7 @@ class Editor(SimpleHTTPRequestHandler):
             return self.send_error(HTTPStatus.NOT_FOUND)
         if not secrets.compare_digest(self.headers.get("X-Editor-Token", ""), self.token):
             return self.responder_json(403, {"error": "Sesión del editor no válida. Recargue la página."})
-        largo = int(self.headers.get("Content-Length") or 0)
+        largo = self.largo_cuerpo()
         if largo <= 0 or largo > MAX_CUERPO:
             return self.responder_json(413, {"error": "Datos demasiado grandes o vacíos."})
         try:
@@ -694,7 +865,10 @@ def main():
         if not SERVIDOR:
             print("No se encontró el servidor de pedidos; la web conserva su copia actual del menú.")
             return
-        exportar_web(json.loads(archivo_fuente().read_text(encoding="utf-8")))
+        try:
+            sincronizar_web()
+        except ErrorMenu as e:
+            sys.exit(f"No se actualizó la web: {e}")
         print(f"Copia de la web actualizada desde {archivo_fuente()}")
         return
     if SERVIDOR:

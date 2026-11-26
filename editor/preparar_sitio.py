@@ -20,7 +20,7 @@ def preparar():
     DESTINO.mkdir()
     for nombre in ARCHIVOS:
         shutil.copy2(RAIZ / nombre, DESTINO / nombre)
-    for nombre in ("assets", "fotos"):
+    for nombre in ("assets", "fotos", "precios"):
         if (RAIZ / nombre).is_dir():
             shutil.copytree(RAIZ / nombre, DESTINO / nombre, ignore=shutil.ignore_patterns(".DS_Store"))
     print("Sitio preparado en dist/ (sin editor, ajustes ni respaldos).")

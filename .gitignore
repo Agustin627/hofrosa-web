@@ -3,3 +3,11 @@ __pycache__/
 editor/respaldos/
 editor/ajustes.json
 dist/
+# Nunca subir secretos: tokens de GitHub, claves o contraseñas guardadas en archivos
+.env
+.env.*
+*.token
+*token*.txt
+*clave*.txt
+*.key
+*.pem

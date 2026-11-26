@@ -8,7 +8,7 @@
   const enlaces = [...document.querySelectorAll("[data-idioma]")];
   const normalizar = valor => {
     const base = String(valor || "").toLowerCase().split(/[-_]/)[0];
-    return Object.hasOwn(codigos, base) ? base : null;
+    return Object.prototype.hasOwnProperty.call(codigos, base) ? base : null;   // Object.hasOwn falta en iOS < 15.4
   };
   const idiomaURL = () => new URL(location.href).searchParams.get("lang");
   let guardado, cookie;

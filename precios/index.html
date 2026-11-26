@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<!-- Solo código propio y la API de GitHub. Sin estilos ni scripts en línea, sin marcos,
+     sin formularios hacia afuera. Trusted Types impide insertar HTML con texto. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src https://api.github.com; base-uri 'none'; form-action 'none'; object-src 'none'; manifest-src 'none'; media-src 'none'; worker-src 'none'; require-trusted-types-for 'script'; trusted-types 'none'; upgrade-insecure-requests">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#233b32">
+<meta name="color-scheme" content="light">
+<title>Precios · Hotel Frontera</title>
+<link rel="icon" href="../favicon-frontera.svg" type="image/svg+xml">
+<link rel="stylesheet" href="precios.css?v=20261126-001648">
+</head>
+<body>
+<a class="saltar" href="#principal">Saltar al contenido</a>
+<header class="cabecera">
+  <div class="cabecera-int">
+    <div>
+      <p class="marca">Hotel Frontera · Las Margaritas</p>
+      <h1>Precios de la carta</h1>
+    </div>
+    <div class="sesion" id="sesion" hidden>
+      <span class="sesion-estado" id="sesion-estado"></span>
+      <button type="button" class="boton-sec" id="boton-bloquear">Bloquear</button>
+    </div>
+  </div>
+</header>
+
+<main id="principal" tabindex="-1">
+  <p class="aviso" id="aviso-general" role="alert" hidden></p>
+
+  <noscript><p class="aviso">Esta página necesita JavaScript.</p></noscript>
+
+  <!-- 1. Conectar este dispositivo con un token de GitHub -->
+  <section class="tarjeta" id="paso-conectar" aria-labelledby="titulo-conectar" hidden>
+    <h2 id="titulo-conectar">Entrar con su token de GitHub</h2>
+    <p>Solo puede cambiar precios quien tenga un <b>token de GitHub</b> con permiso sobre la web. El token es una llave larga que empieza con <code>github_pat_</code>. No se envía a ningún otro lugar: esta página habla solo con GitHub.</p>
+    <details class="ayuda">
+      <summary>¿No tiene token? Créelo en 2 minutos</summary>
+      <ol>
+        <li>Abra <a id="enlace-crear-token" href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener noreferrer">Crear token en GitHub</a> e inicie sesión si se lo pide.</li>
+        <li>En <b>Repository access</b> elija <b>Only select repositories</b> y marque solo <b id="nombre-repo-ayuda">hofrosa-web</b>.</li>
+        <li>En <b>Permissions</b> revise que <b>Contents</b> diga <b>Read and write</b> (ya viene marcado). No agregue otros permisos.</li>
+        <li>Deje la fecha de vencimiento (90 días) y pulse <b>Generate token</b>.</li>
+        <li>Copie el token y péguelo abajo. GitHub lo muestra una sola vez: guárdelo en su gestor de contraseñas, nunca en un archivo de la web.</li>
+      </ol>
+      <p>Si el token se pierde o alguien más lo ve, bórrelo en GitHub (Settings → Developer settings → Personal access tokens) y cree otro.</p>
+    </details>
+    <form id="form-conectar" novalidate>
+      <label for="campo-token">Token de GitHub</label>
+      <input id="campo-token" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="text" maxlength="255" required aria-describedby="error-conectar">
+      <label class="casilla"><input type="checkbox" id="casilla-recordar"> Recordar en este dispositivo, cifrado con una frase</label>
+      <div id="bloque-frase" hidden>
+        <p class="nota">El token se guarda cifrado (AES-256) en este navegador. Para usarlo hay que escribir la frase. Use al menos 12 caracteres; lo más seguro es una frase de cuatro palabras que no sea una cita conocida.</p>
+        <label for="campo-frase-nueva">Frase para desbloquear</label>
+        <input id="campo-frase-nueva" type="password" autocomplete="new-password" minlength="12" maxlength="128" aria-describedby="medidor-frase">
+        <p class="nota" id="medidor-frase" aria-live="polite"></p>
+        <label for="campo-frase-repetir">Repita la frase</label>
+        <input id="campo-frase-repetir" type="password" autocomplete="new-password" maxlength="128">
+      </div>
+      <p class="error" id="error-conectar" role="alert"></p>
+      <button type="submit" class="boton" id="boton-conectar">Entrar</button>
+    </form>
+  </section>
+
+  <!-- 2. Desbloquear el token guardado en este dispositivo -->
+  <section class="tarjeta" id="paso-desbloquear" aria-labelledby="titulo-desbloquear" hidden>
+    <h2 id="titulo-desbloquear">Desbloquear</h2>
+    <p>Este dispositivo tiene un token guardado y cifrado. Escriba su frase para usarlo.</p>
+    <form id="form-desbloquear" novalidate>
+      <label for="campo-frase">Frase</label>
+      <input id="campo-frase" type="password" autocomplete="current-password" maxlength="128" required aria-describedby="error-desbloquear">
+      <p class="error" id="error-desbloquear" role="alert"></p>
+      <div class="acciones">
+        <button type="submit" class="boton" id="boton-desbloquear">Desbloquear</button>
+        <button type="button" class="boton-sec" id="boton-olvidar">Olvidar este dispositivo</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- 3. Editar precios -->
+  <section id="paso-editar" aria-labelledby="titulo-editar" hidden>
+    <h2 id="titulo-editar" class="oculto-visual">Editar precios</h2>
+    <div class="barra-herramientas">
+      <div class="campo-buscar">
+        <label for="buscar">Buscar plato</label>
+        <input id="buscar" type="search" autocomplete="off" maxlength="60" placeholder="Nombre del plato o bebida">
+      </div>
+      <div class="campo-categoria">
+        <label for="filtro-categoria">Categoría</label>
+        <select id="filtro-categoria"><option value="">Todas</option></select>
+      </div>
+      <label class="casilla"><input type="checkbox" id="solo-cambiados"> Solo los que cambié</label>
+    </div>
+    <p class="nota" id="nota-moneda">Precios enteros en córdobas, sin IVA ni propina, como en la carta.</p>
+    <div id="lista-precios" class="lista-precios"></div>
+    <details class="historial" id="historial">
+      <summary>Últimos cambios publicados</summary>
+      <ol id="lista-historial"></ol>
+      <p><a id="enlace-historial" href="#" target="_blank" rel="noopener noreferrer">Ver todo el historial en GitHub</a></p>
+    </details>
+  </section>
+</main>
+
+<div class="pie-acciones" id="pie-acciones" hidden>
+  <p id="resumen-cambios" aria-live="polite"></p>
+  <div class="acciones">
+    <button type="button" class="boton-sec" id="boton-deshacer" disabled>Deshacer todo</button>
+    <button type="button" class="boton" id="boton-revisar" disabled>Revisar y publicar</button>
+  </div>
+</div>
+
+<dialog id="dialogo-revisar" aria-labelledby="titulo-revisar">
+  <div id="form-revisar">
+    <h2 id="titulo-revisar">Revisar antes de publicar</h2>
+    <p>Estos precios se verán en la web en unos minutos (hasta 10).</p>
+    <ul id="lista-revision" class="lista-revision"></ul>
+    <div id="bloque-confirmar" hidden>
+      <p class="advertencia" id="texto-advertencia"></p>
+      <label class="casilla"><input type="checkbox" id="casilla-confirmar"> Revisé los precios marcados y son correctos</label>
+    </div>
+    <p class="error" id="error-publicar" role="alert"></p>
+    <div class="acciones">
+      <button type="button" class="boton-sec" id="boton-volver">Volver a editar</button>
+      <button type="button" class="boton" id="boton-publicar">Publicar</button>
+    </div>
+  </div>
+</dialog>
+
+<p class="estado" id="estado" role="status" aria-live="polite"></p>
+
+<script src="precios.js?v=20261126-001648"></script>
+</body>
+</html>

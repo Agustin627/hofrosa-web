@@ -21,7 +21,8 @@ Abra `http://127.0.0.1:8080`. Use la vista por HTTP para comprobar también Goog
 - `menu-datos.js`: copia local de la carta, precios, horarios y contacto.
 - `idiomas.js`: selector español, inglés y chino simplificado mediante Google Translate.
 - `assets/imagenes/`: fotografías y logo locales (`platos/` y `categorias/` para la carta).
-- `editor/`: aplicación en Python para modificar el menú.
+- `editor/`: aplicación en Python para modificar el menú (`editor_menu.py`) y publicar (`publicar.py`).
+- `precios/`: editor de precios de la web (con token de GitHub).
 
 ## Fotografías del hotel
 
@@ -37,9 +38,32 @@ El auditorio **Segovia** es el de sillas de madera; **Aurora**, el de sillas bla
 
 La web está publicada gratis en GitHub Pages: https://agustin627.github.io/hofrosa-web/
 
-Después de cambiar el menú (con el editor o desde el panel del servidor de pedidos), haga doble clic en `publicar.command` (o ejecute `./publicar.command`): sincroniza la copia pública, sube los cambios a GitHub y la web se actualiza sola en 1 o 2 minutos.
+Después de cambiar el menú (con el editor o desde el panel del servidor de pedidos), haga doble clic en `publicar.command` (o ejecute `./publicar.command`). Lo hace `editor/publicar.py`:
 
-GitHub Pages publica la rama `main` tal como está. Los ajustes del editor (`editor/ajustes.json`) y los respaldos (`editor/respaldos/`) no se suben, porque están en `.gitignore`. Si algún día se usa otro hosting, `python3 editor/preparar_sitio.py` prepara en `dist/` solo los archivos públicos, sin el editor.
+1. Trae de GitHub lo publicado desde otro lugar: precios cambiados en la web (`precios/`) o cambios hechos en otra computadora.
+2. Pasa esos precios al menú único (servidor de pedidos / menú QR). Si el mismo precio cambió en los dos lados, gana el cambio más reciente y lo avisa en pantalla.
+3. Regenera `menu-datos.js` desde el menú único, guarda todo en un commit y lo sube. La web se actualiza sola en 1 o 2 minutos.
+
+Nunca fuerza la subida: si GitHub y esta computadora cambiaron el mismo archivo (que no sea el menú), se detiene, no sube nada y no se pierde nada.
+
+GitHub Pages publica la rama `main` tal como está. Los ajustes del editor (`editor/ajustes.json`) y los respaldos (`editor/respaldos/`) no se suben, porque están en `.gitignore`, igual que archivos con aspecto de secreto (`*.token`, `*.key`, `.env`…). Si algún día se usa otro hosting, `python3 editor/preparar_sitio.py` prepara en `dist/` solo los archivos públicos, sin el editor.
+
+## Cambiar precios desde la web
+
+Dirección: https://agustin627.github.io/hofrosa-web/precios/ (no está enlazada desde la web pública).
+
+- **Quién puede:** solo quien tenga un *token fino* de GitHub (empieza con `github_pat_`) con permiso **Contents: Read and write** sobre **este repositorio solamente**. La página tiene un enlace que crea el token con esos permisos ya elegidos (vence en 90 días); en *Repository access* hay que marcar *Only select repositories → hofrosa-web*. Los tokens clásicos (`ghp_`) se rechazan porque abren todos los repositorios.
+- **Qué cambia:** solo los números de precio de `menu-datos.js`. Antes de publicar, la página comprueba que nada más cambió, pide confirmar los precios que cambian más de 50 % o quedan en cero, y publica sobre la versión exacta que leyó: si otra persona publicó entretanto, recarga y conserva lo que no choca.
+- **Dónde queda:** cada publicación es un commit con la lista de cambios (historial en la misma página y en GitHub). Para deshacer, se vuelve a poner el precio anterior o se revierte el commit en GitHub.
+- **Menú QR:** recibe los precios nuevos al abrir `publicar.command` en esta computadora (paso 2 de la publicación).
+- **Seguridad** (basada en OWASP Top 10:2025 y sus hojas de referencia):
+  - Sin servidor propio ni claves en el código: GitHub decide quién escribe.
+  - Política de seguridad estricta: solo archivos propios y `api.github.com`, Trusted Types (nada de HTML armado con texto), sin formularios hacia afuera, sin referer, sin funcionar dentro de un marco ni abierta por otra ventana.
+  - El token vive solo en memoria. Si se pide recordarlo, se guarda cifrado (AES-GCM de 256 bits) con una clave derivada de una frase de 12+ caracteres (PBKDF2-SHA256, 600 000 iteraciones). Tras un error se espera cada vez más; a los 10 errores se borra.
+  - Se bloquea sola a los 15 minutos sin uso o si queda 5 minutos en segundo plano.
+  - Se comprueba el SHA del archivo que entrega GitHub (detecta un menú alterado o incompleto) y que antes de los datos solo haya comentarios.
+- **Si se pierde o se filtra el token:** bórrelo en GitHub (*Settings → Developer settings → Personal access tokens*) y cree otro. En otro dispositivo, use «Olvidar este dispositivo».
+- **Recomendado:** activar la verificación en dos pasos de la cuenta de GitHub. Todas las webs de `agustin627.github.io` comparten el mismo origen; con un dominio propio la web queda aislada y se podrían usar cabeceras de seguridad de verdad.
 
 ## Un solo menú para la web y el menú QR
 
@@ -47,7 +71,8 @@ La carta es una sola: `datos/menu.json` del servidor de pedidos (`../menu-digita
 
 - Al guardar en el editor de esta web: si el servidor de pedidos está encendido, el cambio entra por su API (como el panel, con clave, versión y registro) y el menú QR cambia al instante; si está apagado, se escribe su archivo con respaldo y lo carga al arrancar. En los dos casos se regenera `menu-datos.js`.
 - Al cambiar algo desde el panel del servidor: `publicar.command` sincroniza la copia antes de publicar (o `python3 editor/editor_menu.py --sincronizar`).
-- Las fotos se guardan en `menu/fotos/` del menú QR y se copian a `fotos/` de esta web, con la misma ruta `fotos/…`.
+- Al cambiar precios en la web (`precios/`): el cambio queda en GitHub y `publicar.command` lo pasa al menú único (por la API si el servidor está encendido, con su registro) antes de regenerar la copia. Así la copia nunca vuelve a los precios viejos.
+- Las fotos se guardan en `menu/fotos/` del menú QR y se copian a `fotos/` de esta web, con la misma ruta `fotos/…`. Solo se copian nombres simples de esa carpeta: nunca una ruta con `..`.
 
 Si el servidor está en otra carpeta o puerto, cree `editor/ajustes.json` con `{"servidorPedidos": "/ruta/a/servidor-pedidos", "puertoSeguro": 8443}`. Sin servidor, el editor edita solo la copia de la web (`--solo-web`).
 
