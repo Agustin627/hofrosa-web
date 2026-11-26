@@ -1,7 +1,7 @@
 /* =====================================================================
    EDITOR DE PRECIOS DE LA WEB · Hotel Frontera · Restaurante Las Margaritas
 
-   Funciona en la web de Cloudflare (por ejemplo hotelfronteraocotal.com/precios/).
+   Funciona en la web de Cloudflare (la dirección del enlace «canonical», más /precios/).
    Para llegar aquí hay que entrar con Cloudflare Access: se escribe el correo y
    llega un código. Esta página no maneja contraseñas, tokens ni secretos: la
    sesión la lleva Cloudflare en una cookie que JavaScript no puede leer.
@@ -43,11 +43,17 @@
     invalidos: new Set(),
     filas: new Map(),
     historial: [],
+    rol: "",              // "dueno" o "admin"
+    acceso: null,         // { duenos, admins, configurado, registro }
     ocupado: false,
   };
 
   class ErrorUsuario extends Error {}
   class SesionVencida extends Error {}
+  // Sesión válida, pero ese correo no está en la lista de quién puede entrar
+  class SinPermiso extends Error {
+    constructor(usuario, mensaje) { super(mensaje || "Su correo no tiene permiso."); this.usuario = String(usuario || ""); }
+  }
   class ErrorApi extends Error {
     constructor(estado, cuerpo) {
       super(`API ${estado}`);
@@ -118,6 +124,7 @@
     let datos = null;
     try { datos = await r.json(); } catch (e) { datos = null; }
     if (r.status === 403 && datos && datos.error === "acceso") throw new SesionVencida(datos.mensaje);
+    if (r.status === 403 && datos && datos.error === "sin-permiso") throw new SinPermiso(datos.usuario, datos.mensaje);
     if (!r.ok) throw new ErrorApi(r.status, datos);
     if (!esObjeto(datos)) throw new ErrorUsuario("La web respondió algo inesperado. No se cambió nada.");
     return datos;
@@ -195,9 +202,12 @@
     S.usuario = r.usuario;
     S.version = r.version;
     S.historial = Array.isArray(r.historial) ? r.historial : [];
+    S.rol = r.rol === "dueno" ? "dueno" : "admin";
+    S.acceso = esObjeto(r.acceso) ? r.acceso : null;
     const choques = reconstruir(r.menu, r.pendientes);
     pintarLista();
     pintarHistorial();
+    pintarAcceso();
     $("#sesion-estado").textContent = `Conectado como ${S.usuario}`;
     $("#sesion").hidden = false;
     $("#cargando").hidden = true;
@@ -348,6 +358,96 @@
     }));
   }
 
+  /* ---------- Quién puede entrar ---------- */
+  // Mismo criterio que el Worker; el Worker vuelve a comprobarlo todo.
+  const CORREO = /^[a-z0-9.!#$%&'*+/=?^_`{|}~-]{1,64}@[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)+$/;
+  const normalizarCorreo = (v) => { const c = String(v || "").trim().toLowerCase(); return c.length <= 254 && CORREO.test(c) ? c : ""; };
+  const fechaCorta = (ms) => {
+    const f = new Date(Number(ms));
+    return Number.isNaN(f.getTime()) || !Number(ms) ? "" : f.toLocaleString("es-NI", { dateStyle: "medium", timeStyle: "short" });
+  };
+
+  function mostrarSinPermiso(usuario) {
+    $("#paso-editar").hidden = true;
+    $("#pie-acciones").hidden = true;
+    $("#primer-inicio").hidden = true;
+    $("#correo-sin-permiso").textContent = usuario || "(sin correo)";
+    $("#sin-permiso").hidden = false;
+    $("#sesion-estado").textContent = usuario ? `Conectado como ${usuario}` : "";
+    $("#sesion").hidden = false;
+    S.editados.clear();
+  }
+
+  function pintarAcceso() {
+    const a = S.acceso;
+    const lista = $("#lista-acceso");
+    if (!esObjeto(a)) { lista.replaceChildren(el("li", { texto: "No se pudo leer la lista." })); return; }
+    const duenos = (Array.isArray(a.duenos) ? a.duenos : []).filter((c) => typeof c === "string");
+    const admins = (Array.isArray(a.admins) ? a.admins : []).filter(esObjeto);
+    const filas = duenos.map((c) => el("li", {}, el("span", { clase: "correo" }, c, el("span", { clase: "detalle", texto: c === S.usuario ? "Dueño (usted)" : "Dueño" }))));
+    for (const x of admins) {
+      const correo = String(x.correo || "");
+      const detalle = [`Agregado por ${String(x.por || "?")}`, fechaCorta(x.en)].filter(Boolean).join(" · ");
+      const fila = el("li", {}, el("span", { clase: "correo" }, correo, el("span", { clase: "detalle", texto: correo === S.usuario ? detalle + " · usted" : detalle })));
+      if (correo !== S.usuario) {
+        const quitar = el("button", { type: "button", clase: "boton-sec", texto: "Quitar", "aria-label": `Quitar a ${correo}` });
+        quitar.addEventListener("click", () => quitarCorreo(correo));
+        fila.append(quitar);
+      }
+      filas.push(fila);
+    }
+    lista.replaceChildren(...filas);
+    const registro = (Array.isArray(a.registro) ? a.registro : []).filter(esObjeto).slice(0, 20);
+    const textoAccion = { agregar: "agregó a", quitar: "quitó a", terminar: "terminó el primer inicio" };
+    $("#lista-registro-acceso").replaceChildren(...(registro.length ? registro.map((r) => el("li", {},
+      el("time", { texto: fechaCorta(r.en) }), ` · ${String(r.quien || "")} ${textoAccion[r.accion] || String(r.accion || "")}${r.correo ? " " + String(r.correo) : ""}`))
+      : [el("li", { texto: "Todavía no hay cambios." })]));
+    // Primer inicio: solo lo ve el dueño, hasta que agrega a alguien o pulsa «Listo»
+    const primerInicio = S.rol === "dueno" && a.configurado === false;
+    $("#correo-dueno").textContent = S.usuario;
+    $("#primer-inicio").hidden = !primerInicio;
+    if (primerInicio) $("#bloque-acceso").open = true;
+  }
+
+  async function cambiarAcceso(cuerpo, mensajeOk) {
+    if (S.ocupado) return false;
+    const caja = $("#error-acceso");
+    caja.textContent = "";
+    ocupar(true, "Guardando…");
+    try {
+      const r = await api("acceso", { metodo: "PUT", cuerpo });
+      if (!esObjeto(r.acceso)) throw new ErrorUsuario("La web respondió algo inesperado. Recargue para ver si se guardó.");
+      S.acceso = r.acceso;
+      pintarAcceso();
+      if (mensajeOk) estado(mensajeOk);
+      return true;
+    } catch (e) {
+      if (e instanceof SesionVencida) avisoSesion(e.message);
+      else if (e instanceof SinPermiso) mostrarSinPermiso(e.usuario);
+      else caja.textContent = mensajeError(e);
+      return false;
+    } finally {
+      ocupar(false);
+    }
+  }
+
+  async function agregarCorreo() {
+    const campo = $("#nuevo-correo");
+    const correo = normalizarCorreo(campo.value);
+    if (!correo) { $("#error-acceso").textContent = "Escriba un correo válido, por ejemplo nombre@gmail.com."; campo.focus(); return; }
+    if (!window.confirm(`¿Dar acceso a ${correo}?\n\nPodrá cambiar precios y agregar o quitar a otras personas. Entrará con un código que le llegará a ese correo.`)) return;
+    if (await cambiarAcceso({ accion: "agregar", correo }, `${correo} ya puede entrar.`)) campo.value = "";
+  }
+
+  async function quitarCorreo(correo) {
+    if (!window.confirm(`¿Quitar el acceso de ${correo}?\n\nDesde ya no podrá cambiar precios, aunque tenga la página abierta.`)) return;
+    await cambiarAcceso({ accion: "quitar", correo }, `Se quitó el acceso de ${correo}.`);
+  }
+
+  async function terminarPrimerInicio() {
+    await cambiarAcceso({ accion: "terminar" }, "Listo. Puede agregar personas cuando quiera en «Quién puede entrar».");
+  }
+
   /* ---------- Revisar y guardar ---------- */
   function cambiosOrdenados() {
     return [...S.editados.entries()].map(([clave, c]) => ({ clave, ...c }))
@@ -423,6 +523,9 @@
       if (e instanceof SesionVencida) {
         cerrarDialogo();
         avisoSesion(e.message);
+      } else if (e instanceof SinPermiso) {
+        cerrarDialogo();
+        mostrarSinPermiso(e.usuario);
       } else if (e instanceof ErrorApi && e.estado === 409) {
         // Otra persona guardó: se trae lo nuevo y se conservan los cambios que no chocan.
         try {
@@ -452,6 +555,9 @@
     $("#boton-volver").addEventListener("click", cerrarDialogo);
     $("#casilla-confirmar").addEventListener("change", actualizarBotonGuardar);
     $("#boton-publicar").addEventListener("click", guardar);
+    $("#boton-agregar").addEventListener("click", agregarCorreo);
+    $("#nuevo-correo").addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); agregarCorreo(); } });
+    $("#boton-listo").addEventListener("click", terminarPrimerInicio);
     window.addEventListener("beforeunload", (e) => {
       if (S.editados.size) { e.preventDefault(); e.returnValue = ""; }
     });
@@ -461,6 +567,7 @@
     } catch (e) {
       $("#cargando").hidden = true;
       if (e instanceof SesionVencida) avisoSesion(e.message);
+      else if (e instanceof SinPermiso) mostrarSinPermiso(e.usuario);
       else aviso(mensajeError(e));
     }
   }

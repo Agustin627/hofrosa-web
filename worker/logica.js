@@ -209,8 +209,94 @@ export async function verificarAcceso(token, { equipo, aud, obtenerClaves, ahora
   return carga;
 }
 
-/** Lista de correos permitidos ("a@x.com, b@y.com"). Vacía = nadie (falla cerrado). */
+/* ---------- Quién puede entrar al editor ----------
+   - Dueños: CORREO_DUENO (secreto del Worker). Siempre tienen acceso y no se pueden
+     quitar desde la web: así nadie queda afuera para siempre.
+   - Administradores: los agrega o quita cualquier correo con acceso, desde el editor.
+     Se guardan en el Durable Object, con registro de quién, cuándo y qué.
+   Access comprueba que la persona es dueña del correo (código al correo); aquí se
+   decide si ese correo tiene permiso. Sin dueño configurado no entra nadie. */
+export const MAX_ADMINS = 20;
+const CORREO = /^[a-z0-9.!#$%&'*+/=?^_`{|}~-]{1,64}@[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)+$/;
+
+export function normalizarCorreo(v) {
+  const c = typeof v === "string" ? v.trim().toLowerCase() : "";
+  return c.length <= 254 && CORREO.test(c) ? c : "";
+}
+
+/** Lista de correos ("a@x.com, b@y.com"); los que no son correos válidos se descartan. */
+export function listaCorreos(texto) {
+  return [...new Set(String(texto || "").split(/[,\s;]+/).map(normalizarCorreo).filter(Boolean))];
+}
+
+/** ¿Está el correo en la lista? Lista vacía = nadie (falla cerrado). */
 export function correoPermitido(email, lista) {
-  const permitidos = String(lista || "").split(/[,\s;]+/).map((x) => x.trim().toLowerCase()).filter(Boolean);
-  return permitidos.includes(String(email || "").trim().toLowerCase());
+  const c = normalizarCorreo(email);
+  return Boolean(c) && listaCorreos(lista).includes(c);
+}
+
+export function accesoVacio() {
+  return { version: 0, configurado: false, admins: [], registro: [] };
+}
+
+export function normalizarAcceso(a) {
+  if (!esObjeto(a)) return accesoVacio();
+  const admins = (Array.isArray(a.admins) ? a.admins : []).filter((x) => esObjeto(x) && normalizarCorreo(x.correo))
+    .map((x) => ({ correo: normalizarCorreo(x.correo), por: String(x.por || ""), en: Number(x.en) || 0 }));
+  return {
+    version: Number.isInteger(a.version) && a.version >= 0 ? a.version : 0,
+    configurado: a.configurado === true,
+    admins,
+    registro: (Array.isArray(a.registro) ? a.registro : []).filter(esObjeto).slice(0, 100),
+  };
+}
+
+/** Dueño, administrador o nadie. */
+export function rolDe(email, acceso, duenos) {
+  const c = normalizarCorreo(email);
+  if (!c) return "";
+  if (listaCorreos(duenos).includes(c)) return "dueno";
+  return normalizarAcceso(acceso).admins.some((x) => x.correo === c) ? "admin" : "";
+}
+
+/**
+ * Agregar o quitar un correo, o terminar el primer inicio. Lo llama el Durable Object
+ * (de a uno por vez). Lanza ErrorPeticion si no se puede; devuelve el acceso nuevo.
+ */
+export function cambiarAcceso(acceso, { accion, correo }, quien, duenos, ahora) {
+  const nuevo = structuredClone(normalizarAcceso(acceso));
+  const listaDuenos = listaCorreos(duenos);
+  if (!listaDuenos.length) throw new ErrorPeticion(403, "acceso", "El acceso no está configurado.");
+  if (!rolDe(quien, nuevo, duenos)) throw new ErrorPeticion(403, "sin-permiso", "Su correo ya no tiene permiso.");
+  if (accion === "terminar") {
+    nuevo.configurado = true;
+  } else if (accion === "agregar" || accion === "quitar") {
+    const c = normalizarCorreo(correo);
+    if (!c) throw new ErrorPeticion(400, "datos", "Escriba un correo válido, por ejemplo nombre@gmail.com.");
+    if (accion === "agregar") {
+      if (listaDuenos.includes(c) || nuevo.admins.some((x) => x.correo === c)) {
+        throw new ErrorPeticion(409, "repetido", "Ese correo ya tiene acceso.");
+      }
+      if (nuevo.admins.length >= MAX_ADMINS) throw new ErrorPeticion(400, "limite", `Como máximo ${MAX_ADMINS} correos además del dueño.`);
+      nuevo.admins.push({ correo: c, por: normalizarCorreo(quien), en: ahora });
+    } else {
+      if (listaDuenos.includes(c)) throw new ErrorPeticion(400, "dueno", "El correo del dueño no se puede quitar desde aquí.");
+      if (c === normalizarCorreo(quien)) throw new ErrorPeticion(400, "propio", "No puede quitarse a sí mismo: pídaselo a otra persona con acceso.");
+      if (!nuevo.admins.some((x) => x.correo === c)) throw new ErrorPeticion(404, "no-existe", "Ese correo no estaba en la lista.");
+      nuevo.admins = nuevo.admins.filter((x) => x.correo !== c);
+    }
+    nuevo.configurado = true;
+  } else {
+    throw new ErrorPeticion(400, "datos", "Acción desconocida.");
+  }
+  nuevo.version += 1;
+  nuevo.registro.unshift({ en: ahora, quien: normalizarCorreo(quien), accion, correo: accion === "terminar" ? "" : normalizarCorreo(correo) });
+  nuevo.registro = nuevo.registro.slice(0, 100);
+  return nuevo;
+}
+
+/** Lo que ve en el editor una persona con acceso. */
+export function vistaAcceso(acceso, duenos) {
+  const a = normalizarAcceso(acceso);
+  return { duenos: listaCorreos(duenos), admins: a.admins, configurado: a.configurado, registro: a.registro.slice(0, 20) };
 }

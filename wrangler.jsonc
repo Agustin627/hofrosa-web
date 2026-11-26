@@ -1,12 +1,13 @@
 // Configuración de Cloudflare Workers para la web (archivos estáticos + API de precios).
 // Cloudflare la usa al publicar desde GitHub (Workers Builds) con: npx wrangler deploy
 {
-  "name": "hofrosa-web",
+  // Nombre del Worker = primera parte de la dirección: www.<subdominio de la cuenta>.workers.dev
+  "name": "www",
   "main": "worker/index.js",
   "compatibility_date": "2026-11-01",
-  // Solo el dominio propio (protegido por Access). Sin direcciones *.workers.dev ni de vista previa,
-  // que no pasan por Access.
-  "workers_dev": false,
+  // La web vive en la dirección gratis de Cloudflare (<nombre>.<subdominio>.workers.dev).
+  // Access protege ahí /precios y /precios/*. Sin direcciones de vista previa: no pasarían por Access.
+  "workers_dev": true,
   "preview_urls": false,
   "assets": {
     "directory": "./",

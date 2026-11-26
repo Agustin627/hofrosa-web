@@ -13,7 +13,7 @@
 <meta name="color-scheme" content="light">
 <title>Precios · Hotel Frontera</title>
 <link rel="icon" href="../favicon-frontera.svg" type="image/svg+xml">
-<link rel="stylesheet" href="precios.css?v=20261126-005156">
+<link rel="stylesheet" href="precios.css?v=20261126-105217">
 </head>
 <body>
 <a class="saltar" href="#principal">Saltar al contenido</a>
@@ -36,6 +36,19 @@
 
   <p class="cargando" id="cargando" role="status">Cargando la carta…</p>
 
+  <section class="tarjeta" id="sin-permiso" aria-labelledby="titulo-sin-permiso" hidden>
+    <h2 id="titulo-sin-permiso">Su correo todavía no tiene permiso</h2>
+    <p>Entró como <strong id="correo-sin-permiso"></strong>. Para cambiar precios, pídale a alguien que ya tenga acceso que agregue este correo en «Quién puede entrar».</p>
+    <p class="nota">Si se equivocó de correo, use «Salir» y entre con el correcto.</p>
+  </section>
+
+  <section class="tarjeta primer-inicio" id="primer-inicio" aria-labelledby="titulo-primer-inicio" hidden>
+    <h2 id="titulo-primer-inicio">Primer inicio</h2>
+    <p>Usted es el dueño de este editor (<strong id="correo-dueno"></strong>). Su correo siempre tiene acceso y no se puede quitar desde aquí.</p>
+    <p>Abajo, en «Quién puede entrar», agregue los correos de las personas que también podrán cambiar precios. Ellas, a su vez, podrán agregar o quitar a otras. Si por ahora solo entra usted, pulse «Listo».</p>
+    <div class="acciones"><button type="button" class="boton" id="boton-listo">Listo</button></div>
+  </section>
+
   <section id="paso-editar" aria-labelledby="titulo-editar" hidden>
     <h2 id="titulo-editar" class="oculto-visual">Editar precios</h2>
     <div class="barra-herramientas">
@@ -54,6 +67,22 @@
     <details class="historial" id="historial">
       <summary>Últimos cambios guardados</summary>
       <ol id="lista-historial"></ol>
+    </details>
+
+    <details class="historial acceso" id="bloque-acceso">
+      <summary>Quién puede entrar</summary>
+      <p class="nota">Cada persona entra con un código que le llega a su correo. Puede cambiar precios y agregar o quitar a otras personas. El correo del dueño no se puede quitar desde aquí, y nadie puede quitarse a sí mismo.</p>
+      <ul class="lista-acceso" id="lista-acceso"></ul>
+      <label for="nuevo-correo">Agregar un correo</label>
+      <div class="agregar-correo">
+        <input id="nuevo-correo" type="email" inputmode="email" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="254" placeholder="nombre@gmail.com">
+        <button type="button" class="boton" id="boton-agregar">Agregar</button>
+      </div>
+      <p class="error" id="error-acceso" role="alert"></p>
+      <details class="registro-acceso">
+        <summary>Registro de cambios de acceso</summary>
+        <ol id="lista-registro-acceso"></ol>
+      </details>
     </details>
   </section>
 </main>
@@ -85,6 +114,6 @@
 
 <p class="estado" id="estado" role="status" aria-live="polite"></p>
 
-<script src="precios.js?v=20261126-005156"></script>
+<script src="precios.js?v=20261126-105217"></script>
 </body>
 </html>

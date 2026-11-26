@@ -37,7 +37,7 @@ El auditorio **Segovia** es el de sillas de madera; **Aurora**, el de sillas bla
 
 ## Publicación
 
-La web va a estar en **https://hotelfronteraocotal.com** con Cloudflare (Workers con archivos estáticos). La copia en GitHub Pages (https://agustin627.github.io/hofrosa-web/) sigue funcionando como respaldo, sin precios en vivo ni editor. Para cambiar de dominio, cambie el enlace `canonical` de `index.html`: `publicar.command` toma la dirección de ahí.
+La web está en **https://www.hotelfrontera.workers.dev**, una dirección gratis de Cloudflare (Workers con archivos estáticos). La copia en GitHub Pages (https://agustin627.github.io/hofrosa-web/) sigue como respaldo, sin precios en vivo ni editor. `publicar.command` toma la dirección del enlace `canonical` de `index.html`: si algún día el hotel usa un dominio propio, se agrega en Cloudflare (Worker `www` → *Configuración* → *Dominios y rutas*) y se cambia ese enlace.
 
 Después de cambiar el menú (con el editor, desde el panel del servidor de pedidos o en `/precios/`), haga doble clic en `publicar.command` (o ejecute `./publicar.command`). Lo hace `editor/publicar.py`:
 
@@ -51,43 +51,39 @@ Qué se publica: Cloudflare sube solo los archivos de la web; `.assetsignore` de
 
 ## Cambiar precios desde la web
 
-Dirección: https://hotelfronteraocotal.com/precios/ (no está enlazada desde la web pública).
+Dirección: https://www.hotelfrontera.workers.dev/precios/ (no está enlazada desde la web pública).
 
-- **Cómo se entra:** Cloudflare Access pide el correo y manda un código de 6 dígitos. Solo pasan los correos autorizados; a los demás no les llega ni la página. No hay contraseñas ni tokens que guardar o que se puedan robar.
+- **Cómo se entra:** Cloudflare Access pide el correo y manda un código. No hay contraseñas ni tokens que guardar o que se puedan robar.
+- **Quién puede entrar:** el dueño (secreto `CORREO_DUENO` del Worker) y los correos que agregue alguien con acceso, desde el mismo editor, en «Quién puede entrar». La primera vez que entra el dueño aparece «Primer inicio» para agregar a los demás. El dueño no se puede quitar desde la web y nadie puede quitarse a sí mismo. Un correo que no está en la lista puede recibir el código, pero ve «Su correo todavía no tiene permiso» y nada más.
 - **Qué cambia:** solo los números de precio. Antes de guardar se revisa la lista y se confirman los precios que cambian más de 50 % o quedan en cero. Si otra persona guardó entretanto, se recarga sin pisar su cambio.
-- **Dónde queda:** en Cloudflare (un Durable Object), con registro de quién, cuándo y qué. La web pública muestra el precio nuevo en menos de un minuto (`/api/menu`).
+- **Dónde queda:** en Cloudflare (un Durable Object), con registro de quién, cuándo y qué (precios y correos). La web pública muestra el precio nuevo en un minuto como mucho (`/api/menu`).
 - **Menú QR:** recibe los precios al abrir `publicar.command` en la computadora del hotel. Mientras tanto, el editor avisa «En el menú QR sigue … hasta publicar».
 - **Seguridad** (OWASP Top 10:2025, OWASP Cheat Sheets y documentación de Cloudflare):
-  - Access protege `/precios` y `/precios/*` antes de que la petición llegue a la web.
-  - El Worker vuelve a comprobar cada petición: firma RS256 del JWT de Access con las claves públicas del equipo, emisor, audiencia (AUD), vigencia y que el correo esté en `CORREOS_ADMIN`. Si falta algo de la configuración, no entra nadie.
-  - Guardar exige JSON del mismo origen (`Origin`, `Sec-Fetch-Site`): un sitio ajeno no puede cambiar precios aunque la sesión esté abierta (CSRF).
-  - Solo se aceptan precios enteros de 0 a 1 000 000 de productos que existen. La versión del Durable Object evita que dos personas se pisen.
+  - Access protege `/precios` y `/precios/*`: el código prueba que la persona es dueña del correo.
+  - El Worker comprueba cada petición: firma RS256 del JWT de Access con las claves públicas del equipo, emisor, audiencia (AUD), vigencia, y que el correo sea el del dueño o esté en la lista. Al guardar, el permiso se vuelve a comprobar junto con el cambio: a quien se quita, deja de poder guardar al instante. Si falta algo de la configuración, no entra nadie.
+  - Guardar exige JSON del mismo origen (`Origin`, `Sec-Fetch-Site`): un sitio ajeno no puede cambiar precios ni correos aunque la sesión esté abierta (CSRF).
+  - Solo se aceptan precios enteros de 0 a 1 000 000 de productos que existen, y correos con formato válido (hasta 20 además del dueño). La versión del Durable Object evita que dos personas se pisen.
   - Cabeceras de seguridad reales (`_headers`): HSTS, CSP, `frame-ancestors`, `nosniff`, `Permissions-Policy`. El editor además usa Trusted Types y no guarda nada en el navegador.
-  - Sin direcciones `*.workers.dev` ni de vista previa (no pasarían por Access).
+  - Sin direcciones de vista previa de Cloudflare (no pasarían por Access).
 
-### Poner la web en Cloudflare (una sola vez)
+### Cómo está armado en Cloudflare
 
-Necesita la cuenta de GitHub y acceso al lugar donde se compró el dominio. Active la verificación en dos pasos en Cloudflare y en GitHub: esas cuentas son las llaves de la web. Los nombres de los botones pueden variar un poco según el idioma del panel.
+Cuenta de Cloudflare del hotel: se entra con la cuenta de Apple de Agustín (verificación en dos pasos de Apple). Active también la verificación en dos pasos en GitHub: esas cuentas son las llaves de la web.
 
-Antes de empezar, abra `publicar.command` una vez: sube a GitHub los archivos que Cloudflare necesita (`wrangler.jsonc`, `worker/`, `_headers`).
+- **Worker `www`** (*Workers y Pages*): conectado al repositorio `hofrosa-web` de GitHub, rama `main`; cada `publicar.command` lo actualiza solo. Subdominio de la cuenta: `hotelfrontera.workers.dev`.
+- **Zero Trust**, plan Free (hasta 50 personas; pidió tarjeta pero no cobra): equipo `hotelfrontera` (`hotelfrontera.cloudflareaccess.com`), inicio de sesión con código al correo (*One-time PIN*). Quien no entra en un mes deja de ocupar lugar.
+- **Aplicación de Access «Precios de la carta»** (*Zero Trust → Access → Aplicaciones*): `www.hotelfrontera.workers.dev/precios` y `/precios/*`, sesión de 8 horas, política *Permitir a todos* con código al correo. El permiso real lo decide el Worker con la lista de arriba.
+- **Secretos del Worker** (*Configuración → Variables y secretos*): `ACCESS_EQUIPO` = `hotelfrontera`, `ACCESS_AUD` = la etiqueta de audiencia de la aplicación, `CORREO_DUENO` = el correo del dueño (puede ser más de uno, separados por comas).
 
-Hoy `hotelfronteraocotal.com` muestra otra página («Hotel Frontera en Ocotal, Nicaragua»); al terminar el paso 3, la reemplaza esta web. Mientras tanto la web nueva se ve en GitHub Pages, y `publicar.command` lo recuerda al final.
+Para cambiar el dueño: cambie `CORREO_DUENO`. Para cerrar sesiones abiertas: *Zero Trust → Usuarios* → revocar. Los ingresos quedan en *Zero Trust → Registros → Access*.
 
-1. **Cuenta y dominio.** Cree una cuenta gratis en https://dash.cloudflare.com y elija *Agregar un dominio* → `hotelfronteraocotal.com` → plan *Free*. Cloudflare copia los registros DNS que ya tiene el dominio: revíselos y, si el hotel tiene correo con ese dominio (registros MX), déjelos. Cloudflare le dará dos *nameservers*: póngalos en el sitio donde se compró el dominio y espere a que el dominio figure como *Activo*.
-2. **Publicar la web.** *Workers y Pages* → *Crear* → *Importar un repositorio* → conecte GitHub (solo `hofrosa-web`) → nombre del proyecto **`hofrosa-web`** (igual que en `wrangler.jsonc`) → comando de compilación vacío, comando de implementación `npx wrangler deploy` → *Implementar*. Desde ahí, cada `publicar.command` actualiza la web sola.
-3. **Dominio.** En el Worker `hofrosa-web` → *Configuración* → *Dominios y rutas* → *Agregar* → *Dominio personalizado* → `hotelfronteraocotal.com`. Si avisa que ya existe un registro DNS con ese nombre (el de la web vieja), bórrelo en *DNS* y vuelva a intentar. Para `www`: *Reglas* → *Reglas de redirección* → plantilla *Redirigir de WWW a raíz*.
-4. **Zero Trust.** En el menú, *Zero Trust*: elija un nombre de equipo (por ejemplo `hotelfrontera`) y el plan *Free*. Pide una tarjeta, pero no cobra.
-5. **Código al correo.** *Configuración* → *Autenticación* → *Métodos de inicio de sesión* → *Agregar nuevo* → *One-time PIN*.
-6. **Proteger el editor.** *Access* → *Aplicaciones* → *Agregar una aplicación* → *Autoalojada* (Self-hosted). Nombre: «Precios de la carta». Duración de la sesión: 8 horas. Agregue **dos** destinos: `hotelfronteraocotal.com` con ruta `precios` y `hotelfronteraocotal.com` con ruta `precios/*`. Política: *Permitir*, *Incluir* → *Correos* → su correo (y el de quien más pueda cambiar precios). Método de inicio: *One-time PIN*. Guarde y copie la **etiqueta de audiencia (AUD)** de la aplicación.
-7. **Decirle al Worker quién entra.** En el Worker `hofrosa-web` → *Configuración* → *Variables y secretos* → agregue tres de tipo **Secreto**:
-   - `ACCESS_EQUIPO`: el nombre de equipo del paso 4 (solo el nombre, sin `.cloudflareaccess.com`).
-   - `ACCESS_AUD`: la etiqueta AUD del paso 6.
-   - `CORREOS_ADMIN`: los mismos correos de la política, separados por comas.
+### Si hay que armarlo de nuevo
 
-   Use el tipo *Secreto* (así los correos no quedan a la vista en el panel) y guarde con *Implementar*. Publicar desde GitHub no los borra.
-8. **Probar.** Abra https://hotelfronteraocotal.com/precios/ → escriba su correo → copie el código → debe ver «Conectado como …». Cambie un precio, guárdelo y mire la carta en la web: el precio nuevo aparece en menos de un minuto. En una ventana privada, con otro correo, no debe llegar ningún código.
-
-Para agregar o quitar a alguien: cambie la política de Access **y** `CORREOS_ADMIN`. Para cerrar sesiones abiertas: *Zero Trust* → *Usuarios* → revocar. Los ingresos quedan en *Zero Trust* → *Registros* → *Access*.
+1. *Workers y Pages* → *Crear* → *Importar un repositorio* → GitHub `hofrosa-web` → nombre **`www`** (igual que en `wrangler.jsonc`), comando de compilación vacío, de implementación `npx wrangler deploy`.
+2. *Workers y Pages* → subdominio de la cuenta: `hotelfrontera`.
+3. *Zero Trust*: plan Free, equipo `hotelfrontera`, *Integraciones → Proveedores de identidad* → *One-time PIN*.
+4. *Access → Aplicaciones* → *Autoalojada*: los dos destinos de arriba, política *Permitir* a *Todos*, inicio con *One-time PIN*, sesión 8 h → copiar la etiqueta AUD.
+5. En el Worker, los tres secretos. Probar `/precios/` con el correo del dueño y con uno que no esté en la lista.
 
 ## Un solo menú para la web y el menú QR
 

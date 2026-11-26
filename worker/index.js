@@ -9,27 +9,48 @@
                                 al menú QR; lo usa publicar.command
      GET  /precios/api/estado   (Access) datos para el editor de precios
      PUT  /precios/api/precios  (Access) guardar precios
+     PUT  /precios/api/acceso   (Access) agregar o quitar correos con acceso
 
    Seguridad:
-   - /precios/* está detrás de Cloudflare Access (código al correo). Además, aquí
-     se verifica el JWT de Access (firma RS256, emisor, audiencia, vigencia) y que el
-     correo esté en CORREOS_ADMIN: si Access se configura mal o alguien llega por otra
-     dirección, igual se rechaza (falla cerrado).
+   - /precios/* está detrás de Cloudflare Access: el código al correo prueba que la
+     persona es dueña del correo. Aquí se verifica el JWT de Access (firma RS256,
+     emisor, audiencia, vigencia) y que el correo tenga permiso: el dueño
+     (CORREO_DUENO) o alguien que agregó una persona con acceso. Sin dueño
+     configurado no entra nadie (falla cerrado).
    - Escrituras: solo JSON, mismo origen (Origin y Sec-Fetch-Site) → sin CSRF.
    - Solo cambian números de precio de productos que existen, enteros de 0 a 1 000 000.
    - Concurrencia: versión del Durable Object; si otra persona guardó antes, 409.
-   - Registro: quién, cuándo y qué cambió (últimos 200 guardados).
-   Variables (en Cloudflare, como «secretos»): ACCESS_EQUIPO, ACCESS_AUD, CORREOS_ADMIN.
+     El permiso se vuelve a comprobar dentro del Durable Object al guardar.
+   - Registro: quién, cuándo y qué cambió (precios y correos).
+   Variables (en Cloudflare, como «secretos»): ACCESS_EQUIPO, ACCESS_AUD, CORREO_DUENO.
    ===================================================================== */
 import { DurableObject } from "cloudflare:workers";
 import {
   ErrorPeticion, ErrorAcceso, leerMenuJS, indexarPrecios, pendientesVigentes, menuEnVivo,
-  validarCambios, normalizarEstado, aplicarEnEstado, verificarAcceso, correoPermitido,
+  validarCambios, normalizarEstado, aplicarEnEstado, verificarAcceso, normalizarAcceso,
+  listaCorreos, rolDe, cambiarAcceso, vistaAcceso,
 } from "./logica.js";
 
 const MAX_CUERPO = 64 * 1024;
-const RUTAS_API = new Set(["/api/menu", "/api/precios-web", "/precios/api/estado", "/precios/api/precios"]);
-const CACHE_MENU_S = 60;
+const RUTAS_API = new Set(["/api/menu", "/api/precios-web", "/precios/api/estado", "/precios/api/precios", "/precios/api/acceso"]);
+const CACHE_MENU_S = 60;        // la carta pública: el precio nuevo se ve en un minuto como mucho
+const CACHE_PRECIOS_WEB_S = 5;  // lo que lee publicar.command: casi al día
+
+/* ---------- Caché en memoria para las rutas públicas ----------
+   En *.workers.dev la caché de Cloudflare (Cache API) no funciona, así que cada copia
+   del Worker guarda la respuesta unos segundos. Así, pedir /api/menu mil veces no gasta
+   el almacenamiento. Al guardar precios se vacía la de esa copia; las demás vencen solas. */
+const memoria = new WeakMap();   // env -> Map(ruta -> { hasta, cuerpo })
+export function olvidarCache(env) { memoria.delete(env); }
+async function enMemoria(env, ruta, segundos, calcular) {
+  let rutas = memoria.get(env);
+  if (!rutas) { rutas = new Map(); memoria.set(env, rutas); }
+  const guardada = rutas.get(ruta);
+  if (guardada && guardada.hasta > Date.now()) return guardada.cuerpo;
+  const cuerpo = await calcular();
+  rutas.set(ruta, { hasta: Date.now() + segundos * 1000, cuerpo });
+  return cuerpo;
+}
 
 const BASE_SEGURA = {
   "X-Content-Type-Options": "nosniff",
@@ -52,13 +73,33 @@ export class Precios extends DurableObject {
     return normalizarEstado(await this.ctx.storage.get("estado"));
   }
 
+  async leerTodo() {
+    const [estado, acceso] = await Promise.all([this.ctx.storage.get("estado"), this.ctx.storage.get("acceso")]);
+    return { estado: normalizarEstado(estado), acceso: normalizarAcceso(acceso) };
+  }
+
   /** Atómico: dentro de un Durable Object no se intercalan dos guardados. */
-  async guardar(versionBase, cambios, precios, quien) {
+  async guardar(versionBase, cambios, precios, quien, duenos) {
+    const acceso = normalizarAcceso(await this.ctx.storage.get("acceso"));
+    if (!rolDe(quien, acceso, duenos)) return { prohibido: true };   // lo quitaron mientras editaba
     const estado = normalizarEstado(await this.ctx.storage.get("estado"));
     if (versionBase !== estado.version) return { conflicto: true, estado };
     const nuevo = aplicarEnEstado(estado, cambios, new Map(precios), quien, Date.now());
     await this.ctx.storage.put("estado", nuevo);
     return { conflicto: false, estado: nuevo };
+  }
+
+  /** Agregar o quitar un correo (o terminar el primer inicio), comprobando el permiso aquí mismo. */
+  async cambiarAcceso(cambio, quien, duenos) {
+    const acceso = normalizarAcceso(await this.ctx.storage.get("acceso"));
+    try {
+      const nuevo = cambiarAcceso(acceso, cambio, quien, duenos, Date.now());
+      await this.ctx.storage.put("acceso", nuevo);
+      return { acceso: nuevo };
+    } catch (e) {
+      if (e instanceof ErrorPeticion) return { error: { estado: e.estado, cuerpo: e.cuerpo } };
+      throw e;
+    }
   }
 }
 
@@ -85,14 +126,15 @@ async function clavesDe(equipo, refrescar) {
   return keys;
 }
 
-async function exigirAdministrador(request, env) {
+/** Sesión de Access válida (no dice nada del permiso). Devuelve el correo. */
+async function exigirSesion(request, env) {
   try {
+    if (!listaCorreos(env.CORREO_DUENO).length) throw new ErrorAcceso("Falta CORREO_DUENO.");
     const carga = await verificarAcceso(request.headers.get("Cf-Access-Jwt-Assertion"), {
       equipo: String(env.ACCESS_EQUIPO || "").trim(), aud: String(env.ACCESS_AUD || "").trim(),
       obtenerClaves: (refrescar) => clavesDe(String(env.ACCESS_EQUIPO || "").trim(), refrescar),
     });
-    if (!correoPermitido(carga.email, env.CORREOS_ADMIN)) throw new ErrorAcceso("Correo no autorizado.");
-    return carga.email.toLowerCase();
+    return carga.email.trim().toLowerCase();
   } catch (e) {
     if (e instanceof ErrorAcceso) {
       console.warn("Acceso rechazado:", e.message);
@@ -100,6 +142,16 @@ async function exigirAdministrador(request, env) {
     }
     throw e;
   }
+}
+
+/** El correo de la sesión tiene que ser el dueño o alguien agregado. */
+function exigirPermiso(usuario, acceso, env) {
+  const rol = rolDe(usuario, acceso, env.CORREO_DUENO);
+  if (!rol) {
+    console.warn("Sin permiso:", usuario);
+    throw new ErrorPeticion(403, "sin-permiso", "Su correo todavía no tiene permiso para cambiar precios.", { usuario });
+  }
+  return rol;
 }
 
 function exigirMismoOrigen(request) {
@@ -137,53 +189,68 @@ async function atender(request, env, ctx) {
   const metodo = request.method;
 
   if (ruta === "/api/menu" && (metodo === "GET" || metodo === "HEAD")) {
-    const cache = caches.default;
-    const clave = new Request(url.origin + "/api/menu");
-    const guardada = await cache.match(clave);
-    if (guardada) return guardada;
-    const datos = await menuPublicado(env, url);
-    const estado = await almacen(env).leer();
-    const r = json(200, menuEnVivo(datos, estado.cambios), { cache: `public, max-age=${CACHE_MENU_S}` });
-    ctx.waitUntil(cache.put(clave, r.clone()));
-    return r;
+    const cuerpo = await enMemoria(env, ruta, CACHE_MENU_S, async () => {
+      const datos = await menuPublicado(env, url);
+      return menuEnVivo(datos, (await almacen(env).leer()).cambios);
+    });
+    return json(200, cuerpo, { cache: `public, max-age=${CACHE_MENU_S}` });
   }
 
   if (ruta === "/api/precios-web" && metodo === "GET") {
-    // Público y en caché 30 s: lo lee publicar.command; nadie puede gastar el Durable Object pidiéndolo mil veces
-    const cache = caches.default;
-    const clave = new Request(url.origin + "/api/precios-web");
-    const guardada = await cache.match(clave);
-    if (guardada) return guardada;
-    const precios = indexarPrecios(await menuPublicado(env, url));
-    const r = json(200, estadoPublico(await almacen(env).leer(), precios), { cache: "public, max-age=30" });
-    ctx.waitUntil(cache.put(clave, r.clone()));
-    return r;
+    // Público (lo lee publicar.command, sin correos) y en memoria unos segundos
+    const cuerpo = await enMemoria(env, ruta, CACHE_PRECIOS_WEB_S, async () => {
+      const precios = indexarPrecios(await menuPublicado(env, url));
+      return estadoPublico(await almacen(env).leer(), precios);
+    });
+    return json(200, cuerpo);
   }
 
   if (ruta === "/precios/api/estado" && metodo === "GET") {
-    const usuario = await exigirAdministrador(request, env);
+    const usuario = await exigirSesion(request, env);
+    const { estado, acceso } = await almacen(env).leerTodo();
+    const rol = exigirPermiso(usuario, acceso, env);
     const datos = await menuPublicado(env, url);
-    const estado = await almacen(env).leer();
     const vigentes = pendientesVigentes(estado.cambios, indexarPrecios(datos));
-    return json(200, { usuario, version: estado.version, menu: datos, pendientes: vigentes, historial: estado.historial.slice(0, 30) });
+    return json(200, {
+      usuario, rol, version: estado.version, menu: datos, pendientes: vigentes,
+      historial: estado.historial.slice(0, 30), acceso: vistaAcceso(acceso, env.CORREO_DUENO),
+    });
   }
 
   if (ruta === "/precios/api/precios" && metodo === "PUT") {
     exigirMismoOrigen(request);
-    const usuario = await exigirAdministrador(request, env);
+    const usuario = await exigirSesion(request, env);
     const cuerpo = await leerCuerpo(request);
     if (!cuerpo || typeof cuerpo !== "object" || !Number.isInteger(cuerpo.version)) throw new ErrorPeticion(400, "datos", "Falta la versión.");
+    const { estado: actual, acceso } = await almacen(env).leerTodo();
+    exigirPermiso(usuario, acceso, env);
     const datos = await menuPublicado(env, url);
     const precios = indexarPrecios(datos);
-    const actual = await almacen(env).leer();
     if (cuerpo.version !== actual.version) throw new ErrorPeticion(409, "conflicto", "Otra persona guardó precios mientras usted editaba.");
     const cambios = validarCambios(cuerpo.cambios, precios, pendientesVigentes(actual.cambios, precios));
-    const r = await almacen(env).guardar(cuerpo.version, cambios, [...precios.entries()], usuario);
+    const r = await almacen(env).guardar(cuerpo.version, cambios, [...precios.entries()], usuario, String(env.CORREO_DUENO || ""));
+    if (r.prohibido) throw new ErrorPeticion(403, "sin-permiso", "Su correo ya no tiene permiso para cambiar precios.", { usuario });
     if (r.conflicto) throw new ErrorPeticion(409, "conflicto", "Otra persona guardó precios mientras usted editaba.");
-    ctx.waitUntil(Promise.all(["/api/menu", "/api/precios-web"].map((r) => caches.default.delete(new Request(url.origin + r)))));
+    olvidarCache(env);
     console.log(`Precios guardados por ${usuario}: ${cambios.map((c) => c.clave + "=" + c.valor).join(", ")}`);
     const vigentes = pendientesVigentes(r.estado.cambios, precios);
     return json(200, { ok: true, usuario, version: r.estado.version, pendientes: vigentes, historial: r.estado.historial.slice(0, 30) });
+  }
+
+  if (ruta === "/precios/api/acceso" && metodo === "PUT") {
+    exigirMismoOrigen(request);
+    const usuario = await exigirSesion(request, env);
+    const cuerpo = await leerCuerpo(request);
+    if (!cuerpo || typeof cuerpo !== "object" || Array.isArray(cuerpo)) throw new ErrorPeticion(400, "datos", "Datos inválidos.");
+    const cambio = { accion: String(cuerpo.accion || ""), correo: typeof cuerpo.correo === "string" ? cuerpo.correo.slice(0, 300) : "" };
+    // El permiso se comprueba dentro del Durable Object, junto con el cambio (no hay carreras)
+    const r = await almacen(env).cambiarAcceso(cambio, usuario, String(env.CORREO_DUENO || ""));
+    if (r.error) {
+      if (r.error.cuerpo.error === "sin-permiso") r.error.cuerpo.usuario = usuario;
+      return json(r.error.estado, r.error.cuerpo);
+    }
+    console.log(`Acceso: ${usuario} → ${cambio.accion} ${cambio.correo}`);
+    return json(200, { ok: true, usuario, rol: rolDe(usuario, r.acceso, env.CORREO_DUENO), acceso: vistaAcceso(r.acceso, env.CORREO_DUENO) });
   }
 
   if (RUTAS_API.has(ruta)) throw new ErrorPeticion(405, "metodo", "Método no permitido.");
