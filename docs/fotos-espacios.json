@@ -1,10 +1,11 @@
 {
   "fecha": "2026-11-25",
   "notas": [
-    "Auditorio Segovia: mesas en herradura y sillas de madera, confirmado por el usuario.",
-    "Auditorio Aurora: mesas en herradura y sillas de plástico, confirmado por el usuario.",
-    "Las primeras cuatro adjuntas tienen derivadas locales de 2048 px. La foto 1 se actualizó desde un original HEIC de 5712 × 4284 del álbum iCloud del usuario. Las demás fotos conservan su mejor fuente local; no se ampliaron miniaturas.",
-    "Conversión a WebP y perfil sRGB, conservando la proporción, sin recorte ni retoque. Máximo 1800 px.",
+    "Auditorio Segovia: sillas de madera, confirmado por el usuario.",
+    "Auditorio Aurora: sillas de plástico, confirmado por el usuario.",
+    "Las 44 adjuntas tienen un original identificado en el álbum iCloud. Se optimizaron 29 tomas seleccionadas y una nueva fotografía nocturna; las restantes son tomas similares o repetidas.",
+    "Conversión a WebP y perfil sRGB, conservando encuadre, proporción y ajustes de las imágenes proporcionadas. Máximo 1800 px. No se ampliaron miniaturas.",
+    "La orientación se comprobó después de decodificar HEIC. Las dimensiones del maestro API pueden describir el sensor sin aplicar el giro EXIF.",
     "Las salas vacías se describen sin asignar un nombre de auditorio no confirmado."
   ],
   "fotos": [
@@ -28,15 +29,24 @@
       "bytes": 337290,
       "sha256": "669b6e8fe58ee93fc158a64066efceadbeeaeffdd3503c7b8bc1607472975d66",
       "fuenteAdjunta": "91888E67-C1C1-49C0-9453-D12FC9212B8C_1_102_o.jpeg",
-      "procedencia": "Original del álbum iCloud proporcionado por el usuario"
+      "procedencia": "Original o render de resolución completa del álbum iCloud proporcionado por el usuario",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1035.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      },
+      "recursoICloud": "CPLMaster.resOriginalRes"
     },
     {
       "fotoAdjunta": 2,
       "uuid": "435722FF-728C-430F-B14A-0E6FC47AC6B8",
-      "fuente": "435722FF-728C-430F-B14A-0E6FC47AC6B8_1_102_o.jpeg",
+      "fuente": "IMG_1038.HEIC",
       "dimensionesFuente": [
-        2048,
-        1536
+        5712,
+        4284
       ],
       "versionesDisponibles": 2,
       "seleccionada": true,
@@ -47,16 +57,27 @@
         1800,
         1350
       ],
-      "bytes": 376572,
-      "sha256": "4369f8f87e0e6a6c288bb5e821c64bf007516e514270b917c04d40153be00115"
+      "bytes": 461890,
+      "sha256": "f734eee7da0857751fe487d1b0c28cac2e2aa4e3c1909f87e687c059f2311df7",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1038.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      },
+      "fuenteAdjunta": "435722FF-728C-430F-B14A-0E6FC47AC6B8_1_102_o.jpeg",
+      "procedencia": "Original o render de resolución completa del álbum iCloud proporcionado por el usuario",
+      "recursoICloud": "CPLMaster.resOriginalRes"
     },
     {
       "fotoAdjunta": 3,
       "uuid": "77FC2617-F147-476F-B3E0-1DDCEAF11893",
-      "fuente": "77FC2617-F147-476F-B3E0-1DDCEAF11893_1_102_o.jpeg",
+      "fuente": "IMG_1039.HEIC",
       "dimensionesFuente": [
-        1536,
-        2048
+        4284,
+        5712
       ],
       "versionesDisponibles": 2,
       "seleccionada": true,
@@ -67,16 +88,27 @@
         1350,
         1800
       ],
-      "bytes": 397620,
-      "sha256": "106718783448a7caa2a602614065dce93152dedbf2bf173abcf19218a890666f"
+      "bytes": 506158,
+      "sha256": "558cf33a7816410e9c4e6a8cdf8fa967c41b82f18cfe5a1514c90a9f63cc6f20",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1039.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      },
+      "fuenteAdjunta": "77FC2617-F147-476F-B3E0-1DDCEAF11893_1_102_o.jpeg",
+      "procedencia": "Original o render de resolución completa del álbum iCloud proporcionado por el usuario",
+      "recursoICloud": "CPLMaster.resOriginalRes"
     },
     {
       "fotoAdjunta": 4,
       "uuid": "612C1096-EAAF-44F0-B300-238A38404CCB",
-      "fuente": "612C1096-EAAF-44F0-B300-238A38404CCB_1_102_o.jpeg",
+      "fuente": "IMG_1040.HEIC",
       "dimensionesFuente": [
-        1536,
-        2048
+        4284,
+        5712
       ],
       "versionesDisponibles": 2,
       "seleccionada": true,
@@ -87,8 +119,19 @@
         1350,
         1800
       ],
-      "bytes": 375904,
-      "sha256": "1c103921ecc64b0aaf5c896fe7cbeab37d7e084f94453ccc875caab175ab4214"
+      "bytes": 472862,
+      "sha256": "b299a9e49a78ebe496fbad5b9640ce152dee2d338325e92117b85697738941f0",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1040.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      },
+      "fuenteAdjunta": "612C1096-EAAF-44F0-B300-238A38404CCB_1_102_o.jpeg",
+      "procedencia": "Original o render de resolución completa del álbum iCloud proporcionado por el usuario",
+      "recursoICloud": "CPLMaster.resOriginalRes"
     },
     {
       "fotoAdjunta": 5,
@@ -100,7 +143,15 @@
       ],
       "versionesDisponibles": 1,
       "seleccionada": false,
-      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona."
+      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona.",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1041.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      }
     },
     {
       "fotoAdjunta": 6,
@@ -112,7 +163,15 @@
       ],
       "versionesDisponibles": 1,
       "seleccionada": false,
-      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona."
+      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona.",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1042.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      }
     },
     {
       "fotoAdjunta": 7,
@@ -124,27 +183,46 @@
       ],
       "versionesDisponibles": 1,
       "seleccionada": false,
-      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona."
+      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona.",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1043.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      }
     },
     {
       "fotoAdjunta": 8,
       "uuid": "778C93D5-AB44-4348-90BA-AE52C37F8927",
-      "fuente": "778C93D5-AB44-4348-90BA-AE52C37F8927_4_5005_c.jpeg",
+      "fuente": "IMG_1044.HEIC",
       "dimensionesFuente": [
-        360,
-        480
+        4284,
+        5712
       ],
-      "versionesDisponibles": 1,
+      "versionesDisponibles": 2,
       "seleccionada": true,
       "archivo": "assets/imagenes/espacios/terraza-mesas.webp",
       "categoria": "terraza",
       "alt": "Mesas de la terraza cubierta junto a la piscina",
       "dimensionesWeb": [
-        360,
-        480
+        1350,
+        1800
       ],
-      "bytes": 26806,
-      "sha256": "d28952be7aee9a782d0b7a35da714f5887658b8673560a6c1c9514fdd21101b0"
+      "bytes": 476698,
+      "sha256": "593f8d4927cfc72e1da72b8313b5bc57cfb0e3ab1599a76ae7f02dc8305d113e",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1044.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      },
+      "fuenteAdjunta": "778C93D5-AB44-4348-90BA-AE52C37F8927_4_5005_c.jpeg",
+      "procedencia": "Original o render de resolución completa del álbum iCloud proporcionado por el usuario",
+      "recursoICloud": "CPLMaster.resOriginalRes"
     },
     {
       "fotoAdjunta": 9,
@@ -156,27 +234,46 @@
       ],
       "versionesDisponibles": 1,
       "seleccionada": false,
-      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona."
+      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona.",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1045.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      }
     },
     {
       "fotoAdjunta": 10,
       "uuid": "40197A73-EDA5-4EFF-8C09-D6B22A9534C5",
-      "fuente": "40197A73-EDA5-4EFF-8C09-D6B22A9534C5_4_5005_c.jpeg",
+      "fuente": "IMG_1046.HEIC",
       "dimensionesFuente": [
-        360,
-        480
+        4284,
+        5712
       ],
-      "versionesDisponibles": 1,
+      "versionesDisponibles": 2,
       "seleccionada": true,
       "archivo": "assets/imagenes/espacios/restaurante-vista.webp",
       "categoria": "restaurante",
       "alt": "Vista del comedor de Restaurante Las Margaritas",
       "dimensionesWeb": [
-        360,
-        480
+        1350,
+        1800
       ],
-      "bytes": 20016,
-      "sha256": "568c0f30de239c8f84031b467a0bf1251abb748237fd68b5c9a06627c39b307a"
+      "bytes": 256672,
+      "sha256": "36606726686b93038c4891a69ae867d7709846c13327cc5667d8ee5301f68859",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1046.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      },
+      "fuenteAdjunta": "40197A73-EDA5-4EFF-8C09-D6B22A9534C5_4_5005_c.jpeg",
+      "procedencia": "Original o render de resolución completa del álbum iCloud proporcionado por el usuario",
+      "recursoICloud": "CPLMaster.resOriginalRes"
     },
     {
       "fotoAdjunta": 11,
@@ -188,27 +285,46 @@
       ],
       "versionesDisponibles": 1,
       "seleccionada": false,
-      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona."
+      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona.",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1047.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      }
     },
     {
       "fotoAdjunta": 12,
       "uuid": "1A43C95B-C568-48A9-94E1-6E73FD60EF14",
-      "fuente": "1A43C95B-C568-48A9-94E1-6E73FD60EF14_4_5005_c.jpeg",
+      "fuente": "IMG_1048.HEIC",
       "dimensionesFuente": [
-        360,
-        480
+        4284,
+        5712
       ],
-      "versionesDisponibles": 1,
+      "versionesDisponibles": 2,
       "seleccionada": true,
       "archivo": "assets/imagenes/espacios/restaurante-dia.webp",
       "categoria": "restaurante",
       "alt": "Comedor de Restaurante Las Margaritas con mesas y sillas de madera",
       "dimensionesWeb": [
-        360,
-        480
+        1350,
+        1800
       ],
-      "bytes": 23010,
-      "sha256": "125790b6470b50ab3d42f5eae60c9e7860d77868d8de699f8896943977a455d4"
+      "bytes": 253540,
+      "sha256": "76e89212c649b31636d1ebfa84bd5dad2712d926f24c50649d3b7435d89321db",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1048.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      },
+      "fuenteAdjunta": "1A43C95B-C568-48A9-94E1-6E73FD60EF14_4_5005_c.jpeg",
+      "procedencia": "Original o render de resolución completa del álbum iCloud proporcionado por el usuario",
+      "recursoICloud": "CPLMaster.resOriginalRes"
     },
     {
       "fotoAdjunta": 13,
@@ -220,27 +336,46 @@
       ],
       "versionesDisponibles": 1,
       "seleccionada": false,
-      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona."
+      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona.",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1049.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      }
     },
     {
       "fotoAdjunta": 14,
       "uuid": "03B6475C-BFC5-4D96-AAF2-81A748B95916",
-      "fuente": "03B6475C-BFC5-4D96-AAF2-81A748B95916_4_5005_c.jpeg",
+      "fuente": "IMG_1050.HEIC",
       "dimensionesFuente": [
-        360,
-        480
+        4284,
+        5712
       ],
-      "versionesDisponibles": 1,
+      "versionesDisponibles": 2,
       "seleccionada": true,
       "archivo": "assets/imagenes/espacios/sala-descanso.webp",
       "categoria": "sala",
       "alt": "Sala de descanso con sofás de madera y televisión",
       "dimensionesWeb": [
-        360,
-        480
+        1350,
+        1800
       ],
-      "bytes": 18508,
-      "sha256": "e989ebed8b98ed3bb77c4c9953571aa002a9df2b57ea11c2f605bd2a701d03ba"
+      "bytes": 199524,
+      "sha256": "22cecdd9bda20c41ef2c9a1e5a8f01b3fd5261c58186ea0f7949d897f0912d5f",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1050.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      },
+      "fuenteAdjunta": "03B6475C-BFC5-4D96-AAF2-81A748B95916_4_5005_c.jpeg",
+      "procedencia": "Original o render de resolución completa del álbum iCloud proporcionado por el usuario",
+      "recursoICloud": "CPLMaster.resOriginalRes"
     },
     {
       "fotoAdjunta": 15,
@@ -252,7 +387,15 @@
       ],
       "versionesDisponibles": 1,
       "seleccionada": false,
-      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona."
+      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona.",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1051.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      }
     },
     {
       "fotoAdjunta": 16,
@@ -264,67 +407,108 @@
       ],
       "versionesDisponibles": 1,
       "seleccionada": false,
-      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona."
+      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona.",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1052.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      }
     },
     {
       "fotoAdjunta": 17,
       "uuid": "523AAD0F-3400-4E85-B203-7ED11B4A9A6C",
-      "fuente": "523AAD0F-3400-4E85-B203-7ED11B4A9A6C_4_5005_c.jpeg",
+      "fuente": "IMG_1054.HEIC",
       "dimensionesFuente": [
-        360,
-        480
+        4284,
+        5712
       ],
-      "versionesDisponibles": 1,
+      "versionesDisponibles": 2,
       "seleccionada": true,
       "archivo": "assets/imagenes/espacios/salon-celosia.webp",
       "categoria": "salon",
       "alt": "Espacio para eventos con celosía decorativa de madera",
       "dimensionesWeb": [
-        360,
-        480
+        1350,
+        1800
       ],
-      "bytes": 20644,
-      "sha256": "ac81df0af111331eefde1d24e718791f038ede28372f231e1e112add75667040"
+      "bytes": 226798,
+      "sha256": "10f7962bafd77ee17fffff1c07c576adaf07d120e58a908f93e0da621444b277",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1054.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      },
+      "fuenteAdjunta": "523AAD0F-3400-4E85-B203-7ED11B4A9A6C_4_5005_c.jpeg",
+      "procedencia": "Original o render de resolución completa del álbum iCloud proporcionado por el usuario",
+      "recursoICloud": "CPLMaster.resOriginalRes"
     },
     {
       "fotoAdjunta": 18,
       "uuid": "1B2D90BC-3F6F-4D6D-B066-FECC292A473C",
-      "fuente": "1B2D90BC-3F6F-4D6D-B066-FECC292A473C_4_5005_c.jpeg",
+      "fuente": "IMG_1059.HEIC",
       "dimensionesFuente": [
-        360,
-        480
+        4284,
+        5712
       ],
-      "versionesDisponibles": 1,
+      "versionesDisponibles": 2,
       "seleccionada": true,
       "archivo": "assets/imagenes/espacios/salon-eventos.webp",
       "categoria": "salon",
       "alt": "Salón despejado con ventanales y cortinas",
       "dimensionesWeb": [
-        360,
-        480
+        1350,
+        1800
       ],
-      "bytes": 13664,
-      "sha256": "385ea4e8cb39de25d9d28470e39ca74dc650b71099d2107293ded2f0cd4f7849"
+      "bytes": 154104,
+      "sha256": "b3dbac8ddff79f1fb177132b6fdf0ba028355f16e0bd036fedfca724020509c8",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1059.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      },
+      "fuenteAdjunta": "1B2D90BC-3F6F-4D6D-B066-FECC292A473C_4_5005_c.jpeg",
+      "procedencia": "Original o render de resolución completa del álbum iCloud proporcionado por el usuario",
+      "recursoICloud": "CPLMaster.resOriginalRes"
     },
     {
       "fotoAdjunta": 19,
       "uuid": "F29DCAA9-5324-4BCF-A330-D92D64A4CFC3",
-      "fuente": "F29DCAA9-5324-4BCF-A330-D92D64A4CFC3_4_5005_c.jpeg",
+      "fuente": "IMG_1061.HEIC",
       "dimensionesFuente": [
-        360,
-        480
+        4284,
+        5712
       ],
-      "versionesDisponibles": 1,
+      "versionesDisponibles": 2,
       "seleccionada": true,
       "archivo": "assets/imagenes/espacios/entrada-dia.webp",
       "categoria": "entrada-parqueo",
       "alt": "Entrada del hotel con acceso por rampa",
       "dimensionesWeb": [
-        360,
-        480
+        1350,
+        1800
       ],
-      "bytes": 27686,
-      "sha256": "5b70501e1f26b64af868f383975c449ecbaf82f959c3a3ce4e6e85d8673b979e"
+      "bytes": 524498,
+      "sha256": "363020f602f4823b5107db064f33eafe033fb7466a24bf411fffadf1af5cb382",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1061.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      },
+      "fuenteAdjunta": "F29DCAA9-5324-4BCF-A330-D92D64A4CFC3_4_5005_c.jpeg",
+      "procedencia": "Original o render de resolución completa del álbum iCloud proporcionado por el usuario",
+      "recursoICloud": "CPLMaster.resOriginalRes"
     },
     {
       "fotoAdjunta": 20,
@@ -336,87 +520,139 @@
       ],
       "versionesDisponibles": 1,
       "seleccionada": false,
-      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona."
+      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona.",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1062.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      }
     },
     {
       "fotoAdjunta": 21,
       "uuid": "ED99B179-E914-48D8-8F4D-D4B7AA228432",
-      "fuente": "ED99B179-E914-48D8-8F4D-D4B7AA228432_4_5005_c.jpeg",
+      "fuente": "IMG_1066.HEIC",
       "dimensionesFuente": [
-        360,
-        480
+        4284,
+        5712
       ],
-      "versionesDisponibles": 1,
+      "versionesDisponibles": 2,
       "seleccionada": true,
       "archivo": "assets/imagenes/espacios/parqueo-palmeras.webp",
       "categoria": "entrada-parqueo",
       "alt": "Parqueo interior de Hotel Frontera rodeado de palmeras",
       "dimensionesWeb": [
-        360,
-        480
+        1350,
+        1800
       ],
-      "bytes": 41978,
-      "sha256": "146fa9fc1d8cee8f77c649626b1d4f99d104cd0ce8feb416caa72b8b32eda2af"
+      "bytes": 744158,
+      "sha256": "c038f7e5a0882bedf7244fd0d42270eb501fd1c6995e8098438616af187d06d6",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1066.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      },
+      "fuenteAdjunta": "ED99B179-E914-48D8-8F4D-D4B7AA228432_4_5005_c.jpeg",
+      "procedencia": "Original o render de resolución completa del álbum iCloud proporcionado por el usuario",
+      "recursoICloud": "CPLMaster.resOriginalRes"
     },
     {
       "fotoAdjunta": 22,
       "uuid": "45061E21-29E6-494C-8150-2616B903525D",
-      "fuente": "45061E21-29E6-494C-8150-2616B903525D_4_5005_c.jpeg",
+      "fuente": "IMG_1069.HEIC",
       "dimensionesFuente": [
-        360,
-        480
+        4284,
+        5712
       ],
-      "versionesDisponibles": 1,
+      "versionesDisponibles": 2,
       "seleccionada": true,
       "archivo": "assets/imagenes/espacios/auditorio-segovia-detalle.webp",
       "categoria": "auditorio-segovia",
       "alt": "Auditorio Segovia con mesas en herradura y sillas de madera",
       "dimensionesWeb": [
-        360,
-        480
+        1350,
+        1800
       ],
-      "bytes": 19220,
-      "sha256": "4c43736a177ba7c37a73e71e6a1c148f33733870e1cfcea4b109d622d4e99411"
+      "bytes": 199190,
+      "sha256": "dc6ea47e0f09d1b718995f44afceb7c6d94c4a02eb8a436fb059920793a0654e",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1069.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      },
+      "fuenteAdjunta": "45061E21-29E6-494C-8150-2616B903525D_4_5005_c.jpeg",
+      "procedencia": "Original o render de resolución completa del álbum iCloud proporcionado por el usuario",
+      "recursoICloud": "CPLMaster.resOriginalRes"
     },
     {
       "fotoAdjunta": 23,
       "uuid": "713152FB-B59D-4668-A9C4-57CAE11E2AFC",
-      "fuente": "713152FB-B59D-4668-A9C4-57CAE11E2AFC_4_5005_c.jpeg",
+      "fuente": "IMG_1070.HEIC",
       "dimensionesFuente": [
-        360,
-        480
+        4284,
+        5712
       ],
-      "versionesDisponibles": 1,
+      "versionesDisponibles": 2,
       "seleccionada": true,
       "archivo": "assets/imagenes/espacios/auditorio-segovia.webp",
       "categoria": "auditorio-segovia",
       "alt": "Auditorio Segovia con mesas en herradura y sillas de madera",
       "dimensionesWeb": [
-        360,
-        480
+        1350,
+        1800
       ],
-      "bytes": 17808,
-      "sha256": "6d7050f562296323beec6df801b84e72125a045396be112e0167f7d3bbcd25e6"
+      "bytes": 169006,
+      "sha256": "0fa2ea9b8a4887aa96b3654732828db7a635b8db5288ee63f35fc557ad9901da",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1070.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      },
+      "fuenteAdjunta": "713152FB-B59D-4668-A9C4-57CAE11E2AFC_4_5005_c.jpeg",
+      "procedencia": "Original o render de resolución completa del álbum iCloud proporcionado por el usuario",
+      "recursoICloud": "CPLMaster.resOriginalRes"
     },
     {
       "fotoAdjunta": 24,
       "uuid": "C44D67E8-BFED-4025-8470-4811655A9751",
-      "fuente": "C44D67E8-BFED-4025-8470-4811655A9751_4_5005_c.jpeg",
+      "fuente": "IMG_1074.HEIC",
       "dimensionesFuente": [
-        360,
-        480
+        4284,
+        5712
       ],
-      "versionesDisponibles": 1,
+      "versionesDisponibles": 2,
       "seleccionada": true,
       "archivo": "assets/imagenes/espacios/bar-terraza.webp",
       "categoria": "bar",
       "alt": "Bar al lado de la piscina y terraza en el nivel superior",
       "dimensionesWeb": [
-        360,
-        480
+        1350,
+        1800
       ],
-      "bytes": 29842,
-      "sha256": "d28d9c8f573b201bcd4639d193be1a903e333ab5456bd8dbf98528b5b393c3a2"
+      "bytes": 460900,
+      "sha256": "2d7f9a493e1ca768e07b3bf035f3b78faf7978769fa8270055832ec2a36a3250",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1074.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      },
+      "fuenteAdjunta": "C44D67E8-BFED-4025-8470-4811655A9751_4_5005_c.jpeg",
+      "procedencia": "Original o render de resolución completa del álbum iCloud proporcionado por el usuario",
+      "recursoICloud": "CPLMaster.resOriginalRes"
     },
     {
       "fotoAdjunta": 25,
@@ -428,27 +664,46 @@
       ],
       "versionesDisponibles": 1,
       "seleccionada": false,
-      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona."
+      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona.",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1076.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      }
     },
     {
       "fotoAdjunta": 26,
       "uuid": "2A5F42A5-45E8-4C29-AB79-53CB09D0DE09",
-      "fuente": "2A5F42A5-45E8-4C29-AB79-53CB09D0DE09_4_5005_c.jpeg",
+      "fuente": "IMG_1085.HEIC",
       "dimensionesFuente": [
-        360,
-        480
+        4284,
+        5712
       ],
-      "versionesDisponibles": 1,
+      "versionesDisponibles": 2,
       "seleccionada": true,
       "archivo": "assets/imagenes/espacios/auditorio-aurora.webp",
       "categoria": "auditorio-aurora",
       "alt": "Auditorio Aurora con mesas en herradura y sillas de plástico blanco",
       "dimensionesWeb": [
-        360,
-        480
+        1350,
+        1800
       ],
-      "bytes": 17854,
-      "sha256": "67064aea78c4be7238470b001ecba0eff5e0516e406dc437e41296f27cf3b8e5"
+      "bytes": 221090,
+      "sha256": "eb861d0b95e34c75fcac1692f0ccd472e4f1bb6e4b8fbfc8278d55b4b6e5e0c7",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1085.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      },
+      "fuenteAdjunta": "2A5F42A5-45E8-4C29-AB79-53CB09D0DE09_4_5005_c.jpeg",
+      "procedencia": "Original o render de resolución completa del álbum iCloud proporcionado por el usuario",
+      "recursoICloud": "CPLMaster.resOriginalRes"
     },
     {
       "fotoAdjunta": 27,
@@ -460,87 +715,139 @@
       ],
       "versionesDisponibles": 1,
       "seleccionada": false,
-      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona."
+      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona.",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1086.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      }
     },
     {
       "fotoAdjunta": 28,
       "uuid": "9BC8D32F-DE8D-40F2-94FC-EE3F91764770",
-      "fuente": "9BC8D32F-DE8D-40F2-94FC-EE3F91764770_4_5005_c.jpeg",
+      "fuente": "IMG_1121.HEIC",
       "dimensionesFuente": [
-        360,
-        480
+        4284,
+        5712
       ],
-      "versionesDisponibles": 1,
+      "versionesDisponibles": 2,
       "seleccionada": true,
       "archivo": "assets/imagenes/espacios/piscina-jardin.webp",
       "categoria": "piscina",
       "alt": "Curva de la piscina junto a las tumbonas y el corredor",
       "dimensionesWeb": [
-        360,
-        480
+        1350,
+        1800
       ],
-      "bytes": 24690,
-      "sha256": "5b3c9a8007486b83f1e07740a37378b164e9ff9f905167c142b0343d41f69fa5"
+      "bytes": 424084,
+      "sha256": "2e73138e2aa9a9c493eb1085485b98e51a0b7b54852302bf57a84a1ce9d5f7e0",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1121.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      },
+      "fuenteAdjunta": "9BC8D32F-DE8D-40F2-94FC-EE3F91764770_4_5005_c.jpeg",
+      "procedencia": "Original o render de resolución completa del álbum iCloud proporcionado por el usuario",
+      "recursoICloud": "CPLAsset.resJPEGFullRes"
     },
     {
       "fotoAdjunta": 29,
       "uuid": "78D6BEAC-CBD0-4761-ADB9-F24AAFCFFD28",
-      "fuente": "78D6BEAC-CBD0-4761-ADB9-F24AAFCFFD28_4_5005_c.jpeg",
+      "fuente": "IMG_1122.HEIC",
       "dimensionesFuente": [
-        360,
-        480
+        4284,
+        5712
       ],
-      "versionesDisponibles": 1,
+      "versionesDisponibles": 2,
       "seleccionada": true,
       "archivo": "assets/imagenes/espacios/vista-terraza-piscina.webp",
       "categoria": "terraza",
       "alt": "Vista de la piscina y el patio desde la terraza superior",
       "dimensionesWeb": [
-        360,
-        480
+        1350,
+        1800
       ],
-      "bytes": 34086,
-      "sha256": "e710ef0354e6e4d339f6bee92e8d3254dedfebc30604a8db2e5f4c93a49701bc"
+      "bytes": 549558,
+      "sha256": "ce86eb7ac9a6a2aaefd026baa37d8e04f3666057c2a682491140294295f11ae7",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1122.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      },
+      "fuenteAdjunta": "78D6BEAC-CBD0-4761-ADB9-F24AAFCFFD28_4_5005_c.jpeg",
+      "procedencia": "Original o render de resolución completa del álbum iCloud proporcionado por el usuario",
+      "recursoICloud": "CPLMaster.resOriginalRes"
     },
     {
       "fotoAdjunta": 30,
       "uuid": "6D5B791E-1A80-4E08-B579-9FB739A3DFDB",
-      "fuente": "6D5B791E-1A80-4E08-B579-9FB739A3DFDB_4_5005_c.jpeg",
+      "fuente": "IMG_1124.HEIC",
       "dimensionesFuente": [
-        360,
-        480
+        4284,
+        5712
       ],
-      "versionesDisponibles": 1,
+      "versionesDisponibles": 2,
       "seleccionada": true,
       "archivo": "assets/imagenes/espacios/vista-terraza-montanas.webp",
       "categoria": "terraza",
       "alt": "Vista de la piscina, los tejados y las montañas desde la terraza",
       "dimensionesWeb": [
-        360,
-        480
+        1350,
+        1800
       ],
-      "bytes": 33684,
-      "sha256": "95732c6313dc71a5c5ae8edd2339ecc4ddf9512b832b633ea08c7ee773575b2b"
+      "bytes": 531954,
+      "sha256": "4ee44e83022b17f84f0590716fc4b6de0dd4bf68c552604262e6c2b7de46639e",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1124.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      },
+      "fuenteAdjunta": "6D5B791E-1A80-4E08-B579-9FB739A3DFDB_4_5005_c.jpeg",
+      "procedencia": "Original o render de resolución completa del álbum iCloud proporcionado por el usuario",
+      "recursoICloud": "CPLMaster.resOriginalRes"
     },
     {
       "fotoAdjunta": 31,
       "uuid": "7301B7F4-9FEA-48B4-8CA7-B7F168CEEC5E",
-      "fuente": "7301B7F4-9FEA-48B4-8CA7-B7F168CEEC5E_4_5005_c.jpeg",
+      "fuente": "IMG_1133.HEIC",
       "dimensionesFuente": [
-        360,
-        480
+        4284,
+        5712
       ],
-      "versionesDisponibles": 1,
+      "versionesDisponibles": 2,
       "seleccionada": true,
       "archivo": "assets/imagenes/espacios/piscina-atardecer.webp",
       "categoria": "piscina",
       "alt": "Piscina y bar de Hotel Frontera al atardecer",
       "dimensionesWeb": [
-        360,
-        480
+        1350,
+        1800
       ],
-      "bytes": 28642,
-      "sha256": "e48d62a05e1d84b6b08cf8fa7e6f8e0d3b86cfcd2a8975f68c69bece169b9ec5"
+      "bytes": 403868,
+      "sha256": "5ba0b59578ee63c254ac9105a44dc083e464fbbade711f3a2483ddfe98fbb109",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1133.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      },
+      "fuenteAdjunta": "7301B7F4-9FEA-48B4-8CA7-B7F168CEEC5E_4_5005_c.jpeg",
+      "procedencia": "Original o render de resolución completa del álbum iCloud proporcionado por el usuario",
+      "recursoICloud": "CPLAsset.resJPEGFullRes"
     },
     {
       "fotoAdjunta": 32,
@@ -552,7 +859,15 @@
       ],
       "versionesDisponibles": 1,
       "seleccionada": false,
-      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona."
+      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona.",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1134.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      }
     },
     {
       "fotoAdjunta": 33,
@@ -564,47 +879,77 @@
       ],
       "versionesDisponibles": 1,
       "seleccionada": false,
-      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona."
+      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona.",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1135.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      }
     },
     {
       "fotoAdjunta": 34,
       "uuid": "B9770CF5-4624-4CB5-B323-00B94D9D95A6",
-      "fuente": "B9770CF5-4624-4CB5-B323-00B94D9D95A6_4_5005_c.jpeg",
+      "fuente": "IMG_1136.HEIC",
       "dimensionesFuente": [
-        360,
-        480
+        4284,
+        5712
       ],
-      "versionesDisponibles": 1,
+      "versionesDisponibles": 2,
       "seleccionada": true,
       "archivo": "assets/imagenes/espacios/parqueo-atardecer.webp",
       "categoria": "entrada-parqueo",
       "alt": "Parqueo del hotel entre palmeras al atardecer",
       "dimensionesWeb": [
-        360,
-        480
+        1350,
+        1800
       ],
-      "bytes": 42786,
-      "sha256": "1903c6c49ba594b5424ffc88eced069b005daaecef1361365b5f9a0d1c90226b"
+      "bytes": 713306,
+      "sha256": "d747cee60f002cfb2e52a7169471b2c47b3deb420575559ec196713ed8208dd2",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1136.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      },
+      "fuenteAdjunta": "B9770CF5-4624-4CB5-B323-00B94D9D95A6_4_5005_c.jpeg",
+      "procedencia": "Original o render de resolución completa del álbum iCloud proporcionado por el usuario",
+      "recursoICloud": "CPLAsset.resJPEGFullRes"
     },
     {
       "fotoAdjunta": 35,
       "uuid": "D4C5CABB-3220-41E2-B2B6-DB1871825DDF",
-      "fuente": "D4C5CABB-3220-41E2-B2B6-DB1871825DDF_4_5005_c.jpeg",
+      "fuente": "IMG_1137.HEIC",
       "dimensionesFuente": [
-        360,
-        480
+        4284,
+        5712
       ],
-      "versionesDisponibles": 1,
+      "versionesDisponibles": 2,
       "seleccionada": true,
       "archivo": "assets/imagenes/espacios/entrada-atardecer.webp",
       "categoria": "entrada-parqueo",
       "alt": "Fachada y acceso del hotel con iluminación al atardecer",
       "dimensionesWeb": [
-        360,
-        480
+        1350,
+        1800
       ],
-      "bytes": 36026,
-      "sha256": "b73d247fdd7d22ed13e015f2e03bd5f2d22028174001cc00b051f3793820aefc"
+      "bytes": 552786,
+      "sha256": "fccb9f8852f4fc1c4632f6465bff69c96b64d64bee720f87824acf0282a9d170",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1137.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      },
+      "fuenteAdjunta": "D4C5CABB-3220-41E2-B2B6-DB1871825DDF_4_5005_c.jpeg",
+      "procedencia": "Original o render de resolución completa del álbum iCloud proporcionado por el usuario",
+      "recursoICloud": "CPLAsset.resJPEGFullRes"
     },
     {
       "fotoAdjunta": 36,
@@ -616,107 +961,170 @@
       ],
       "versionesDisponibles": 1,
       "seleccionada": false,
-      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona."
+      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona.",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1138.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      }
     },
     {
       "fotoAdjunta": 37,
       "uuid": "BBD9B59B-B17A-43F2-847A-DB0537F3C0E6",
-      "fuente": "BBD9B59B-B17A-43F2-847A-DB0537F3C0E6_4_5005_c.jpeg",
+      "fuente": "IMG_1140.HEIC",
       "dimensionesFuente": [
-        360,
-        480
+        4284,
+        5712
       ],
-      "versionesDisponibles": 1,
+      "versionesDisponibles": 2,
       "seleccionada": true,
       "archivo": "assets/imagenes/espacios/sala-navidad.webp",
       "categoria": "sala",
       "alt": "Sala de estar con mobiliario clásico y decoración navideña",
       "dimensionesWeb": [
-        360,
-        480
+        1350,
+        1800
       ],
-      "bytes": 26022,
-      "sha256": "d62a632613e54537d403efd82703ab46eb4fd0556074268cdeb0f4a560f43f3d"
+      "bytes": 337350,
+      "sha256": "1cdf2b9e0c80048281630d4c7ad39d240f65a754e0e021937307e1141e0609ec",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1140.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      },
+      "fuenteAdjunta": "BBD9B59B-B17A-43F2-847A-DB0537F3C0E6_4_5005_c.jpeg",
+      "procedencia": "Original o render de resolución completa del álbum iCloud proporcionado por el usuario",
+      "recursoICloud": "CPLAsset.resJPEGFullRes"
     },
     {
       "fotoAdjunta": 38,
       "uuid": "4D437446-CD6C-4581-8773-AB72E1859E47",
-      "fuente": "4D437446-CD6C-4581-8773-AB72E1859E47_4_5005_c.jpeg",
+      "fuente": "IMG_1145.HEIC",
       "dimensionesFuente": [
-        360,
-        480
+        4284,
+        5712
       ],
-      "versionesDisponibles": 1,
+      "versionesDisponibles": 2,
       "seleccionada": true,
       "archivo": "assets/imagenes/espacios/piscina-descanso-atardecer.webp",
       "categoria": "piscina",
       "alt": "Piscina y zona de descanso al atardecer",
       "dimensionesWeb": [
-        360,
-        480
+        1350,
+        1800
       ],
-      "bytes": 23910,
-      "sha256": "f216c880bae487ddda197f62a238d910a1ef1926a3e44393e079e5d2866194a8"
+      "bytes": 323472,
+      "sha256": "e2c76b745d1191e5cd38a0a8315ca92db676d0d07328490ae81c689036499386",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1145.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      },
+      "fuenteAdjunta": "4D437446-CD6C-4581-8773-AB72E1859E47_4_5005_c.jpeg",
+      "procedencia": "Original o render de resolución completa del álbum iCloud proporcionado por el usuario",
+      "recursoICloud": "CPLAsset.resJPEGFullRes"
     },
     {
       "fotoAdjunta": 39,
       "uuid": "3944EF52-09CC-45DF-8840-0BD0FA20093E",
-      "fuente": "3944EF52-09CC-45DF-8840-0BD0FA20093E_4_5005_c.jpeg",
+      "fuente": "IMG_1148.HEIC",
       "dimensionesFuente": [
-        360,
-        480
+        4284,
+        5712
       ],
-      "versionesDisponibles": 1,
+      "versionesDisponibles": 2,
       "seleccionada": true,
       "archivo": "assets/imagenes/espacios/restaurante-noche.webp",
       "categoria": "restaurante",
       "alt": "Comedor de Restaurante Las Margaritas iluminado por la noche",
       "dimensionesWeb": [
-        360,
-        480
+        1350,
+        1800
       ],
-      "bytes": 23562,
-      "sha256": "65112010c34cc381de9743176e1c0ee226e772b705000af0cbe3c22c2d7266fa"
+      "bytes": 241050,
+      "sha256": "df936875bfef727677f99e288aace8282f4f873b0fb8175b091cda4c97a2ca33",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1148.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      },
+      "fuenteAdjunta": "3944EF52-09CC-45DF-8840-0BD0FA20093E_4_5005_c.jpeg",
+      "procedencia": "Original o render de resolución completa del álbum iCloud proporcionado por el usuario",
+      "recursoICloud": "CPLAsset.resJPEGFullRes"
     },
     {
       "fotoAdjunta": 40,
       "uuid": "1BC2A403-E779-4B75-8E49-8899E01E9904",
-      "fuente": "1BC2A403-E779-4B75-8E49-8899E01E9904_4_5005_c.jpeg",
+      "fuente": "IMG_1149.HEIC",
       "dimensionesFuente": [
-        360,
-        480
+        4284,
+        5712
       ],
-      "versionesDisponibles": 1,
+      "versionesDisponibles": 2,
       "seleccionada": true,
       "archivo": "assets/imagenes/espacios/restaurante-noche-vista.webp",
       "categoria": "restaurante",
       "alt": "Vista nocturna de las mesas de Restaurante Las Margaritas",
       "dimensionesWeb": [
-        360,
-        480
+        1350,
+        1800
       ],
-      "bytes": 25200,
-      "sha256": "237881319c43c91859bae123c27d31e0126d0e3b0fdb19ec9f922c1ab507572c"
+      "bytes": 262140,
+      "sha256": "e787f490327bf840408e0bc9273d5e20f947e761623e359cb0adbd84d6886047",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1149.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      },
+      "fuenteAdjunta": "1BC2A403-E779-4B75-8E49-8899E01E9904_4_5005_c.jpeg",
+      "procedencia": "Original o render de resolución completa del álbum iCloud proporcionado por el usuario",
+      "recursoICloud": "CPLAsset.resJPEGFullRes"
     },
     {
       "fotoAdjunta": 41,
       "uuid": "30D936DC-63EA-4DA5-84D3-3779BC72C36B",
-      "fuente": "30D936DC-63EA-4DA5-84D3-3779BC72C36B_4_5005_c.jpeg",
+      "fuente": "IMG_1152.HEIC",
       "dimensionesFuente": [
-        360,
-        480
+        4284,
+        5712
       ],
-      "versionesDisponibles": 1,
+      "versionesDisponibles": 2,
       "seleccionada": true,
       "archivo": "assets/imagenes/espacios/piscina-noche.webp",
       "categoria": "piscina",
       "alt": "Piscina de Hotel Frontera con reflejos de la iluminación nocturna",
       "dimensionesWeb": [
-        360,
-        480
+        1350,
+        1800
       ],
-      "bytes": 23096,
-      "sha256": "ad070881133caf662e10a7900c102170a308a30431e521d04cbdc24ebdef14da"
+      "bytes": 264346,
+      "sha256": "6750cd95711e9b92e3589dacbe39546a3c1cc57751fcd5096a3bdfe1757522bb",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1152.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      },
+      "fuenteAdjunta": "30D936DC-63EA-4DA5-84D3-3779BC72C36B_4_5005_c.jpeg",
+      "procedencia": "Original o render de resolución completa del álbum iCloud proporcionado por el usuario",
+      "recursoICloud": "CPLAsset.resJPEGFullRes"
     },
     {
       "fotoAdjunta": 42,
@@ -728,91 +1136,132 @@
       ],
       "versionesDisponibles": 1,
       "seleccionada": false,
-      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona."
+      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona.",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1153.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      }
     },
     {
       "fotoAdjunta": 43,
       "uuid": "1C6BE6C8-A79F-4484-8702-762F356CAD4B",
-      "fuente": "1C6BE6C8-A79F-4484-8702-762F356CAD4B_4_5005_c.jpeg",
+      "fuente": "IMG_1154.HEIC",
       "dimensionesFuente": [
-        360,
-        480
+        4284,
+        5712
       ],
-      "versionesDisponibles": 1,
+      "versionesDisponibles": 2,
       "seleccionada": true,
       "archivo": "assets/imagenes/espacios/bar-noche.webp",
       "categoria": "bar",
       "alt": "Bar y terraza iluminados junto a la piscina por la noche",
       "dimensionesWeb": [
-        360,
-        480
+        1350,
+        1800
       ],
-      "bytes": 23214,
-      "sha256": "ade3e2aa73cf314a127d66c9e159e160758e740906e87013fb9fe61e22b86918"
+      "bytes": 234276,
+      "sha256": "52196a0dccf6289ee0d324b52dc4c30f462cb89df67b72b3442094b84932ebc0",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1154.HEIC",
+        "dimensionesMaestroAPI": [
+          5712,
+          4284
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      },
+      "fuenteAdjunta": "1C6BE6C8-A79F-4484-8702-762F356CAD4B_4_5005_c.jpeg",
+      "procedencia": "Original o render de resolución completa del álbum iCloud proporcionado por el usuario",
+      "recursoICloud": "CPLAsset.resJPEGFullRes"
     },
     {
       "fotoAdjunta": 44,
       "uuid": "6EE1225A-057C-4422-AA6C-9815E945C280",
-      "fuente": "6EE1225A-057C-4422-AA6C-9815E945C280_4_5005_c.jpeg",
+      "fuente": "IMG_1155.HEIC",
       "dimensionesFuente": [
-        360,
-        480
+        4284,
+        5712
       ],
-      "versionesDisponibles": 1,
+      "versionesDisponibles": 2,
       "seleccionada": true,
       "archivo": "assets/imagenes/espacios/patio-noche.webp",
       "categoria": "piscina",
       "alt": "Patio y piscina de Hotel Frontera iluminados por la noche",
       "dimensionesWeb": [
-        360,
-        480
+        1350,
+        1800
       ],
-      "bytes": 20482,
-      "sha256": "7766f1ffd3d9e2b757c8dc6ae412031769c1e676659299d5c1add3a35f912623"
+      "bytes": 215182,
+      "sha256": "996dd34beefff63d14ccf014701a0ea735f68cb0d5f62355d3fa3fb1029f03d2",
+      "originalICloudIdentificado": {
+        "nombre": "IMG_1155.HEIC",
+        "dimensionesMaestroAPI": [
+          4284,
+          5712
+        ],
+        "comparacionContenido": "Coincidencia de encuadre con la foto adjunta; algunas versiones tienen ajustes de color o exposición."
+      },
+      "fuenteAdjunta": "6EE1225A-057C-4422-AA6C-9815E945C280_4_5005_c.jpeg",
+      "procedencia": "Original o render de resolución completa del álbum iCloud proporcionado por el usuario",
+      "recursoICloud": "CPLMaster.resOriginalRes"
     }
   ],
   "verificacionICloud": {
     "fecha": "2026-11-25",
-    "imagenesAlbum": 38,
-    "originalesHEICGrandes": 1,
+    "imagenesAlbum": 112,
+    "originalesHEICGrandes": 75,
     "originalesJPEG360x480": 37,
-    "metodo": "Consulta pública de los maestros CPLMaster y descarga de resOriginalRes; comprobación del formato y dimensiones reales y revisión visual.",
-    "originalIncorporado": {
-      "archivoOrigen": "IMG_1035.HEIC",
-      "tipo": "public.heic",
-      "dimensiones": [
-        5712,
-        4284
+    "adjuntasConOriginalIdentificado": 44,
+    "fuentesAdjuntasOptimizadas": 29,
+    "fotosNocturnasAdicionales": 1,
+    "metodo": "Consulta pública fresca de los maestros CPLMaster y assets CPLAsset, recorriendo las dos páginas de resultados. Correlación de miniaturas con las 44 adjuntas por contenido y comprobación visual de los auditorios, restaurante y galería. Descarga de resOriginalRes o del render completo resJPEGFullRes cuando conserva ajustes de la foto.",
+    "auditorioSegovia": {
+      "archivoOrigen": "IMG_1070.HEIC",
+      "correspondeAFotoAdjunta": 23,
+      "dimensionesFuente": [
+        4284,
+        5712
       ],
-      "bytes": 2572778,
-      "correspondeAFotoAdjunta": 1
+      "recurso": "CPLMaster.resOriginalRes"
     },
     "auditorioAurora": {
-      "tomasAlbum": [
-        "IMG_1077.HEIC",
-        "IMG_1078.HEIC"
+      "archivoOrigen": "IMG_1085.HEIC",
+      "correspondeAFotoAdjunta": 26,
+      "dimensionesFuente": [
+        4284,
+        5712
       ],
-      "recursoDisponible": "resOriginalRes",
-      "tipoReal": "public.jpeg",
-      "dimensiones": [
-        360,
-        480
-      ],
-      "bytes": [
-        84042,
-        84015
-      ],
-      "recursosAdicionalesCPLAsset": [],
-      "accion": "Se mantiene la foto adjunta 26 para conservar la toma elegida."
-    },
-    "auditorioSegovia": {
-      "presenteEnAlbum": false,
-      "accion": "Se conservan las fotos adjuntas 22 y 23."
+      "recurso": "CPLMaster.resOriginalRes"
     },
     "restaurante": {
-      "presenteEnAlbum": false,
-      "accion": "Se conservan las fotos adjuntas del comedor de mesas redondas."
+      "dia": "IMG_1048.HEIC",
+      "noche": "IMG_1148.HEIC",
+      "vistaNocturna": "IMG_1149.HEIC"
     },
-    "observacion": "El álbum incluye tomas diferentes de los mismos espacios y no constituye una copia de las 44 adjuntas. No se reemplazaron fotografías sin correspondencia inequívoca. No se guardaron URL firmadas, tokens ni datos de cuenta en este inventario."
-  }
+    "observacion": "Los 37 JPEG pequeños siguen en el álbum, junto a los 75 HEIC grandes añadidos. Se verificó la correspondencia de cada adjunta por contenido, no por el orden del álbum. El inventario no incluye URL firmadas, credenciales ni datos de cuenta."
+  },
+  "fotosAdicionales": [
+    {
+      "fuente": "IMG_1158.HEIC",
+      "archivo": "assets/imagenes/espacios/piscina-guirnaldas-noche.webp",
+      "categoria": "piscina",
+      "alt": "Piscina de Hotel Frontera por la noche con guirnaldas iluminadas y reflejos en el agua",
+      "procedencia": "Render de resolución completa del álbum iCloud proporcionado por el usuario",
+      "recursoICloud": "CPLAsset.resJPEGFullRes",
+      "dimensionesFuente": [
+        4284,
+        5712
+      ],
+      "dimensionesWeb": [
+        1350,
+        1800
+      ],
+      "bytes": 213260,
+      "sha256": "b539ac1b1cc349485b0750a2f380868dbfd4d0b717e6b02ec5021d415113e5c1",
+      "motivo": "Ángulo nocturno desde el lado opuesto a las vistas del bar, con las guirnaldas encendidas."
+    }
+  ]
 }

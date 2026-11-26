@@ -25,7 +25,7 @@ Abra `http://127.0.0.1:8080`. Use la vista por HTTP para comprobar también Goog
 
 ## Fotografías del hotel
 
-Las fotografías nuevas están en `assets/imagenes/espacios/`. La portada, el restaurante, los auditorios y la piscina utilizan una selección; «Más fotos del hotel» muestra otras vistas de las instalaciones. Se conservan las fotos de habitaciones.
+Las fotografías nuevas están en `assets/imagenes/espacios/`, optimizadas en WebP a partir de los originales del álbum facilitado por el propietario. La portada alterna vistas de día y de noche; «Más fotos del hotel» incluye otras vistas de las instalaciones, la piscina iluminada y el restaurante nocturno. Se conservan las fotos de habitaciones.
 
 El auditorio **Segovia** es el de sillas de madera; **Aurora**, el de sillas blancas de plástico. Ambos tienen mesas en herradura. `docs/fotos-espacios.json` registra las fuentes, dimensiones y correspondencias de las fotografías, sin incluir enlaces privados al álbum.
 
