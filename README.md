@@ -23,6 +23,12 @@ Abra `http://127.0.0.1:8080`. Use la vista por HTTP para comprobar también Goog
 - `assets/imagenes/`: fotografías y logo locales (`platos/` y `categorias/` para la carta).
 - `editor/`: aplicación en Python para modificar el menú.
 
+## Fotografías del hotel
+
+Las fotografías nuevas están en `assets/imagenes/espacios/`. La portada, el restaurante, los auditorios y la piscina utilizan una selección; «Más fotos del hotel» muestra otras vistas de las instalaciones. Se conservan las fotos de habitaciones.
+
+El auditorio **Segovia** es el de sillas de madera; **Aurora**, el de sillas blancas de plástico. Ambos tienen mesas en herradura. `docs/fotos-espacios.json` registra las fuentes, dimensiones y correspondencias de las fotografías, sin incluir enlaces privados al álbum.
+
 ## Publicación
 
 La web está publicada gratis en GitHub Pages: https://agustin627.github.io/hofrosa-web/

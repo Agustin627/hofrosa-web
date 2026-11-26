@@ -1,0 +1,818 @@
+{
+  "fecha": "2026-11-25",
+  "notas": [
+    "Auditorio Segovia: mesas en herradura y sillas de madera, confirmado por el usuario.",
+    "Auditorio Aurora: mesas en herradura y sillas de plástico, confirmado por el usuario.",
+    "Las primeras cuatro adjuntas tienen derivadas locales de 2048 px. La foto 1 se actualizó desde un original HEIC de 5712 × 4284 del álbum iCloud del usuario. Las demás fotos conservan su mejor fuente local; no se ampliaron miniaturas.",
+    "Conversión a WebP y perfil sRGB, conservando la proporción, sin recorte ni retoque. Máximo 1800 px.",
+    "Las salas vacías se describen sin asignar un nombre de auditorio no confirmado."
+  ],
+  "fotos": [
+    {
+      "fotoAdjunta": 1,
+      "uuid": "91888E67-C1C1-49C0-9453-D12FC9212B8C",
+      "fuente": "IMG_1035.HEIC",
+      "dimensionesFuente": [
+        5712,
+        4284
+      ],
+      "versionesDisponibles": 3,
+      "seleccionada": true,
+      "archivo": "assets/imagenes/espacios/piscina-bar-dia.webp",
+      "categoria": "piscina",
+      "alt": "Piscina de Hotel Frontera con el bar y la terraza al fondo",
+      "dimensionesWeb": [
+        1800,
+        1350
+      ],
+      "bytes": 337290,
+      "sha256": "669b6e8fe58ee93fc158a64066efceadbeeaeffdd3503c7b8bc1607472975d66",
+      "fuenteAdjunta": "91888E67-C1C1-49C0-9453-D12FC9212B8C_1_102_o.jpeg",
+      "procedencia": "Original del álbum iCloud proporcionado por el usuario"
+    },
+    {
+      "fotoAdjunta": 2,
+      "uuid": "435722FF-728C-430F-B14A-0E6FC47AC6B8",
+      "fuente": "435722FF-728C-430F-B14A-0E6FC47AC6B8_1_102_o.jpeg",
+      "dimensionesFuente": [
+        2048,
+        1536
+      ],
+      "versionesDisponibles": 2,
+      "seleccionada": true,
+      "archivo": "assets/imagenes/espacios/piscina-bar-cerca.webp",
+      "categoria": "bar",
+      "alt": "Bar junto a la piscina y acceso a la terraza superior",
+      "dimensionesWeb": [
+        1800,
+        1350
+      ],
+      "bytes": 376572,
+      "sha256": "4369f8f87e0e6a6c288bb5e821c64bf007516e514270b917c04d40153be00115"
+    },
+    {
+      "fotoAdjunta": 3,
+      "uuid": "77FC2617-F147-476F-B3E0-1DDCEAF11893",
+      "fuente": "77FC2617-F147-476F-B3E0-1DDCEAF11893_1_102_o.jpeg",
+      "dimensionesFuente": [
+        1536,
+        2048
+      ],
+      "versionesDisponibles": 2,
+      "seleccionada": true,
+      "archivo": "assets/imagenes/espacios/piscina-corredor.webp",
+      "categoria": "terraza",
+      "alt": "Corredor con mesas junto a la piscina de Hotel Frontera",
+      "dimensionesWeb": [
+        1350,
+        1800
+      ],
+      "bytes": 397620,
+      "sha256": "106718783448a7caa2a602614065dce93152dedbf2bf173abcf19218a890666f"
+    },
+    {
+      "fotoAdjunta": 4,
+      "uuid": "612C1096-EAAF-44F0-B300-238A38404CCB",
+      "fuente": "612C1096-EAAF-44F0-B300-238A38404CCB_1_102_o.jpeg",
+      "dimensionesFuente": [
+        1536,
+        2048
+      ],
+      "versionesDisponibles": 2,
+      "seleccionada": true,
+      "archivo": "assets/imagenes/espacios/piscina-descanso.webp",
+      "categoria": "piscina",
+      "alt": "Piscina con tumbonas azules, sombrillas y jardín",
+      "dimensionesWeb": [
+        1350,
+        1800
+      ],
+      "bytes": 375904,
+      "sha256": "1c103921ecc64b0aaf5c896fe7cbeab37d7e084f94453ccc875caab175ab4214"
+    },
+    {
+      "fotoAdjunta": 5,
+      "uuid": "477987DE-B0B0-4315-A7C9-A7D8E21BCA2A",
+      "fuente": "477987DE-B0B0-4315-A7C9-A7D8E21BCA2A_4_5005_c.jpeg",
+      "dimensionesFuente": [
+        360,
+        480
+      ],
+      "versionesDisponibles": 1,
+      "seleccionada": false,
+      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona."
+    },
+    {
+      "fotoAdjunta": 6,
+      "uuid": "8DA5A51E-2780-423B-B986-12C2FFC0F9C2",
+      "fuente": "8DA5A51E-2780-423B-B986-12C2FFC0F9C2_4_5005_c.jpeg",
+      "dimensionesFuente": [
+        360,
+        480
+      ],
+      "versionesDisponibles": 1,
+      "seleccionada": false,
+      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona."
+    },
+    {
+      "fotoAdjunta": 7,
+      "uuid": "AC4EB24D-6FAB-4F43-B688-A1B8FC4CC60F",
+      "fuente": "AC4EB24D-6FAB-4F43-B688-A1B8FC4CC60F_4_5005_c.jpeg",
+      "dimensionesFuente": [
+        360,
+        480
+      ],
+      "versionesDisponibles": 1,
+      "seleccionada": false,
+      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona."
+    },
+    {
+      "fotoAdjunta": 8,
+      "uuid": "778C93D5-AB44-4348-90BA-AE52C37F8927",
+      "fuente": "778C93D5-AB44-4348-90BA-AE52C37F8927_4_5005_c.jpeg",
+      "dimensionesFuente": [
+        360,
+        480
+      ],
+      "versionesDisponibles": 1,
+      "seleccionada": true,
+      "archivo": "assets/imagenes/espacios/terraza-mesas.webp",
+      "categoria": "terraza",
+      "alt": "Mesas de la terraza cubierta junto a la piscina",
+      "dimensionesWeb": [
+        360,
+        480
+      ],
+      "bytes": 26806,
+      "sha256": "d28952be7aee9a782d0b7a35da714f5887658b8673560a6c1c9514fdd21101b0"
+    },
+    {
+      "fotoAdjunta": 9,
+      "uuid": "0E4AD285-5F52-4F49-A2A0-1B90D9D19F9B",
+      "fuente": "0E4AD285-5F52-4F49-A2A0-1B90D9D19F9B_4_5005_c.jpeg",
+      "dimensionesFuente": [
+        360,
+        480
+      ],
+      "versionesDisponibles": 1,
+      "seleccionada": false,
+      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona."
+    },
+    {
+      "fotoAdjunta": 10,
+      "uuid": "40197A73-EDA5-4EFF-8C09-D6B22A9534C5",
+      "fuente": "40197A73-EDA5-4EFF-8C09-D6B22A9534C5_4_5005_c.jpeg",
+      "dimensionesFuente": [
+        360,
+        480
+      ],
+      "versionesDisponibles": 1,
+      "seleccionada": true,
+      "archivo": "assets/imagenes/espacios/restaurante-vista.webp",
+      "categoria": "restaurante",
+      "alt": "Vista del comedor de Restaurante Las Margaritas",
+      "dimensionesWeb": [
+        360,
+        480
+      ],
+      "bytes": 20016,
+      "sha256": "568c0f30de239c8f84031b467a0bf1251abb748237fd68b5c9a06627c39b307a"
+    },
+    {
+      "fotoAdjunta": 11,
+      "uuid": "F807D787-2F59-4BDD-A13D-DDCB8205F93F",
+      "fuente": "F807D787-2F59-4BDD-A13D-DDCB8205F93F_4_5005_c.jpeg",
+      "dimensionesFuente": [
+        360,
+        480
+      ],
+      "versionesDisponibles": 1,
+      "seleccionada": false,
+      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona."
+    },
+    {
+      "fotoAdjunta": 12,
+      "uuid": "1A43C95B-C568-48A9-94E1-6E73FD60EF14",
+      "fuente": "1A43C95B-C568-48A9-94E1-6E73FD60EF14_4_5005_c.jpeg",
+      "dimensionesFuente": [
+        360,
+        480
+      ],
+      "versionesDisponibles": 1,
+      "seleccionada": true,
+      "archivo": "assets/imagenes/espacios/restaurante-dia.webp",
+      "categoria": "restaurante",
+      "alt": "Comedor de Restaurante Las Margaritas con mesas y sillas de madera",
+      "dimensionesWeb": [
+        360,
+        480
+      ],
+      "bytes": 23010,
+      "sha256": "125790b6470b50ab3d42f5eae60c9e7860d77868d8de699f8896943977a455d4"
+    },
+    {
+      "fotoAdjunta": 13,
+      "uuid": "B93B5560-1606-4A39-AD15-773B1C9F2645",
+      "fuente": "B93B5560-1606-4A39-AD15-773B1C9F2645_4_5005_c.jpeg",
+      "dimensionesFuente": [
+        360,
+        480
+      ],
+      "versionesDisponibles": 1,
+      "seleccionada": false,
+      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona."
+    },
+    {
+      "fotoAdjunta": 14,
+      "uuid": "03B6475C-BFC5-4D96-AAF2-81A748B95916",
+      "fuente": "03B6475C-BFC5-4D96-AAF2-81A748B95916_4_5005_c.jpeg",
+      "dimensionesFuente": [
+        360,
+        480
+      ],
+      "versionesDisponibles": 1,
+      "seleccionada": true,
+      "archivo": "assets/imagenes/espacios/sala-descanso.webp",
+      "categoria": "sala",
+      "alt": "Sala de descanso con sofás de madera y televisión",
+      "dimensionesWeb": [
+        360,
+        480
+      ],
+      "bytes": 18508,
+      "sha256": "e989ebed8b98ed3bb77c4c9953571aa002a9df2b57ea11c2f605bd2a701d03ba"
+    },
+    {
+      "fotoAdjunta": 15,
+      "uuid": "C2A95C30-BB21-4117-A32E-820F91CDFE50",
+      "fuente": "C2A95C30-BB21-4117-A32E-820F91CDFE50_4_5005_c.jpeg",
+      "dimensionesFuente": [
+        360,
+        480
+      ],
+      "versionesDisponibles": 1,
+      "seleccionada": false,
+      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona."
+    },
+    {
+      "fotoAdjunta": 16,
+      "uuid": "DF9874FA-CEC0-4839-9E06-F18711047EFD",
+      "fuente": "DF9874FA-CEC0-4839-9E06-F18711047EFD_4_5005_c.jpeg",
+      "dimensionesFuente": [
+        360,
+        480
+      ],
+      "versionesDisponibles": 1,
+      "seleccionada": false,
+      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona."
+    },
+    {
+      "fotoAdjunta": 17,
+      "uuid": "523AAD0F-3400-4E85-B203-7ED11B4A9A6C",
+      "fuente": "523AAD0F-3400-4E85-B203-7ED11B4A9A6C_4_5005_c.jpeg",
+      "dimensionesFuente": [
+        360,
+        480
+      ],
+      "versionesDisponibles": 1,
+      "seleccionada": true,
+      "archivo": "assets/imagenes/espacios/salon-celosia.webp",
+      "categoria": "salon",
+      "alt": "Espacio para eventos con celosía decorativa de madera",
+      "dimensionesWeb": [
+        360,
+        480
+      ],
+      "bytes": 20644,
+      "sha256": "ac81df0af111331eefde1d24e718791f038ede28372f231e1e112add75667040"
+    },
+    {
+      "fotoAdjunta": 18,
+      "uuid": "1B2D90BC-3F6F-4D6D-B066-FECC292A473C",
+      "fuente": "1B2D90BC-3F6F-4D6D-B066-FECC292A473C_4_5005_c.jpeg",
+      "dimensionesFuente": [
+        360,
+        480
+      ],
+      "versionesDisponibles": 1,
+      "seleccionada": true,
+      "archivo": "assets/imagenes/espacios/salon-eventos.webp",
+      "categoria": "salon",
+      "alt": "Salón despejado con ventanales y cortinas",
+      "dimensionesWeb": [
+        360,
+        480
+      ],
+      "bytes": 13664,
+      "sha256": "385ea4e8cb39de25d9d28470e39ca74dc650b71099d2107293ded2f0cd4f7849"
+    },
+    {
+      "fotoAdjunta": 19,
+      "uuid": "F29DCAA9-5324-4BCF-A330-D92D64A4CFC3",
+      "fuente": "F29DCAA9-5324-4BCF-A330-D92D64A4CFC3_4_5005_c.jpeg",
+      "dimensionesFuente": [
+        360,
+        480
+      ],
+      "versionesDisponibles": 1,
+      "seleccionada": true,
+      "archivo": "assets/imagenes/espacios/entrada-dia.webp",
+      "categoria": "entrada-parqueo",
+      "alt": "Entrada del hotel con acceso por rampa",
+      "dimensionesWeb": [
+        360,
+        480
+      ],
+      "bytes": 27686,
+      "sha256": "5b70501e1f26b64af868f383975c449ecbaf82f959c3a3ce4e6e85d8673b979e"
+    },
+    {
+      "fotoAdjunta": 20,
+      "uuid": "C07E561B-1265-4EE7-9DDE-FDF8329D72C3",
+      "fuente": "C07E561B-1265-4EE7-9DDE-FDF8329D72C3_4_5005_c.jpeg",
+      "dimensionesFuente": [
+        360,
+        480
+      ],
+      "versionesDisponibles": 1,
+      "seleccionada": false,
+      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona."
+    },
+    {
+      "fotoAdjunta": 21,
+      "uuid": "ED99B179-E914-48D8-8F4D-D4B7AA228432",
+      "fuente": "ED99B179-E914-48D8-8F4D-D4B7AA228432_4_5005_c.jpeg",
+      "dimensionesFuente": [
+        360,
+        480
+      ],
+      "versionesDisponibles": 1,
+      "seleccionada": true,
+      "archivo": "assets/imagenes/espacios/parqueo-palmeras.webp",
+      "categoria": "entrada-parqueo",
+      "alt": "Parqueo interior de Hotel Frontera rodeado de palmeras",
+      "dimensionesWeb": [
+        360,
+        480
+      ],
+      "bytes": 41978,
+      "sha256": "146fa9fc1d8cee8f77c649626b1d4f99d104cd0ce8feb416caa72b8b32eda2af"
+    },
+    {
+      "fotoAdjunta": 22,
+      "uuid": "45061E21-29E6-494C-8150-2616B903525D",
+      "fuente": "45061E21-29E6-494C-8150-2616B903525D_4_5005_c.jpeg",
+      "dimensionesFuente": [
+        360,
+        480
+      ],
+      "versionesDisponibles": 1,
+      "seleccionada": true,
+      "archivo": "assets/imagenes/espacios/auditorio-segovia-detalle.webp",
+      "categoria": "auditorio-segovia",
+      "alt": "Auditorio Segovia con mesas en herradura y sillas de madera",
+      "dimensionesWeb": [
+        360,
+        480
+      ],
+      "bytes": 19220,
+      "sha256": "4c43736a177ba7c37a73e71e6a1c148f33733870e1cfcea4b109d622d4e99411"
+    },
+    {
+      "fotoAdjunta": 23,
+      "uuid": "713152FB-B59D-4668-A9C4-57CAE11E2AFC",
+      "fuente": "713152FB-B59D-4668-A9C4-57CAE11E2AFC_4_5005_c.jpeg",
+      "dimensionesFuente": [
+        360,
+        480
+      ],
+      "versionesDisponibles": 1,
+      "seleccionada": true,
+      "archivo": "assets/imagenes/espacios/auditorio-segovia.webp",
+      "categoria": "auditorio-segovia",
+      "alt": "Auditorio Segovia con mesas en herradura y sillas de madera",
+      "dimensionesWeb": [
+        360,
+        480
+      ],
+      "bytes": 17808,
+      "sha256": "6d7050f562296323beec6df801b84e72125a045396be112e0167f7d3bbcd25e6"
+    },
+    {
+      "fotoAdjunta": 24,
+      "uuid": "C44D67E8-BFED-4025-8470-4811655A9751",
+      "fuente": "C44D67E8-BFED-4025-8470-4811655A9751_4_5005_c.jpeg",
+      "dimensionesFuente": [
+        360,
+        480
+      ],
+      "versionesDisponibles": 1,
+      "seleccionada": true,
+      "archivo": "assets/imagenes/espacios/bar-terraza.webp",
+      "categoria": "bar",
+      "alt": "Bar al lado de la piscina y terraza en el nivel superior",
+      "dimensionesWeb": [
+        360,
+        480
+      ],
+      "bytes": 29842,
+      "sha256": "d28d9c8f573b201bcd4639d193be1a903e333ab5456bd8dbf98528b5b393c3a2"
+    },
+    {
+      "fotoAdjunta": 25,
+      "uuid": "8845C81F-AD25-44CE-84DA-A4950C81D851",
+      "fuente": "8845C81F-AD25-44CE-84DA-A4950C81D851_4_5005_c.jpeg",
+      "dimensionesFuente": [
+        360,
+        480
+      ],
+      "versionesDisponibles": 1,
+      "seleccionada": false,
+      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona."
+    },
+    {
+      "fotoAdjunta": 26,
+      "uuid": "2A5F42A5-45E8-4C29-AB79-53CB09D0DE09",
+      "fuente": "2A5F42A5-45E8-4C29-AB79-53CB09D0DE09_4_5005_c.jpeg",
+      "dimensionesFuente": [
+        360,
+        480
+      ],
+      "versionesDisponibles": 1,
+      "seleccionada": true,
+      "archivo": "assets/imagenes/espacios/auditorio-aurora.webp",
+      "categoria": "auditorio-aurora",
+      "alt": "Auditorio Aurora con mesas en herradura y sillas de plástico blanco",
+      "dimensionesWeb": [
+        360,
+        480
+      ],
+      "bytes": 17854,
+      "sha256": "67064aea78c4be7238470b001ecba0eff5e0516e406dc437e41296f27cf3b8e5"
+    },
+    {
+      "fotoAdjunta": 27,
+      "uuid": "F5317694-505C-4307-8D47-EBF4A1F42E70",
+      "fuente": "F5317694-505C-4307-8D47-EBF4A1F42E70_4_5005_c.jpeg",
+      "dimensionesFuente": [
+        360,
+        480
+      ],
+      "versionesDisponibles": 1,
+      "seleccionada": false,
+      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona."
+    },
+    {
+      "fotoAdjunta": 28,
+      "uuid": "9BC8D32F-DE8D-40F2-94FC-EE3F91764770",
+      "fuente": "9BC8D32F-DE8D-40F2-94FC-EE3F91764770_4_5005_c.jpeg",
+      "dimensionesFuente": [
+        360,
+        480
+      ],
+      "versionesDisponibles": 1,
+      "seleccionada": true,
+      "archivo": "assets/imagenes/espacios/piscina-jardin.webp",
+      "categoria": "piscina",
+      "alt": "Curva de la piscina junto a las tumbonas y el corredor",
+      "dimensionesWeb": [
+        360,
+        480
+      ],
+      "bytes": 24690,
+      "sha256": "5b3c9a8007486b83f1e07740a37378b164e9ff9f905167c142b0343d41f69fa5"
+    },
+    {
+      "fotoAdjunta": 29,
+      "uuid": "78D6BEAC-CBD0-4761-ADB9-F24AAFCFFD28",
+      "fuente": "78D6BEAC-CBD0-4761-ADB9-F24AAFCFFD28_4_5005_c.jpeg",
+      "dimensionesFuente": [
+        360,
+        480
+      ],
+      "versionesDisponibles": 1,
+      "seleccionada": true,
+      "archivo": "assets/imagenes/espacios/vista-terraza-piscina.webp",
+      "categoria": "terraza",
+      "alt": "Vista de la piscina y el patio desde la terraza superior",
+      "dimensionesWeb": [
+        360,
+        480
+      ],
+      "bytes": 34086,
+      "sha256": "e710ef0354e6e4d339f6bee92e8d3254dedfebc30604a8db2e5f4c93a49701bc"
+    },
+    {
+      "fotoAdjunta": 30,
+      "uuid": "6D5B791E-1A80-4E08-B579-9FB739A3DFDB",
+      "fuente": "6D5B791E-1A80-4E08-B579-9FB739A3DFDB_4_5005_c.jpeg",
+      "dimensionesFuente": [
+        360,
+        480
+      ],
+      "versionesDisponibles": 1,
+      "seleccionada": true,
+      "archivo": "assets/imagenes/espacios/vista-terraza-montanas.webp",
+      "categoria": "terraza",
+      "alt": "Vista de la piscina, los tejados y las montañas desde la terraza",
+      "dimensionesWeb": [
+        360,
+        480
+      ],
+      "bytes": 33684,
+      "sha256": "95732c6313dc71a5c5ae8edd2339ecc4ddf9512b832b633ea08c7ee773575b2b"
+    },
+    {
+      "fotoAdjunta": 31,
+      "uuid": "7301B7F4-9FEA-48B4-8CA7-B7F168CEEC5E",
+      "fuente": "7301B7F4-9FEA-48B4-8CA7-B7F168CEEC5E_4_5005_c.jpeg",
+      "dimensionesFuente": [
+        360,
+        480
+      ],
+      "versionesDisponibles": 1,
+      "seleccionada": true,
+      "archivo": "assets/imagenes/espacios/piscina-atardecer.webp",
+      "categoria": "piscina",
+      "alt": "Piscina y bar de Hotel Frontera al atardecer",
+      "dimensionesWeb": [
+        360,
+        480
+      ],
+      "bytes": 28642,
+      "sha256": "e48d62a05e1d84b6b08cf8fa7e6f8e0d3b86cfcd2a8975f68c69bece169b9ec5"
+    },
+    {
+      "fotoAdjunta": 32,
+      "uuid": "3B7D770F-B091-4C09-B4FA-EFD0164C0CE9",
+      "fuente": "3B7D770F-B091-4C09-B4FA-EFD0164C0CE9_4_5005_c.jpeg",
+      "dimensionesFuente": [
+        360,
+        480
+      ],
+      "versionesDisponibles": 1,
+      "seleccionada": false,
+      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona."
+    },
+    {
+      "fotoAdjunta": 33,
+      "uuid": "D71297DA-F9ED-4F6A-B66D-ABF02331DCA5",
+      "fuente": "D71297DA-F9ED-4F6A-B66D-ABF02331DCA5_4_5005_c.jpeg",
+      "dimensionesFuente": [
+        360,
+        480
+      ],
+      "versionesDisponibles": 1,
+      "seleccionada": false,
+      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona."
+    },
+    {
+      "fotoAdjunta": 34,
+      "uuid": "B9770CF5-4624-4CB5-B323-00B94D9D95A6",
+      "fuente": "B9770CF5-4624-4CB5-B323-00B94D9D95A6_4_5005_c.jpeg",
+      "dimensionesFuente": [
+        360,
+        480
+      ],
+      "versionesDisponibles": 1,
+      "seleccionada": true,
+      "archivo": "assets/imagenes/espacios/parqueo-atardecer.webp",
+      "categoria": "entrada-parqueo",
+      "alt": "Parqueo del hotel entre palmeras al atardecer",
+      "dimensionesWeb": [
+        360,
+        480
+      ],
+      "bytes": 42786,
+      "sha256": "1903c6c49ba594b5424ffc88eced069b005daaecef1361365b5f9a0d1c90226b"
+    },
+    {
+      "fotoAdjunta": 35,
+      "uuid": "D4C5CABB-3220-41E2-B2B6-DB1871825DDF",
+      "fuente": "D4C5CABB-3220-41E2-B2B6-DB1871825DDF_4_5005_c.jpeg",
+      "dimensionesFuente": [
+        360,
+        480
+      ],
+      "versionesDisponibles": 1,
+      "seleccionada": true,
+      "archivo": "assets/imagenes/espacios/entrada-atardecer.webp",
+      "categoria": "entrada-parqueo",
+      "alt": "Fachada y acceso del hotel con iluminación al atardecer",
+      "dimensionesWeb": [
+        360,
+        480
+      ],
+      "bytes": 36026,
+      "sha256": "b73d247fdd7d22ed13e015f2e03bd5f2d22028174001cc00b051f3793820aefc"
+    },
+    {
+      "fotoAdjunta": 36,
+      "uuid": "ADB15C4C-2AFA-4892-BD57-8807F8C60F11",
+      "fuente": "ADB15C4C-2AFA-4892-BD57-8807F8C60F11_4_5005_c.jpeg",
+      "dimensionesFuente": [
+        360,
+        480
+      ],
+      "versionesDisponibles": 1,
+      "seleccionada": false,
+      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona."
+    },
+    {
+      "fotoAdjunta": 37,
+      "uuid": "BBD9B59B-B17A-43F2-847A-DB0537F3C0E6",
+      "fuente": "BBD9B59B-B17A-43F2-847A-DB0537F3C0E6_4_5005_c.jpeg",
+      "dimensionesFuente": [
+        360,
+        480
+      ],
+      "versionesDisponibles": 1,
+      "seleccionada": true,
+      "archivo": "assets/imagenes/espacios/sala-navidad.webp",
+      "categoria": "sala",
+      "alt": "Sala de estar con mobiliario clásico y decoración navideña",
+      "dimensionesWeb": [
+        360,
+        480
+      ],
+      "bytes": 26022,
+      "sha256": "d62a632613e54537d403efd82703ab46eb4fd0556074268cdeb0f4a560f43f3d"
+    },
+    {
+      "fotoAdjunta": 38,
+      "uuid": "4D437446-CD6C-4581-8773-AB72E1859E47",
+      "fuente": "4D437446-CD6C-4581-8773-AB72E1859E47_4_5005_c.jpeg",
+      "dimensionesFuente": [
+        360,
+        480
+      ],
+      "versionesDisponibles": 1,
+      "seleccionada": true,
+      "archivo": "assets/imagenes/espacios/piscina-descanso-atardecer.webp",
+      "categoria": "piscina",
+      "alt": "Piscina y zona de descanso al atardecer",
+      "dimensionesWeb": [
+        360,
+        480
+      ],
+      "bytes": 23910,
+      "sha256": "f216c880bae487ddda197f62a238d910a1ef1926a3e44393e079e5d2866194a8"
+    },
+    {
+      "fotoAdjunta": 39,
+      "uuid": "3944EF52-09CC-45DF-8840-0BD0FA20093E",
+      "fuente": "3944EF52-09CC-45DF-8840-0BD0FA20093E_4_5005_c.jpeg",
+      "dimensionesFuente": [
+        360,
+        480
+      ],
+      "versionesDisponibles": 1,
+      "seleccionada": true,
+      "archivo": "assets/imagenes/espacios/restaurante-noche.webp",
+      "categoria": "restaurante",
+      "alt": "Comedor de Restaurante Las Margaritas iluminado por la noche",
+      "dimensionesWeb": [
+        360,
+        480
+      ],
+      "bytes": 23562,
+      "sha256": "65112010c34cc381de9743176e1c0ee226e772b705000af0cbe3c22c2d7266fa"
+    },
+    {
+      "fotoAdjunta": 40,
+      "uuid": "1BC2A403-E779-4B75-8E49-8899E01E9904",
+      "fuente": "1BC2A403-E779-4B75-8E49-8899E01E9904_4_5005_c.jpeg",
+      "dimensionesFuente": [
+        360,
+        480
+      ],
+      "versionesDisponibles": 1,
+      "seleccionada": true,
+      "archivo": "assets/imagenes/espacios/restaurante-noche-vista.webp",
+      "categoria": "restaurante",
+      "alt": "Vista nocturna de las mesas de Restaurante Las Margaritas",
+      "dimensionesWeb": [
+        360,
+        480
+      ],
+      "bytes": 25200,
+      "sha256": "237881319c43c91859bae123c27d31e0126d0e3b0fdb19ec9f922c1ab507572c"
+    },
+    {
+      "fotoAdjunta": 41,
+      "uuid": "30D936DC-63EA-4DA5-84D3-3779BC72C36B",
+      "fuente": "30D936DC-63EA-4DA5-84D3-3779BC72C36B_4_5005_c.jpeg",
+      "dimensionesFuente": [
+        360,
+        480
+      ],
+      "versionesDisponibles": 1,
+      "seleccionada": true,
+      "archivo": "assets/imagenes/espacios/piscina-noche.webp",
+      "categoria": "piscina",
+      "alt": "Piscina de Hotel Frontera con reflejos de la iluminación nocturna",
+      "dimensionesWeb": [
+        360,
+        480
+      ],
+      "bytes": 23096,
+      "sha256": "ad070881133caf662e10a7900c102170a308a30431e521d04cbdc24ebdef14da"
+    },
+    {
+      "fotoAdjunta": 42,
+      "uuid": "0E11807C-543C-4193-82B9-610736E85AAC",
+      "fuente": "0E11807C-543C-4193-82B9-610736E85AAC_4_5005_c.jpeg",
+      "dimensionesFuente": [
+        360,
+        480
+      ],
+      "versionesDisponibles": 1,
+      "seleccionada": false,
+      "motivo": "Toma similar o repetida; se conserva una composición alternativa de la misma zona."
+    },
+    {
+      "fotoAdjunta": 43,
+      "uuid": "1C6BE6C8-A79F-4484-8702-762F356CAD4B",
+      "fuente": "1C6BE6C8-A79F-4484-8702-762F356CAD4B_4_5005_c.jpeg",
+      "dimensionesFuente": [
+        360,
+        480
+      ],
+      "versionesDisponibles": 1,
+      "seleccionada": true,
+      "archivo": "assets/imagenes/espacios/bar-noche.webp",
+      "categoria": "bar",
+      "alt": "Bar y terraza iluminados junto a la piscina por la noche",
+      "dimensionesWeb": [
+        360,
+        480
+      ],
+      "bytes": 23214,
+      "sha256": "ade3e2aa73cf314a127d66c9e159e160758e740906e87013fb9fe61e22b86918"
+    },
+    {
+      "fotoAdjunta": 44,
+      "uuid": "6EE1225A-057C-4422-AA6C-9815E945C280",
+      "fuente": "6EE1225A-057C-4422-AA6C-9815E945C280_4_5005_c.jpeg",
+      "dimensionesFuente": [
+        360,
+        480
+      ],
+      "versionesDisponibles": 1,
+      "seleccionada": true,
+      "archivo": "assets/imagenes/espacios/patio-noche.webp",
+      "categoria": "piscina",
+      "alt": "Patio y piscina de Hotel Frontera iluminados por la noche",
+      "dimensionesWeb": [
+        360,
+        480
+      ],
+      "bytes": 20482,
+      "sha256": "7766f1ffd3d9e2b757c8dc6ae412031769c1e676659299d5c1add3a35f912623"
+    }
+  ],
+  "verificacionICloud": {
+    "fecha": "2026-11-25",
+    "imagenesAlbum": 38,
+    "originalesHEICGrandes": 1,
+    "originalesJPEG360x480": 37,
+    "metodo": "Consulta pública de los maestros CPLMaster y descarga de resOriginalRes; comprobación del formato y dimensiones reales y revisión visual.",
+    "originalIncorporado": {
+      "archivoOrigen": "IMG_1035.HEIC",
+      "tipo": "public.heic",
+      "dimensiones": [
+        5712,
+        4284
+      ],
+      "bytes": 2572778,
+      "correspondeAFotoAdjunta": 1
+    },
+    "auditorioAurora": {
+      "tomasAlbum": [
+        "IMG_1077.HEIC",
+        "IMG_1078.HEIC"
+      ],
+      "recursoDisponible": "resOriginalRes",
+      "tipoReal": "public.jpeg",
+      "dimensiones": [
+        360,
+        480
+      ],
+      "bytes": [
+        84042,
+        84015
+      ],
+      "recursosAdicionalesCPLAsset": [],
+      "accion": "Se mantiene la foto adjunta 26 para conservar la toma elegida."
+    },
+    "auditorioSegovia": {
+      "presenteEnAlbum": false,
+      "accion": "Se conservan las fotos adjuntas 22 y 23."
+    },
+    "restaurante": {
+      "presenteEnAlbum": false,
+      "accion": "Se conservan las fotos adjuntas del comedor de mesas redondas."
+    },
+    "observacion": "El álbum incluye tomas diferentes de los mismos espacios y no constituye una copia de las 44 adjuntas. No se reemplazaron fotografías sin correspondencia inequívoca. No se guardaron URL firmadas, tokens ni datos de cuenta en este inventario."
+  }
+}
